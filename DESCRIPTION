@@ -1,0 +1,5 @@
+Package: NIPALS_MCIA
+Type: Package
+Title: Multiple co-inertia analysis implemented via the NIPALS algorithm
+Version: 0.0.1.0
+RoxygenNote: 7.2.0
