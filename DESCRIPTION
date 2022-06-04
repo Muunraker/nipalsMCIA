@@ -1,4 +1,4 @@
-Package: NIPALS_MCIA
+Package: NIPALS-MCIA
 Type: Package
 Title: Multiple co-inertia analysis implemented via the NIPALS algorithm
 Version: 0.0.1.0
