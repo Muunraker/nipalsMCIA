@@ -46,7 +46,6 @@ omicadeInitialization <- function(df){
 
 #' NIPALS Iteration
 #'
-#' @import pracma
 #' @description Applies one iteration stage/loop of the NIPALS algorithm. 
 #' 
 #' @details Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
