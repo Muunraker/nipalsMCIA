@@ -1,4 +1,5 @@
 
+
 #' Omicade4 Initialization
 #'
 #' @description Applies the variable and block level pre-processing as the 
@@ -69,7 +70,7 @@ NIPALS_iter <- function(ds, tol=1e-10, maxIter=1000){
   stopCrit <- 2*tol  
   covSquared_old <- 0
   iter <- 0
-  gs <- rand(nrow(ds[[1]]),1) # begin with random global score vector
+  gs <- pracma::rand(nrow(ds[[1]]),1) # begin with random global score vector
   
   while(stopCrit > tol && iter <= maxIter){
     
