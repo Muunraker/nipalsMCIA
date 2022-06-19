@@ -21,7 +21,7 @@ omicadeInitialization <- function(df){
   minVal <- min(temp_df)
   if(minVal < 0 ){
     offset <- floor(minVal)
-    temp_df <- temp_df+offset
+    temp_df <- temp_df+abs(offset)
   }
 
   # Generating centered column profiles:
