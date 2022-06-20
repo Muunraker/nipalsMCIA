@@ -103,8 +103,7 @@ NIPALS_iter <- function(ds, tol=1e-10, maxIter=1000){
     
     iter <- iter +1 
     
-    print(iter)
-    print(stopCrit)
+    print(paste("Iteration number:",iter,", Resisual error:", stopCrit))
     
     
   }
@@ -187,12 +186,12 @@ deflate_block_gs <- function(df,gs){
 #' \item `global` deflation via global scores (for CPCA)
 #' }
 #' @return a list containing the following: \itemize{
-#' \item `global_scores` a matrix containing global scores as columns
+#' \item `global_scores` a matrix containing global scores as columns (w/ unit variance)
 #' \item `global_loadings` a matrix containing global loadings as columns
 #' \item `global_score_weights` a matrix of weights to express global scores as
 #' a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
 #' \item `block scores` a list of matrices, each contains the scores for one block
-#' \item `block loadings` a list of matrices, each contains the loadings for one block
+#' \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 #' }
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
@@ -200,16 +199,18 @@ deflate_block_gs <- function(df,gs){
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks, num_PCs, tol=1e-7, max_iter = 1000, deflationMethod = 'block'){
+nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000, deflationMethod = 'block'){
   num_blocks <- length(data_blocks)
   
   # First NIPALS run
+  print(paste("Computing order", 1 ,"scores"))
   nipals_result <- NIPALS_iter(data_blocks, tol)
   
-  # Setting up variables
-  global_scores <- nipals_result$global_scores # matrix containing global scores as columns
-  global_loadings <- as.matrix(nipals_result$global_loadings) # matrix containing global loadings as columns
-  block_score_weights <- nipals_result$block_score_weights # matrix containing block score weights as columns
+  # Saving result
+  gs_var <- drop(var(nipals_result$global_scores)) # variance of global score (for normalization)
+  global_scores <- nipals_result$global_scores/gs_var # matrix containing global scores as columns
+  global_loadings <- as.matrix(nipals_result$global_loadings)/gs_var # matrix containing global loadings as columns
+  block_score_weights <- nipals_result$block_score_weights/gs_var # matrix containing block score weights as columns
   
   block_scores <- list() # list containing matrices of block scores
   block_loadings <- list() # list containing matrices of block loadings
@@ -218,29 +219,36 @@ nipals_multiblock <- function(data_blocks, num_PCs, tol=1e-7, max_iter = 1000, d
     block_loadings[[i]] <- nipals_result$block_loadings[[i]]
   }
                        
-
-  # generate scores/loadings up to number of PCs
-  for(i in 2:num_PCs){
-    # Deflate blocks
-    if(tolower(deflationMethod) == 'block'){
-      data_blocks <- mapply(deflate_block_bl, data_blocks, nipals_result$block_loadings)
-    } else if(tolower(deflationMethod) == 'global'){
-      data_blocks <- lapply(data_blocks, deflate_block_gs, gs=nipals_result$global_scores)
-    }else{
-      stop("Uknown option for deflation step - use 'block' or 'global'")
-    }
-    
-    nipals_result <- NIPALS_iter(data_blocks, tol)
-    
-    global_scores <- cbind(global_scores, nipals_result$global_scores)
-    global_loadings <- cbind(global_loadings, nipals_result$global_loadings)
-    block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights)
-    
-    for(j in 1:num_blocks){
-      block_scores[[j]] <- cbind(block_scores[[j]], nipals_result$block_scores[,j])
-      block_loadings[[j]] <- cbind(block_loadings[[j]], nipals_result$block_loadings[[j]])
+  if(num_PCs>1){
+    # generate scores/loadings up to number of PCs
+    for(i in 2:num_PCs){
+      print(paste("Computing order", i ,"scores"))
+      # Deflate blocks
+      if(tolower(deflationMethod) == 'block'){
+        data_blocks <- mapply(deflate_block_bl, data_blocks, nipals_result$block_loadings)
+      } else if(tolower(deflationMethod) == 'global'){
+        data_blocks <- lapply(data_blocks, deflate_block_gs, gs=nipals_result$global_scores)
+      }else{
+        stop("Uknown option for deflation step - use 'block' or 'global'")
+      }
+      
+      # Run another NIPALS iteration
+      nipals_result <- NIPALS_iter(data_blocks, tol)
+      
+      # Save results
+      gs_var <- drop(var(nipals_result$global_scores))
+      global_scores <- cbind(global_scores, nipals_result$global_scores/gs_var)
+      global_loadings <- cbind(global_loadings, nipals_result$global_loadings/gs_var)
+      block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights/gs_var)
+      
+      for(j in 1:num_blocks){
+        block_scores[[j]] <- cbind(block_scores[[j]], nipals_result$block_scores[,j])
+        block_loadings[[j]] <- cbind(block_loadings[[j]], nipals_result$block_loadings[[j]])
+      }
     }
   }
+    
+  # Returning output:
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
   retlist <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings )

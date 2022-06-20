@@ -6,7 +6,7 @@
 \usage{
 nipals_multiblock(
   data_blocks,
-  num_PCs,
+  num_PCs = 2,
   tol = 1e-07,
   max_iter = 1000,
   deflationMethod = "block"
@@ -28,12 +28,12 @@ nipals_multiblock(
 }
 \value{
 a list containing the following: \itemize{
-\item `global_scores` a matrix containing global scores as columns
+\item `global_scores` a matrix containing global scores as columns (w/ unit variance)
 \item `global_loadings` a matrix containing global loadings as columns
 \item `global_score_weights` a matrix of weights to express global scores as
 a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
 \item `block scores` a list of matrices, each contains the scores for one block
-\item `block loadings` a list of matrices, each contains the loadings for one block
+\item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 }
 }
 \description{
