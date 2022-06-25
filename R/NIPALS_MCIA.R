@@ -208,9 +208,9 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000,
   
   # Saving result
   gs_var <- drop(var(nipals_result$global_scores)) # variance of global score (for normalization)
-  global_scores <- nipals_result$global_scores/gs_var # matrix containing global scores as columns
-  global_loadings <- as.matrix(nipals_result$global_loadings)/gs_var # matrix containing global loadings as columns
-  block_score_weights <- nipals_result$block_score_weights/gs_var # matrix containing block score weights as columns
+  global_scores <- nipals_result$global_scores/sqrt(gs_var) # matrix containing global scores as columns
+  global_loadings <- as.matrix(nipals_result$global_loadings)/sqrt(gs_var) # matrix containing global loadings as columns
+  block_score_weights <- nipals_result$block_score_weights/sqrt(gs_var) # matrix containing block score weights as columns
   
   block_scores <- list() # list containing matrices of block scores
   block_loadings <- list() # list containing matrices of block loadings
@@ -237,9 +237,9 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000,
       
       # Save results
       gs_var <- drop(var(nipals_result$global_scores))
-      global_scores <- cbind(global_scores, nipals_result$global_scores/gs_var)
-      global_loadings <- cbind(global_loadings, nipals_result$global_loadings/gs_var)
-      block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights/gs_var)
+      global_scores <- cbind(global_scores, nipals_result$global_scores/sqrt(gs_var))
+      global_loadings <- cbind(global_loadings, nipals_result$global_loadings/sqrt(gs_var))
+      block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights/sqrt(gs_var))
       
       for(j in 1:num_blocks){
         block_scores[[j]] <- cbind(block_scores[[j]], nipals_result$block_scores[,j])
