@@ -276,8 +276,8 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
     plot(gs_normed[,1],gs_normed[,2],main = "First Two Global Scores",  
          xlab="1st Order Scores", ylab="2nd Order Scores",
          col="black",
-         xlim=c(min(gs_normed[,1]), max(gs_normed[,1])),
-         ylim=c(min(gs_normed[,2]), max(gs_normed[,2])),
+         xlim=c(min(gs_normed[,1])*1.05, max(gs_normed[,1])*1.05),
+         ylim=c(min(gs_normed[,2])*1.05, max(gs_normed[,2])*1.05),
          cex = .5,pch = 16)
     grid()
     # Plotting block scores (shapes correspond to different blocks)
@@ -287,7 +287,8 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
       # Line segments joining block scores to central global score:
       segments(bs_j[,1],bs_j[,2],gs_normed[,1],gs_normed[,2], col="black")
     }
-    legend("topleft",legend = c(names(data_blocks)),pch = 1:length(data_blocks)-1)
+    legend("bottomleft",legend = c(names(data_blocks)),pch = 1:length(data_blocks)-1,
+           cex = 0.5)
   }
   
   return(results_list)
