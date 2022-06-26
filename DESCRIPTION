@@ -7,7 +7,7 @@ Authors@R: c(person("Max","Mattessich", role = c("aut", "cre"),
 Description: Computes Multiple Co-Inertia Analysis (MCIA) for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).
 RoxygenNote: 7.2.0
 Depends:
-    R (>= 2.1.5)
+    R (>= 3.5.0)
 Imports:
     pracma
 Author: Max Mattessich[aut, cre],
