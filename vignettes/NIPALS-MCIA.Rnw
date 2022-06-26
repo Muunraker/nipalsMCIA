@@ -1,0 +1,14 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage[numbers]{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+
+Test
+
+\end{document}

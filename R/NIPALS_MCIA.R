@@ -64,7 +64,7 @@ omicadeInitialization <- function(df){
 #' nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
 #' 
 #' @export
-NIPALS_iter <- function(ds, tol=1e-10, maxIter=1000){
+NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   
   # Main iteration loop
   stopCrit <- 2*tol  
