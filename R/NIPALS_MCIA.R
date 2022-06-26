@@ -193,13 +193,15 @@ deflate_block_gs <- function(df,gs){
 #' \item `block scores` a list of matrices, each contains the scores for one block
 #' \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 #' }
+#' @param plots "true" (default) to display projection plots for block/global scores
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
 #'  MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000, deflationMethod = 'block'){
+nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000, 
+                              deflationMethod = 'block',plots="true"){
   num_blocks <- length(data_blocks)
   
   # First NIPALS run
@@ -207,11 +209,9 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000,
   nipals_result <- NIPALS_iter(data_blocks, tol)
   
   # Saving result
-  # Normalization of GS disabled - breaks block score weights
-  # gs_var <- drop(var(nipals_result$global_scores)) # variance of global score (for normalization)
-  # global_scores <- nipals_result$global_scores/sqrt(gs_var) # matrix containing global scores as columns
-  # global_loadings <- as.matrix(nipals_result$global_loadings)/sqrt(gs_var) # matrix containing global loadings as columns
-  # block_score_weights <- nipals_result$block_score_weights/sqrt(gs_var) # matrix containing block score weights as columns
+  global_scores <- nipals_result$global_scores # matrix containing global scores as columns
+  global_loadings <- as.matrix(nipals_result$global_loadings) # matrix containing global loadings as columns
+  block_score_weights <- nipals_result$block_score_weights# matrix containing block score weights as columns
   
   block_scores <- list() # list containing matrices of block scores
   block_loadings <- list() # list containing matrices of block loadings
@@ -236,12 +236,8 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000,
       # Run another NIPALS iteration
       nipals_result <- NIPALS_iter(data_blocks, tol)
       
-      # Save results
-      # gs_var <- drop(var(nipals_result$global_scores))
-      # global_scores <- cbind(global_scores, nipals_result$global_scores/sqrt(gs_var))
-      # global_loadings <- cbind(global_loadings, nipals_result$global_loadings/sqrt(gs_var))
-      # block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights/sqrt(gs_var))
       
+      # Save results
       global_scores <- cbind(global_scores, nipals_result$global_scores)
       global_loadings <- cbind(global_loadings, nipals_result$global_loadings)
       block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights)
@@ -253,10 +249,45 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-7, max_iter = 1000,
     }
   }
     
-  # Returning output:
+  # Formatting results
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
-  retlist <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings )
-  names(retlist) <- c('global_scores','global_loadings','block_score_weights','block_scores','block_loadings')
-  return(retlist)
+  results_list <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings )
+  names(results_list) <- c('global_scores','global_loadings','block_score_weights','block_scores','block_loadings')
+  
+  # Plotting results
+  # Plot 1 - first two scores as (x,y) coordinates
+  if(tolower(plots) == 'true'){
+    # Normalize global and block scores to unit variance
+    gs_norms <- apply(results_list$global_scores,2,function(x){sqrt(var(x))})
+    gs_normed <- t(t(results_list$global_scores) / gs_norms)
+    gl_normed <- t(t(results_list$global_loadings) / gs_norms)
+    gw_normed <- t(t(results_list$block_score_weights) / gs_norms)
+    
+    bs_normed <- list()
+    bl_normed <- list() 
+    for(i in 1:length(results_list$block_scores)){
+      bs_norms <-apply(results_list$block_scores[[i]],2,function(x){sqrt(var(x))})
+      bs_normed[[i]] <- t(t(results_list$block_scores[[i]]) / bs_norms)
+      bl_normed[[i]] <- t(t(results_list$block_loadings[[i]]) / bs_norms)
+    }
+    
+    # Plotting first two global scores
+    plot(gs_normed[,1],gs_normed[,2],main = "First Two Global Scores",  
+         xlab="1st Order Scores", ylab="2nd Order Scores",
+         col="black",
+         xlim=c(min(gs_normed[,1]), max(gs_normed[,1])),
+         ylim=c(min(gs_normed[,2]), max(gs_normed[,2])),
+         cex = .5,pch = 16)
+    grid()
+    # Plotting block scores (shapes correspond to different blocks)
+    for(j in 1:length(bs_normed)){
+      bs_j <- bs_normed[[j]]
+      points(bs_j[,1],bs_j[,2], col="black",cex = 1,pch = j-1)
+      # Line segments joining block scores to central global score:
+      segments(bs_j[,1],bs_j[,2],gs_normed[,1],gs_normed[,2], col="black")
+    }
+  }
+  
+  return(results_list)
 }
