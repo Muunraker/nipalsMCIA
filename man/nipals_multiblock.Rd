@@ -7,9 +7,10 @@
 nipals_multiblock(
   data_blocks,
   num_PCs = 2,
-  tol = 1e-07,
+  tol = 1e-12,
   max_iter = 1000,
-  deflationMethod = "block"
+  deflationMethod = "block",
+  plots = "true"
 )
 }
 \arguments{
@@ -24,11 +25,13 @@ nipals_multiblock(
 \item `global` deflation via global scores (for CPCA)
 }}
 
+\item{plots}{"true" (default) to display projection plots for block/global scores}
+
 \item{maxIter}{a number for the maximum number of times NIPALS should iterate}
 }
 \value{
 a list containing the following: \itemize{
-\item `global_scores` a matrix containing global scores as columns (w/ unit variance)
+\item `global_scores` a matrix containing global scores as columns (NOT normalized to unit variance)
 \item `global_loadings` a matrix containing global loadings as columns
 \item `global_score_weights` a matrix of weights to express global scores as
 a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"

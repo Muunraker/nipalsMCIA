@@ -287,6 +287,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
       # Line segments joining block scores to central global score:
       segments(bs_j[,1],bs_j[,2],gs_normed[,1],gs_normed[,2], col="black")
     }
+    legend("topleft",legend = c(names(data_blocks)),pch = 1:length(data_blocks)-1)
   }
   
   return(results_list)
