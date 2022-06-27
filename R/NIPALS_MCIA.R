@@ -103,7 +103,7 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
     
     iter <- iter +1 
     
-    message(paste("Iteration number:",iter,", Resisual error:", stopCrit))
+    message(paste("Iteration number:",iter,", Residual error:", stopCrit))
     
     
   }

@@ -14,8 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 The package can be installed directly from Github via the \verb+devtools+ package:
 
 ```{r installing package, echo = T, results = 'hide',error=FALSE, warning=FALSE,message=FALSE}
-install.packages("devtools",repos = "http://cran.us.r-project.org") # required for install_github
-library(devtools)
+install.packages("devtools",repos = "http://cran.us.r-project.org") 
+library(devtools)# required for install_github
 
 install_github("Muunraker/NIPALS-MCIA")
 library(nipalsMCIA)
@@ -28,9 +28,12 @@ data(NCI60) # loads data as data_blocks
 summary(data_blocks)
 ```
 
-The preprocessing function and main NIPALS iteration can then be applied to the data. The results include a plot of the first two global scores 
-```{r computing MCIA}
-data_blocks_norm <- lapply(data_blocks,omicadeInitialization) # preprocessed data
-results <- nipals_multiblock(data_blocks_norm,num_PCs = 2, tol=1e-12,
-                          deflationMethod = 'block',plots="true")
+The preprocessing function and main NIPALS iteration can then be applied to the data. The results include a plot of the first two global scores:
+```{r computing MCIA,message=FALSE}
+# Apply initialization:
+data_blocks_norm <- lapply(data_blocks,omicadeInitialization) 
+
+# Main NIPALS function
+results <- nipals_multiblock(data_blocks_norm,num_PCs = 2, tol=1e-12, 
+                          deflationMethod = 'block',plots="true") 
 ```
