@@ -103,7 +103,7 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
     
     iter <- iter +1 
     
-    print(paste("Iteration number:",iter,", Resisual error:", stopCrit))
+    message(paste("Iteration number:",iter,", Resisual error:", stopCrit))
     
     
   }
@@ -205,7 +205,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
   num_blocks <- length(data_blocks)
   
   # First NIPALS run
-  print(paste("Computing order", 1 ,"scores"))
+  message(paste("Computing order", 1 ,"scores"))
   nipals_result <- NIPALS_iter(data_blocks, tol)
   
   # Saving result
@@ -223,7 +223,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
   if(num_PCs>1){
     # generate scores/loadings up to number of PCs
     for(i in 2:num_PCs){
-      print(paste("Computing order", i ,"scores"))
+      message(paste("Computing order", i ,"scores"))
       # Deflate blocks
       if(tolower(deflationMethod) == 'block'){
         data_blocks <- mapply(deflate_block_bl, data_blocks, nipals_result$block_loadings)
