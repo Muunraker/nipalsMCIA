@@ -272,12 +272,26 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
       bl_normed[[i]] <- t(t(results_list$block_loadings[[i]]) / bs_norms)
     }
     
+    # Getting bounds for projection plot
+    min_bs1 <- min(sapply(lapply(bs_normed, `[`,,1) , min)) # minimum 1st block score
+    min_bs2 <- min(sapply(lapply(bs_normed, `[`,,2) , min)) # minimum 2nd block score
+    max_bs1 <- max(sapply(lapply(bs_normed, `[`,,1) , max)) # maximum 1st block score
+    max_bs2 <- max(sapply(lapply(bs_normed, `[`,,2) , max)) # maximum 2nd block score
+    
+    min_x <- min(c(min_bs1, min(gs_normed[,1]))) # minimum x coordinate in plot
+    min_y <- min(c(min_bs2, min(gs_normed[,2]))) # minimum y coordinate in plot
+    max_x <- max(c(max_bs1, max(gs_normed[,1]))) # maximum x coordinate in plot
+    max_y <- max(c(max_bs2, max(gs_normed[,2]))) # maximum y coordinate in plot
+    
+    
+    min_gs1 <- min 
+    
     # Plotting first two global scores
-    plot(gs_normed[,1],gs_normed[,2],main = "First Two Global Scores",  
+    plot(gs_normed[,1],gs_normed[,2],main = "Plot of First and Second Order Scores",  
          xlab="1st Order Scores", ylab="2nd Order Scores",
          col="black",
-         xlim=c(min(gs_normed[,1])*1.05, max(gs_normed[,1])*1.05),
-         ylim=c(min(gs_normed[,2])*1.05, max(gs_normed[,2])*1.05),
+         xlim=c(min(gs_normed[,1]), max(gs_normed[,1])),
+         ylim=c(min(gs_normed[,2]), max(gs_normed[,2])),
          cex = .5,pch = 16)
     grid()
     # Plotting block scores (shapes correspond to different blocks)
