@@ -261,8 +261,10 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
   # Formatting results
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
-  results_list <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings, eigvals )
-  names(results_list) <- c('global_scores','global_loadings','block_score_weights','block_scores','block_loadings')
+  results_list <-list(global_scores, global_loadings, block_score_weights, 
+                      block_scores, block_loadings, eigvals )
+  names(results_list) <- c('global_scores','global_loadings','block_score_weights',
+                           'block_scores','block_loadings', 'eigvals')
   
   # Plotting results
   if(tolower(plots) == 'true'){
