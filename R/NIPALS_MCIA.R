@@ -318,12 +318,10 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
     
     
     ####  Plot 2 - Eigenvalues of scores up to num_PCs
-    barploteigs <- unlist(test$eigvals)^2
+    barploteigs <- unlist(eigvals)^2
     names(barploteigs) <- 1:num_PCs
     barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
             main = "Plot of Global Score Eigenvalues ")
-    
-    
     
   }
   
