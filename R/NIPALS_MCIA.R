@@ -261,6 +261,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
   # Formatting results
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
+  names(eigvals) <- paste("gs",1:num_PCs,sep = '')
   results_list <-list(global_scores, global_loadings, block_score_weights, 
                       block_scores, block_loadings, eigvals )
   names(results_list) <- c('global_scores','global_loadings','block_score_weights',
@@ -316,6 +317,12 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
     
     
     ####  Plot 2 - Eigenvalues of scores up to num_PCs
+    barploteigs <- unlist(test$eigvals)^2
+    names(barploteigs) <- 1:num_PCs
+    barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
+            main = "Plot of Global Score Eigenvalues ")
+    
+    
     
   }
   
