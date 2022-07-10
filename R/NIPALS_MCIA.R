@@ -298,6 +298,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
     max_y <- max(c(max_bs2, max(gs_normed[,2]))) # maximum y coordinate in plot
     
     # Plotting first two global scores
+    par(mfrow=c(1,2))
     plot(gs_normed[,1],gs_normed[,2],main = "Plot of First and Second Order Scores",  
          xlab="1st Order Scores", ylab="2nd Order Scores",
          col="black",
