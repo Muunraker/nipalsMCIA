@@ -104,12 +104,15 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
     iter <- iter +1 
     
     message(paste("Iteration number:",iter,", Residual error:", stopCrit))
-    
-    
   }
   if(iter > maxIter){
     warning('NIPALS iteration did not converge')
   }
+  
+  # Computing eigenvalue associated with the global score
+  global_matrix <- do.call(cbind,ds)
+  svdres <- svd(global_matrix)
+  eigval <- svdres$d[1]
   
   # Computing global loadings at final iteration
   gl <- bl_list[[1]]*gw[1]
@@ -119,8 +122,9 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   }
   
   # Returning results
-  retlist <-list(gs, gl, gw, bs_list, bl_list )
-  names(retlist) <- c('global_scores','global_loadings','block_score_weights','block_scores','block_loadings')
+  retlist <-list(gs, gl, gw, bs_list, bl_list, eigval)
+  names(retlist) <- c('global_scores','global_loadings','block_score_weights',
+                      'block_scores','block_loadings', 'eigval')
   return(retlist)
 }
 
@@ -190,6 +194,7 @@ deflate_block_gs <- function(df,gs){
 #' \item `global_loadings` a matrix containing global loadings as columns
 #' \item `global_score_weights` a matrix of weights to express global scores as
 #' a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
+#' \item `eigvals` a matrix containing the eigenvalue for each computed global score. 
 #' \item `block scores` a list of matrices, each contains the scores for one block
 #' \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 #' }
@@ -219,6 +224,9 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
     block_scores[[i]] <- nipals_result$block_scores[,i]
     block_loadings[[i]] <- nipals_result$block_loadings[[i]]
   }
+  
+  # Computing block eigenvalue
+  eigvals <- list(nipals_result$eigval);
                        
   if(num_PCs>1){
     # generate scores/loadings up to number of PCs
@@ -241,6 +249,7 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
       global_scores <- cbind(global_scores, nipals_result$global_scores)
       global_loadings <- cbind(global_loadings, nipals_result$global_loadings)
       block_score_weights <- cbind(block_score_weights, nipals_result$block_score_weights)
+      eigvals <- cbind(eigvals,nipals_result$eigval)
       
       for(j in 1:num_blocks){
         block_scores[[j]] <- cbind(block_scores[[j]], nipals_result$block_scores[,j])
@@ -252,12 +261,14 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
   # Formatting results
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
-  results_list <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings )
+  results_list <-list(global_scores, global_loadings, block_score_weights, block_scores, block_loadings, eigvals )
   names(results_list) <- c('global_scores','global_loadings','block_score_weights','block_scores','block_loadings')
   
   # Plotting results
-  # Plot 1 - first two scores as (x,y) coordinates
   if(tolower(plots) == 'true'){
+    #### Plot 1 - first two scores as (x,y) coordinates
+    
+    
     # Normalize global and block scores to unit variance
     gs_norms <- apply(results_list$global_scores,2,function(x){sqrt(var(x))})
     gs_normed <- t(t(results_list$global_scores) / gs_norms)
@@ -299,8 +310,14 @@ nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000
       segments(bs_j[,1],bs_j[,2],gs_normed[,1],gs_normed[,2], col="black")
     }
     legend("bottomleft",legend = c(names(data_blocks)),pch = 1:length(data_blocks)-1,
-           cex = 0.5)
+           cex = 1)
+    
+    
+    ####  Plot 2 - Eigenvalues of scores up to num_PCs
+    
   }
+  
+  
   
   return(results_list)
 }
