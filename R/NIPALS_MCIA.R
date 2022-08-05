@@ -1,9 +1,9 @@
 
 
-#' Omicade4 Initialization
+#' Centered Column Profile Pre-processing
 #'
-#' @description Applies the variable and block level pre-processing as the 
-#' "Omicade4" package (Meng et al. 2014)
+#' @description Converts data blocks into centered column profiles where each 
+#' block has unit variance. Mimics the pre-processing in the Omicade4 package (Meng et al. 2014)
 #' @details Performs the following steps on a given data frame: \itemize{
 #' \item Offsets data to make whole matrix non-negative
 #' \item Divides each column by its sum 
@@ -14,7 +14,7 @@
 #' @param df the data frame to apply pre-processing to, in "sample" x "variable" format 
 #' @return the processed data frame
 #' @export
-omicadeInitialization <- function(df){
+CCpreproc <- function(df){
   temp_df <- df
   
   # Making data non-negative
@@ -181,7 +181,11 @@ deflate_block_gs <- function(df,gs){
 #' function, then used to deflate the data matrix according to the desired deflation method. 
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #' 
-#' @param data_blocks a list of data frames, each in "sample" x "variable" format  
+#' @param data_blocks a list of data frames, each in "sample" x "variable" format 
+#' @param preprocMethod an option for the desired data pre-processing, either:\itemize{
+#' \item `colprofile` (default) to transform the data into centered column profiles (see Meng et. al. 2014)
+#' \item `none` for no pre-processing performed (NOT RECCOMENDED)
+#' }
 #' @param num_PCs the maximum order of scores/loadings
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
 #' @param maxIter a number for the maximum number of times NIPALS should iterate
@@ -205,9 +209,17 @@ deflate_block_gs <- function(df,gs){
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks, num_PCs=2, tol=1e-12, max_iter = 1000, 
+nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2, tol=1e-12, max_iter = 1000, 
                               deflationMethod = 'block',plots="true"){
   num_blocks <- length(data_blocks)
+  
+  if(tolower(preprocMethod) == 'colprofile'){
+    message("Performing centered column profile pre-processing...")
+    data_blocks <- lapply(data_blocks,CCpreproc)
+    message("Pre-processing completed.")
+  }else{
+    message("No Pre-processing performed.")
+  }
   
   # First NIPALS run
   message(paste("Computing order", 1 ,"scores"))
