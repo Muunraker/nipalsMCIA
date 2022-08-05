@@ -5,7 +5,7 @@ Title: Multiple Co-Inertia Analysis via the NIPALS Method
 Authors@R: c(person("Max","Mattessich", role = c("aut", "cre"),
                      email = "maximilianmattessich2027@u.northwestern.edu"))
 Description: Computes Multiple Co-Inertia Analysis (MCIA) for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Depends:
     R (>= 3.5.0)
 Imports:

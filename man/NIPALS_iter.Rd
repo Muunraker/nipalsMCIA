@@ -4,7 +4,7 @@
 \alias{NIPALS_iter}
 \title{NIPALS Iteration}
 \usage{
-NIPALS_iter(ds, tol = 1e-10, maxIter = 1000)
+NIPALS_iter(ds, tol = 1e-12, maxIter = 1000)
 }
 \arguments{
 \item{ds}{a list of data frames, each in "sample" x "variable" format}

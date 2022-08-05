@@ -6,6 +6,7 @@
 \usage{
 nipals_multiblock(
   data_blocks,
+  preprocMethod = "colprofile",
   num_PCs = 2,
   tol = 1e-12,
   max_iter = 1000,
@@ -15,6 +16,11 @@ nipals_multiblock(
 }
 \arguments{
 \item{data_blocks}{a list of data frames, each in "sample" x "variable" format}
+
+\item{preprocMethod}{an option for the desired data pre-processing, either:\itemize{
+\item `colprofile` (default) to transform the data into centered column profiles (see Meng et. al. 2014)
+\item `none` for no pre-processing performed (NOT RECCOMENDED)
+}}
 
 \item{num_PCs}{the maximum order of scores/loadings}
 
@@ -35,6 +41,7 @@ a list containing the following: \itemize{
 \item `global_loadings` a matrix containing global loadings as columns
 \item `global_score_weights` a matrix of weights to express global scores as
 a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
+\item `eigvals` a matrix containing the eigenvalue for each computed global score. 
 \item `block scores` a list of matrices, each contains the scores for one block
 \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 }
