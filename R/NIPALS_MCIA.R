@@ -72,20 +72,23 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   iter <- 0
   gs <- pracma::rand(nrow(ds[[1]]),1) # begin with random global score vector
   
+  ds_test <- lapply(ds, as.matrix)
+  
   while(stopCrit > tol && iter <= maxIter){
     
+    
     # Computing block loadings
-    bl_list <- lapply(ds, function(df,q){ 
-      bl_k <- crossprod(as.matrix(df), q) 
+    bl_list <- lapply(ds_test, function(df,q){ 
+      bl_k <- crossprod(df, q) 
       bl_k <- bl_k/norm(bl_k, type="2") 
       return(bl_k)
     }, q=gs)
     
     # Computing block scores
     bs_list <- mapply(function(df,bl_k){
-      bs_k <- as.matrix(df) %*% bl_k
+      bs_k <- df %*% bl_k
       return(bs_k)
-    },ds, bl_list)
+    },ds_test, bl_list)
     
     # Computing global weights
     gw <- crossprod(bs_list,gs)
