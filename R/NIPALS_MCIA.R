@@ -15,7 +15,7 @@
 #' @return the processed data frame
 #' @export
 CCpreproc <- function(df){
-  temp_df <- df
+  temp_df <- as.matrix(df)
   
   # Making data non-negative
   minVal <- min(temp_df)
@@ -31,13 +31,13 @@ CCpreproc <- function(df){
   
   ## Dividing by column sums
   nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs 
-  temp_df[,nz_cols] <- as.data.frame(t( t(temp_df[,nz_cols])/colsums[nz_cols]))
+  temp_df[,nz_cols] <- t( t(temp_df[,nz_cols])/colsums[nz_cols])
   
   ## Subtracting row contributions
   temp_df <- temp_df - row_contribs
 
   # Applying feature weighting ("multiplication by feature metrics")
-  temp_df <- as.data.frame(t( t(temp_df)*sqrt(colsums/totsum)))
+  temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
   
   # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
   temp_df <- temp_df*(1/sqrt(sum(svd(temp_df)[[1]]^2)))
@@ -72,13 +72,11 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   iter <- 0
   gs <- pracma::rand(nrow(ds[[1]]),1) # begin with random global score vector
   
-  ds_test <- lapply(ds, as.matrix)
-  
   while(stopCrit > tol && iter <= maxIter){
     
     
     # Computing block loadings
-    bl_list <- lapply(ds_test, function(df,q){ 
+    bl_list <- lapply(ds, function(df,q){ 
       bl_k <- crossprod(df, q) 
       bl_k <- bl_k/norm(bl_k, type="2") 
       return(bl_k)
@@ -88,7 +86,7 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
     bs_list <- mapply(function(df,bl_k){
       bs_k <- df %*% bl_k
       return(bs_k)
-    },ds_test, bl_list)
+    },ds, bl_list)
     
     # Computing global weights
     gw <- crossprod(bs_list,gs)
@@ -106,7 +104,7 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
     
     iter <- iter +1 
     
-    message(paste("Iteration number:",iter,", Residual error:", stopCrit))
+    # message(paste("Iteration number:",iter,", Residual error:", stopCrit))
   }
   if(iter > maxIter){
     warning('NIPALS iteration did not converge')
@@ -216,13 +214,12 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
                               deflationMethod = 'block',plots="true"){
   num_blocks <- length(data_blocks)
   
-  # data_blocks_test <- lapply(ds, as.matrix) # converting input data to matrix form
-  
   if(tolower(preprocMethod) == 'colprofile'){
     message("Performing centered column profile pre-processing...")
     data_blocks <- lapply(data_blocks,CCpreproc)
     message("Pre-processing completed.")
   }else{
+    data_blocks <- lapply(data_blocks, as.matrix) # converting input data to matrix form
     message("No Pre-processing performed.")
   }
   
@@ -341,7 +338,6 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
             main = "Plot of Global Score Eigenvalues ")
     
   }
-  
   
   
   return(results_list)
