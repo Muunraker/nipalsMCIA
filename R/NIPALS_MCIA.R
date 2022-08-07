@@ -56,7 +56,7 @@ CCpreproc <- function(df){
 #' low enough, or the maximum number of iterations is reached. Intended as a 
 #' utility function for `nipals_multiblock` to be used between deflation steps.
 #' 
-#' @param ds a list of data frames, each in "sample" x "variable" format  
+#' @param ds a list of data matrices, each in "sample" x "variable" format  
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
 #' @param maxIter a number for the maximum number of times NIPALS should iterate
 #' @return a list containing the global/block scores, loadings and weights for a given order
@@ -215,6 +215,8 @@ deflate_block_gs <- function(df,gs){
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2, tol=1e-12, max_iter = 1000, 
                               deflationMethod = 'block',plots="true"){
   num_blocks <- length(data_blocks)
+  
+  # data_blocks_test <- lapply(ds, as.matrix) # converting input data to matrix form
   
   if(tolower(preprocMethod) == 'colprofile'){
     message("Performing centered column profile pre-processing...")
