@@ -11,7 +11,7 @@ nipals_multiblock(
   tol = 1e-12,
   max_iter = 1000,
   deflationMethod = "block",
-  plots = "true"
+  plots = "all"
 )
 }
 \arguments{
@@ -31,7 +31,10 @@ nipals_multiblock(
 \item `global` deflation via global scores (for CPCA)
 }}
 
-\item{plots}{"true" (default) to display projection plots for block/global scores}
+\item{plots}{an option to display varios plots of results: \itemize{
+\item `all` displays plots of block scores, global scores, and eigenvalue scree plot
+\item `global` displays only global score projections and eigenvalue scree plot
+}}
 
 \item{maxIter}{a number for the maximum number of times NIPALS should iterate}
 }

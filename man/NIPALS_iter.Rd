@@ -7,7 +7,7 @@
 NIPALS_iter(ds, tol = 1e-12, maxIter = 1000)
 }
 \arguments{
-\item{ds}{a list of data frames, each in "sample" x "variable" format}
+\item{ds}{a list of data matrices, each in "sample" x "variable" format}
 
 \item{tol}{a number for the tolerance on the stopping criterion for NIPALS}
 

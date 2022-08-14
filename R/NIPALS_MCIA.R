@@ -203,7 +203,10 @@ deflate_block_gs <- function(df,gs){
 #' \item `block scores` a list of matrices, each contains the scores for one block
 #' \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
 #' }
-#' @param plots "true" (default) to display projection plots for block/global scores
+#' @param plots an option to display varios plots of results: \itemize{
+#' \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
+#' \item `global` displays only global score projections and eigenvalue scree plot
+#' }
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
 #'  MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
@@ -211,7 +214,7 @@ deflate_block_gs <- function(df,gs){
 #' 
 #' @export
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2, tol=1e-12, max_iter = 1000, 
-                              deflationMethod = 'block',plots="true"){
+                              deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   
   if(tolower(preprocMethod) == 'colprofile'){
@@ -282,7 +285,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
                            'block_scores','block_loadings', 'eigvals')
   
   # Plotting results
-  if(tolower(plots) == 'true'){
+  if(tolower(plots) == 'all'){
     #### Plot 1 - first two scores as (x,y) coordinates
     
     
@@ -313,7 +316,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
     
     # Plotting first two global scores
     par(mfrow=c(1,2))
-    plot(gs_normed[,1],gs_normed[,2],main = "Plot of First and Second Order Scores",  
+    plot(gs_normed[,1],gs_normed[,2],main = "First and Second Order Scores",  
          xlab="1st Order Scores", ylab="2nd Order Scores",
          col="black",
          xlim=c(min_x, max_x),
@@ -335,8 +338,42 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
     barploteigs <- unlist(eigvals)^2
     names(barploteigs) <- 1:num_PCs
     barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
-            main = "Plot of Global Score Eigenvalues ")
+            main = "Global Score Eigenvalues ")
     
+  }else if (tolower(plots) == 'global'){
+    #### Plot 1 - first two scores as (x,y) coordinates
+    
+    
+    # Normalize global scores to unit variance
+    gs_norms <- apply(results_list$global_scores,2,function(x){sqrt(var(x))})
+    gs_normed <- t(t(results_list$global_scores) / gs_norms)
+    gl_normed <- t(t(results_list$global_loadings) / gs_norms)
+    gw_normed <- t(t(results_list$block_score_weights) / gs_norms)
+
+    
+    # Getting bounds for projection plot
+    
+    min_x <-  min(gs_normed[,1]) # minimum x coordinate in plot
+    min_y <-  min(gs_normed[,2]) # minimum y coordinate in plot
+    max_x <-  max(gs_normed[,1]) # maximum x coordinate in plot
+    max_y <-  max(gs_normed[,2]) # maximum y coordinate in plot
+    
+    # Plotting first two global scores
+    par(mfrow=c(1,2))
+    plot(gs_normed[,1],gs_normed[,2],main = "First and Second Order Global Scores",  
+         xlab="1st Order Scores", ylab="2nd Order Scores",
+         col="black",
+         xlim=c(min_x, max_x),
+         ylim=c(min_y, max_y),
+         cex = 1)
+    grid()
+    
+    
+    ####  Plot 2 - Eigenvalues of scores up to num_PCs
+    barploteigs <- unlist(eigvals)^2
+    names(barploteigs) <- 1:num_PCs
+    barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
+            main = "Global Score Eigenvalues ")
   }
   
   
