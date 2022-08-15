@@ -1,6 +1,6 @@
 
 
-NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction
+# NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 
 ## Installation Instructions 
