@@ -11,7 +11,7 @@
 
 
 
-<title>README</title>
+<title>NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction via Nonlinear Iterative Partial Least Squares</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -361,25 +361,38 @@ pre code {
 
 
 
+<h1 class="title toc-ignore">NIPALS-MCIA: Software to Compute
+Multi-Block Dimensionality Reduction via Nonlinear Iterative Partial
+Least Squares</h1>
 
 </div>
 
-
-<div id="nipals-mcia-software-to-compute-multi-block-dimensionality-reduction-via-nonlinear-iterative-partial-least-squares" class="section level1">
-<h1>NIPALS-MCIA: Software to Compute Multi-Block Dimensionality
-Reduction via Nonlinear Iterative Partial Least Squares</h1>
-<p>[[<em>TOC</em>]]</p>
+<div id="TOC">
+<ul>
+<li><a href="#installation-instructions" id="toc-installation-instructions">Installation Instructions</a>
+<ul>
+<li><a href="#required-dependencies" id="toc-required-dependencies">Required Dependencies</a></li>
+<li><a href="#installation" id="toc-installation">Installation</a></li>
+</ul></li>
+<li><a href="#using-nipals-mcia" id="toc-using-nipals-mcia">Using
+NIPALS-MCIA</a>
+<ul>
+<li><a href="#performing-dimensionality-reduction" id="toc-performing-dimensionality-reduction">Performing
+dimensionality-reduction</a></li>
+<li><a href="#predicting-scores-on-new-data" id="toc-predicting-scores-on-new-data">Predicting scores on new
+data</a></li>
+</ul></li>
+</ul>
 </div>
-<div id="installation-instructions" class="section level1">
-<h1>Installation Instructions</h1>
+
+<div id="installation-instructions" class="section level2">
+<h2>Installation Instructions</h2>
 <div id="required-dependencies" class="section level3">
 <h3>Required Dependencies</h3>
 <ul>
 <li>The R component of NIPALS-MCIA requires R versions 3.5.0 or above.
 Some functions from the Pracma R package are automatically installed
 with NIPALS-MCIA.</li>
-<li>The MATLAB component of NIPALS-MCIA was built on version R2020b and
-later.</li>
 </ul>
 </div>
 <div id="installation" class="section level3">
@@ -391,13 +404,16 @@ library(devtools)
 install_github(&quot;Muunraker/NIPALS-MCIA&quot;,force = TRUE)
 </code></pre>
 <p>The MATLAB version of NIPALS-MCIA is installed simply by downloading
-the files from Github and adding the `Functions’ folder to the MATLAB
+the files from Github and adding the ‘Functions’ folder to the MATLAB
 path.</p>
 <pre class="{matlab}"><code>addpath(&#39;&lt;path to MATLAB_MCIA&gt;\Functions&#39;)
 </code></pre>
 </div>
-<div id="using-nipals-mcia-in-r" class="section level2">
-<h2>Using NIPALS-MCIA in R</h2>
+</div>
+<div id="using-nipals-mcia" class="section level2">
+<h2>Using NIPALS-MCIA</h2>
+<div id="performing-dimensionality-reduction" class="section level3">
+<h3>Performing dimensionality-reduction</h3>
 <p>The package currently includes only one vignette - a cut version of a
 three-omic NCI-60 cancer cell line dataset. Only one function call is
 needed to perform MCIA:</p>
@@ -405,14 +421,31 @@ needed to perform MCIA:</p>
 mcia_results &lt;- nipals_multiblock(data_blocks, preprocMethod=&#39;colprofile&#39;,num_PCs = 8, tol=1e-9)
 </code></pre>
 <p>Note: this dataset is reproduced from the omicade4 package (Meng et.
-al., 2014).</p>
+al., 2014). This package assumes all input datasets are in sample by
+feature format.</p>
 <p>Meng, C., Kuster, B., Culhane, A. C., &amp; Gholami, A. M. (2014). A
 multivariate approach to the integration of multi-omics datasets. BMC
 bioinformatics, 15(1), 1-13.</p>
 </div>
-<div id="using-nipals-mcia-in-matlab" class="section level2">
-<h2>Using NIPALS-MCIA in MATLAB</h2>
-<p>[Todo]</p>
+<div id="predicting-scores-on-new-data" class="section level3">
+<h3>Predicting scores on new data</h3>
+<p>NIPALS-MCIA includes the ‘predict_gs’ function, which allows for the
+computation of global scores for new data given a previously-computed
+set of loadings.</p>
+<pre class="{r}"><code># Computing MCIA on a dataset:
+mcia_results &lt;- nipals_multiblock(data_blocks, preprocMethod=&#39;colprofile&#39;,num_PCs = 8, tol=1e-9)
+
+# Prediction
+bl &lt;- mcia_results$block_loadings # existing block loadings matrix
+bw &lt;- mcia_results$block_score_weights  # existing block weights matrix
+new_data &lt;- list(omics_1, omics_2, omics_3) # new data where each omics is a matrix or dataframe.
+gs_new &lt;- predict_gs(bl, bw, new_data) # new global score from &quot;new_data&quot; 
+
+</code></pre>
+<p>Note that the new dataset must have the same number of omics and
+match all the features of the original dataset. The new dataset must
+also be formatted as a list of data frames or data matrices in sample by
+feature form.</p>
 </div>
 </div>
 
