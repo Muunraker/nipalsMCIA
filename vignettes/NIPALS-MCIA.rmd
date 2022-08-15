@@ -28,11 +28,11 @@ data(NCI60) # loads data as data_blocks
 summary(data_blocks)
 ```
 
-The preprocessing function and main NIPALS iteration can then be applied to the data. The results include a plot of the first two global scores:
+The main NIPALS function includes a pre-processing option for the data. The results include a plot of the first two global scores as well as an eigenvalue scree plot to aid variable selection.
 ```{r computing MCIA,message=FALSE}
 
 # Main NIPALS function
 results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10,
-                             plots='global', tol=1e-12)
+                             plots='all', tol=1e-12)
 
 ```
