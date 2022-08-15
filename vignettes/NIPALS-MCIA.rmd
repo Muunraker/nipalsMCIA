@@ -30,10 +30,9 @@ summary(data_blocks)
 
 The preprocessing function and main NIPALS iteration can then be applied to the data. The results include a plot of the first two global scores:
 ```{r computing MCIA,message=FALSE}
-# Apply initialization:
-data_blocks_norm <- lapply(data_blocks,omicadeInitialization) 
 
 # Main NIPALS function
-results <- nipals_multiblock(data_blocks_norm,num_PCs = 2, tol=1e-12, 
-                          deflationMethod = 'block',plots="true") 
+results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10,
+                             plots='global', tol=1e-12)
+
 ```
