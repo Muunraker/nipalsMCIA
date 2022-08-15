@@ -1,6 +1,6 @@
 
 ---
-title: "NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction via Nonlinear Iterative Partial Least Squares"
+"NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction via Nonlinear Iterative Partial Least Squares"
 output:
   html_document:
     toc: true
