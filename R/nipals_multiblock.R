@@ -1,177 +1,4 @@
 
-
-#' Centered Column Profile Pre-processing
-#'
-#' @description Converts data blocks into centered column profiles where each 
-#' block has unit variance. Mimics the pre-processing in the Omicade4 package (Meng et al. 2014)
-#' @details Performs the following steps on a given data frame: \itemize{
-#' \item Offsets data to make whole matrix non-negative
-#' \item Divides each column by its sum 
-#' \item Subtracts (row sum/total sum) from each row
-#' \item Multiplies each column by sqrt(column sum/total sum)
-#' \item Divides the whole data frame by its total variance (the sqrt of the sum of singular values)
-#' }
-#' @param df the data frame to apply pre-processing to, in "sample" x "variable" format 
-#' @return the processed data frame
-#' @export
-CCpreproc <- function(df){
-  temp_df <- as.matrix(df)
-  
-  # Making data non-negative
-  minVal <- min(temp_df)
-  if(minVal < 0 ){
-    offset <- floor(minVal)
-    temp_df <- temp_df+abs(offset)
-  }
-
-  # Generating centered column profiles:
-  totsum <- sum(temp_df)
-  colsums <- colSums(temp_df)
-  row_contribs <- rowSums(temp_df)/totsum
-  
-  ## Dividing by column sums
-  nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs 
-  temp_df[,nz_cols] <- t( t(temp_df[,nz_cols])/colsums[nz_cols])
-  
-  ## Subtracting row contributions
-  temp_df <- temp_df - row_contribs
-
-  # Applying feature weighting ("multiplication by feature metrics")
-  temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
-  
-  # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
-  temp_df <- temp_df*(1/sqrt(sum(svd(temp_df)[[1]]^2)))
-  
-  return(temp_df)
-}
-
-#' NIPALS Iteration
-#'
-#' @description Applies one iteration stage/loop of the NIPALS algorithm. 
-#' 
-#' @details Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
-#' Starts with a random vector in sample space and repeatedly projects it onto
-#' the variable vectors and block scores to generate block and global 
-#' loadings/scores/weights. The loop stops when either the stopping criterion is 
-#' low enough, or the maximum number of iterations is reached. Intended as a 
-#' utility function for `nipals_multiblock` to be used between deflation steps.
-#' 
-#' @param ds a list of data matrices, each in "sample" x "variable" format  
-#' @param tol a number for the tolerance on the stopping criterion for NIPALS
-#' @param maxIter a number for the maximum number of times NIPALS should iterate
-#' @return a list containing the global/block scores, loadings and weights for a given order
-#' @examples 
-#' nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
-#' 
-#' @export
-NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
-  
-  # Main iteration loop
-  stopCrit <- 2*tol  
-  covSquared_old <- 0
-  iter <- 0
-  gs <- pracma::rand(nrow(ds[[1]]),1) # begin with random global score vector
-  
-  while(stopCrit > tol && iter <= maxIter){
-    
-    
-    # Computing block loadings
-    bl_list <- lapply(ds, function(df,q){ 
-      bl_k <- crossprod(df, q) 
-      bl_k <- bl_k/norm(bl_k, type="2") 
-      return(bl_k)
-    }, q=gs)
-    
-    # Computing block scores
-    bs_list <- mapply(function(df,bl_k){
-      bs_k <- df %*% bl_k
-      return(bs_k)
-    },ds, bl_list)
-    
-    # Computing global weights
-    gw <- crossprod(bs_list,gs)
-    gw <- gw/norm(gw, type="2")
-    gs <- bs_list %*% gw
-    
-    # Computing stopping criteria
-    covList <- sapply(as.data.frame(bs_list), function(bs, gs){
-      gs_norm <- gs/sqrt(drop(var(gs)))
-      return(drop(cov(bs,gs_norm))^2)
-    }, gs = gs)
-    
-    stopCrit <- abs(sum(covList) - covSquared_old)
-    covSquared_old <-sum(covList)
-    
-    iter <- iter +1 
-    
-    # message(paste("Iteration number:",iter,", Residual error:", stopCrit))
-  }
-  if(iter > maxIter){
-    warning('NIPALS iteration did not converge')
-  }
-  
-  # Computing eigenvalue associated with the global score
-  global_matrix <- do.call(cbind,ds)
-  svdres <- svd(global_matrix)
-  eigval <- svdres$d[1]
-  
-  # Computing global loadings at final iteration
-  gl <- bl_list[[1]]*gw[1]
-  nblocks <- length(ds)
-  for(i in 2:nblocks){
-    gl <- c(gl, bl_list[[i]]*gw[i])
-  }
-  
-  # Returning results
-  retlist <-list(gs, gl, gw, bs_list, bl_list, eigval)
-  names(retlist) <- c('global_scores','global_loadings','block_score_weights',
-                      'block_scores','block_loadings', 'eigval')
-  return(retlist)
-}
-
-
-#' Deflation via block loadings
-#'
-#' @description Removes data from a data frame in the direction of a given block 
-#' loadings vector. 
-#' 
-#' @details Subtracts the component of each row in the direction of a given
-#' block loadings vector to yield a `deflated' data matrix.
-#' 
-#' @param df a data frame in "sample" x "variable" format  
-#' @param bl a block loadings vector in variable space
-#' @return the deflated data frame
-#' @examples 
-#' deflated_data <- deflate_block_bl(data_frame,block_loading)
-#' 
-#' @export
-deflate_block_bl <- function(df,bl){
-  df <- df - tcrossprod(as.matrix(df) %*% bl, bl)
-  return(df)
-}
-
-#' Deflation via global scores
-#'
-#' @description Removes data from a data frame in the direction of a given global 
-#' scores vector. 
-#' 
-#' @details Subtracts the component of each column in the direction of a given
-#' global scores vector to yield a `deflated' data matrix.
-#' 
-#' @param df a data frame in "sample" x "variable" format  
-#' @param gs a global scores vector in sample space
-#' @return the deflated data frame
-#' @examples 
-#' deflated_data <- deflate_block_gs(data_frame,global_score)
-#' 
-#' @export
-deflate_block_gs <- function(df,gs){
-  normed_gs <- gs/norm(gs, type="2")
-  df <- df - tcrossprod(normed_gs) %*% as.matrix(df)
-  return(df)
-}
-
-
 #' Main NIPALS computation loop
 #'
 #' @description Applies the full adjusted NIPALS algorithm to generate block and 
@@ -244,7 +71,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
   
   # Computing block eigenvalue
   eigvals <- list(nipals_result$eigval);
-                       
+  
   if(num_PCs>1){
     # generate scores/loadings up to number of PCs
     for(i in 2:num_PCs){
@@ -274,7 +101,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
       }
     }
   }
-    
+  
   # Formatting results
   names(block_scores) <- names(data_blocks)
   names(block_loadings) <- names(data_blocks)
@@ -349,7 +176,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
     gs_normed <- t(t(results_list$global_scores) / gs_norms)
     gl_normed <- t(t(results_list$global_loadings) / gs_norms)
     gw_normed <- t(t(results_list$block_score_weights) / gs_norms)
-
+    
     
     # Getting bounds for projection plot
     
@@ -379,58 +206,3 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
   
   return(results_list)
 }
-
-
-
-#' Prediction of new global scores based on block loadings and weights
-#'
-#' @description Uses previously-computed block scores and weights to compute 
-#' a global score for new data.
-#' 
-#' @details Projects the new observations onto each block loadings vector, then 
-#' weights the projection according to the corresponding block weights.
-#' 
-#' @param bl a list of matrices of block loadings, where each matrix corresponds
-#' to one omics type with dimensions "features" x "number of loadings" 
-#' @param bw a matrix of block weights, with dimensions "number of omics" x "number of loadings"
-#' @param df a list of data matrices to make predictions from, where each entry 
-#' corresponds to one omics type in "sample" x " features" format.
-#' Feature and omic order must match `bl`. Pre-processing should also match the data
-#' used to generate `bl` and `bw`. 
-#' @return a matrix of predicted global scores, in form 
-#' @examples 
-#' deflated_data <- deflate_block_bl(data_frame,block_loading)
-#' 
-#' @export
-#' 
-predict_gs <- function(bl,bw, df){
-  
-  num_omics <- length(bl)
-  if(length(df) != length(bl) | length(df) != dim(bw)[[1]]){
-    stop("Mismatched number of omics between the block loadings, block weights, and new data.")
-  }
-  
-  
-  # ensuring all arguments are matrices
-  bl <- lapply(bl,as.matrix)
-  df <- lapply(df,as.matrix)
-  
-  if(dim(df[[1]])[[2]] != dim(bl[[1]])[[1]]){
-    stop(paste('Error: mismatched number of features in omic ',1))
-  }
-  new_gs <- df[[1]] %*% bl[[1]] # block score matrix for 1st omic
-  new_gs <- t(t(new_gs)*bw[1,]) # applying block weight
-  
-  # for each omics type, a
-  if(num_omics >1){
-    for( i in 2:num_omics){
-      if(dim(df[[i]])[[2]] != dim(bl[[i]])[[1]]){
-        stop(paste('Error: mismatched number of features in omic ',i))
-      }
-      new_gs_i <- df[[i]] %*% bl[[i]] # block score matrix for ith omic
-      new_gs <- new_gs +t(t(new_gs_i)*bw[i,]) # applying block weight
-    }
-  }
-  return(new_gs)
-}
-
