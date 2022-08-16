@@ -11,61 +11,16 @@ library('biomaRt')
 # Annotation databases used for biological enrichment
 path.database <- "data/bio_annotations/c2.cp.reactome.v6.2.symbols.gmt" #REACTOME
 
-# load the factors 
-load("results/factors/factorizations.RData")
-
-cytof_fn = 'data/cmi_pb/cytof.pma.day0.proc.tsv'
-cytof = read.table(cytof_fn, header=T, row.names = 1)
-
-olink_fn = 'data/cmi_pb/olink.pma.day0.proc.tsv'
-olink = read.table(olink_fn, header=T, row.names = 1)
-
-rnaseq_fn = 'data/cmi_pb/rnaseq.pma.day0.proc.tsv'
-rnaseq = read.table(rnaseq_fn, header=T, row.names = 1)
-
-features = list(cytof=cytof, olink=olink, rnaseq=rnaseq)
-
-results_folder = "results/factors_v_features/"
-dir.create(results_folder, showWarnings = F)
-
-# loading the biomart
-ensembl = useMart("ensembl", host="useast.ensembl.org", version =  )
-mart <- useDataset("hsapiens_gene_ensembl", ensembl)
-
-# change the metagene ensembl id to hgnc name
-for (i in seq(1, length(out$factorizations))){
-  genes = rownames(out$factorizations[[i]][[2]][[1]])
-  
-  print("obtaining hgnc name")
-  hgnc_list <- getBM(filters="ensembl_gene_id",
-                     attributes=c("ensembl_gene_id", "hgnc_symbol"),
-                     values=genes,
-                     uniqueRows = F,
-                     verbose = 104,
-                     mart=mart)
-  print("renaming now")
-  new_factored_data =  out$factorizations[[i]][[2]][[1]]
-  new_factored_data = merge(new_factored_data, hgnc_list, by.x=0, by.y='ensembl_gene_id')
-  
-  print("running distinct")
-  new_factored_data = distinct(new_factored_data, hgnc_symbol, .keep_all = T)
-  rownames(new_factored_data) = new_factored_data$hgnc_symbol
-  
-  print("removing columns")
-  new_factored_data = subset(new_factored_data, select = -c(Row.names, hgnc_symbol))
-  
-  print("saving to a new list in the out variable")
-  out$factorizations[[i]][[3]] = list()
-  out$factorizations[[i]][[3]][[1]] = new_factored_data
-  print("renaming complete")
-}
-  
-############################################
-########## Using ggplot2 heatmaps ##########
-############################################
-
-# Function: correlates components versus feature data
-make_basic_heatmap <- function(feat, feat_data, factor_out){
+#' General purpose function for plotting a correlation heatmap of factors versus other
+#'
+#' @description Plots a heatmap of MCIA factos versus other vectors such as
+#' the original feature vectors (membership analysis) or versus tasks to 
+#' investigate the predictive power of these factors to some other vector of data.
+#' @param block_matrix the list of matrices used to calculate the MCIA factors
+#' @param mcia_factors the MCIA factor object calculated from block_matrix
+#' @return the ggplot2 object
+#' @export
+plot_factors_v_features <- function(feat, feat_data, factor_out){
   
   plot_list = list()
   
@@ -99,142 +54,86 @@ make_basic_heatmap <- function(feat, feat_data, factor_out){
   return(plot_list)
 }
 
-for (feat_name in names(features)){
-  
-  # generate heatmaps in ggplot
-  plot_list = make_basic_heatmap(feat_name, features[[feat_name]], out)
+#' General purpose function for plotting a correlation heatmap of factors versus other
+#'
+#' @description Plots a heatmap of MCIA factos versus other vectors such as
+#' the original feature vectors (membership analysis) or versus tasks to 
+#' investigate the predictive power of these factors to some other vector of data.
+#' @param block_matrix the list of matrices used to calculate the MCIA factors
+#' @param mcia_factors the MCIA factor object calculated from block_matrix
+#' @return the ggplot2 object
+#' @export
+plot_factors_v_features_v2 <- function(feat, feat_data, factor_out){
 
-  # save the heatmaps to separate pdf pages
-  fn = paste0(results_folder, feat_name, '.pdf')
-  pdf(fn, onefile = TRUE)
-  for (i in seq(1, length(plot_list))){
-    print(plot_list[[i]])
-  }
-  dev.off()
-}
-
-############################################
-########## Using ComplexHeatmaps ###########
-############################################
-
-# Function: correlates components versus feature data
-make_basic_heatmap_v2 <- function(feat, feat_data, factor_out){
-  
-  plot_list = list()
-  
-  # correlate the tasks and factors
-  for (i in seq(1,5)){
-    
-    # harmonize the data
-    method = factor_out$method[[i]]
-    factors = factor_out$factorizations[[i]][[1]]
-    row.names(factors) = gsub('X', '', row.names(factors))
-    shared_samples = intersect(row.names(factors), row.names(feat_data))
-    final_factors = factors[shared_samples, ]
-    final_features = feat_data[shared_samples, ]
-    
-    # correlate the factors and task
-    factor_corrs = cor(final_factors, final_features)
-    factor_corrs = factor_corrs[ , colSums(is.na(factor_corrs)) == 0]
-    rownames(factor_corrs) = gsub("^.*([0-9]+)$", '\\1', rownames(factor_corrs))
-    color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
-    
-    # make a heatmap of the correlations
-    title = sprintf('%s components versus %s', method, toupper(feat_name))
-    show_cols = T
-    if (feat_name %in% c('rnaseq', 'olink')){
-      show_cols = F
+      plot_list = list()
+      
+      # correlate the tasks and factors
+      for (i in seq(1,5)){
+        
+        # harmonize the data
+        method = factor_out$method[[i]]
+        factors = factor_out$factorizations[[i]][[1]]
+        row.names(factors) = gsub('X', '', row.names(factors))
+        shared_samples = intersect(row.names(factors), row.names(feat_data))
+        final_factors = factors[shared_samples, ]
+        final_features = feat_data[shared_samples, ]
+        
+        # correlate the factors and task
+        factor_corrs = cor(final_factors, final_features)
+        factor_corrs = factor_corrs[ , colSums(is.na(factor_corrs)) == 0]
+        rownames(factor_corrs) = gsub("^.*([0-9]+)$", '\\1', rownames(factor_corrs))
+        color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
+        
+        # make a heatmap of the correlations
+        title = sprintf('%s components versus %s', method, toupper(feat_name))
+        show_cols = T
+        if (feat_name %in% c('rnaseq', 'olink')){
+          show_cols = F
+        }
+        
+        p = Heatmap(factor_corrs, 
+                name = "Pearson's R", 
+                column_title = title,
+                row_title = "Components",
+                row_names_gp = gpar(fontsize = 7),
+                col = color_func,
+                show_column_names = show_cols
+        )    
+        plot_list[[i]] = p
+      }
+      return(plot_list)
     }
-    
-    p = Heatmap(factor_corrs, 
-            name = "Pearson's R", 
-            column_title = title,
-            row_title = "Components",
-            row_names_gp = gpar(fontsize = 7),
-            col = color_func,
-            show_column_names = show_cols
-    )    
-    plot_list[[i]] = p
-  }
-  return(plot_list)
-}
 
-for (feat_name in names(features)){
-  
-  print(feat_name)
-  
-  # generate heatmaps in ggplot
-  plot_list = make_basic_heatmap_v2(feat_name, features[[feat_name]], out)
+    for (feat_name in names(features)){
+      
+      print(feat_name)
+      
+      # generate heatmaps in ggplot
+      plot_list = make_basic_heatmap_v2(feat_name, features[[feat_name]], out)
 
-  # save the heatmaps to separate pdf pages
-  fn = paste0(results_folder, feat_name, '_v3.pdf')
-  pdf(fn, onefile = TRUE)
-  for (i in seq(1, length(plot_list))){
-    print(plot_list[[i]])
-  }
-  dev.off()
-}
-
-############################################
-########## Filtering #######################
-############################################
-
-# filtering based on the variances of gene expression
-# filtering is done using a percentile min and max
-rnaseq_variance = rnaseq %>% summarise_all(var)
-rnaseq_variance =  t(rnaseq_variance)
-
-# Returns a vector for easy filtering
-# filter based on the percentile using pmin and pmax
-filter_by_percentile <- function(vec, pmin, pmax){
-  var_func = ecdf(rnaseq_variance[, 1])
-  bools = list()
-  for (i in seq(1, length(vec))){
-    p = var_func(vec[i])
-    if (p >= pmin & p <= pmax){
-      bools[[i]] = T
+      # save the heatmaps to separate pdf pages
+      fn = paste0(results_folder, feat_name, '_v3.pdf')
+      pdf(fn, onefile = TRUE)
+      for (i in seq(1, length(plot_list))){
+        print(plot_list[[i]])
+      }
+      dev.off()
     }
-    else{
-      bools[[i]] = F
-    }
-  }
-  bools = unlist(bools)
-  return(bools)
-}
-flt_bools = filter_by_percentile(rnaseq_variance[, 1], 0.995, 1)
-flt_genes = rownames(rnaseq_variance)[flt_bools]
-flt_rnaseq = rnaseq[,flt_genes]
 
-# generate heatmaps in ggplot
-plot_list = make_basic_heatmap_v2('rnaseq', flt_rnaseq, out)
-
-# save the heatmaps to separate pdf pages
-fn = paste0(results_folder, 'rnaseq_flt', '_v3.pdf')
-pdf(fn, onefile = TRUE)
-for (i in seq(1, length(plot_list))){
-  print(plot_list[[i]])
-}
-dev.off()
-
-
-########################################
-######## biological comparison #########
-########################################
-
-## Perform biological annotation-based comparison 
-
-library("fgsea", quietly = TRUE)
-
-## Perform biological annotation-based comparison 
-## INPUTS:
-# factorizations = already computed factorizations
-# path.database = path to a GMT annotation file
-# pval.thr = p-value threshold (default to 0.05)
-## OUPUTS: a list containing output values
-# selectivity = Selectivity (fraction of significant annotations per all significant factors)
-# nonZeroFacs = Number of unique factors that were significant at least once
-# total_pathways = Number of clinical annotations with at least one significant factor component
+#' Perform biological annotation-based comparison 
+#'
+#' @description Runs fgsea for the input gene list
+#' @param genes a vector of gene names according to HUGO nomenclature 
+#' @param factorizations = already computed factorizations
+#' @param path.database = path to a GMT annotation file
+#' @param pval.thr = p-value threshold (default to 0.05)
+#' @return selectivity Selectivity (fraction of significant annotations per all significant factors)
+#' @return nonZeroFacs Number of unique factors that were significant at least once
+#' @return total_pathways = Number of clinical annotations with at least one significant factor component
+#' @export
 biological_comparison <- function(factorizations, path.database, pval.thr=0.05){
+
+    library("fgsea", quietly = TRUE)
     
     # Load annotation database
     pathways <- gmtPathways(path.database)
@@ -355,9 +254,9 @@ biological_comparison <- function(factorizations, path.database, pval.thr=0.05){
     return(out)
 }
 
-bio_comp = biological_comparison(out$factorizations, path.database, pval.thr=0.05)
-fn = paste0(results_folder, 'report.tsv')
-write.table(bio_comp, file=fn, quote = F, sep="\t")
+#bio_comp = biological_comparison(out$factorizations, path.database, pval.thr=0.05)
+#fn = paste0(results_folder, 'report.tsv')
+#write.table(bio_comp, file=fn, quote = F, sep="\t")
 
 
 
