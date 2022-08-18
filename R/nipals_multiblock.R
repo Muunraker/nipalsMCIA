@@ -40,7 +40,7 @@
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2, tol=1e-12, max_iter = 1000, 
+nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000, 
                               deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   
@@ -107,9 +107,9 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=2,
   names(block_loadings) <- names(data_blocks)
   names(eigvals) <- paste("gs",1:num_PCs,sep = '')
   results_list <-list(global_scores, global_loadings, block_score_weights, 
-                      block_scores, block_loadings, eigvals )
+                      block_scores, block_loadings, eigvals, tolower(preprocMethod))
   names(results_list) <- c('global_scores','global_loadings','block_score_weights',
-                           'block_scores','block_loadings', 'eigvals')
+                           'block_scores','block_loadings', 'eigvals','preprocMethod')
   
   # Plotting results
   if(tolower(plots) == 'all'){

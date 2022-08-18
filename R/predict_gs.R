@@ -7,9 +7,8 @@
 #' @details Projects the new observations onto each block loadings vector, then 
 #' weights the projection according to the corresponding block weights.
 #' 
-#' @param bl a list of matrices of block loadings, where each matrix corresponds
-#' to one omics type with dimensions "features" x "number of loadings" 
-#' @param bw a matrix of block weights, with dimensions "number of omics" x "number of loadings"
+#' @param mcia_results an mcia object output by nipals_multiblock() containing block
+#' scores, weights, and pre-processing identifier. 
 #' @param df a list of data matrices to make predictions from, where each entry 
 #' corresponds to one omics type in "sample" x " features" format.
 #' Feature and omic order must match `bl`. Pre-processing should also match the data
@@ -20,17 +19,29 @@
 #' 
 #' @export
 #' 
-predict_gs <- function(bl,bw, df){
+predict_gs <- function(mcia_results, df){
+  
+  bl <- mcia_results$block_loadings
+  bw <- mcia_results$block_score_weights
+  preprocMethod <- mcia_results$preprocMethod
   
   num_omics <- length(bl)
   if(length(df) != length(bl) | length(df) != dim(bw)[[1]]){
     stop("Mismatched number of omics between the block loadings, block weights, and new data.")
   }
   
+  if(tolower(preprocMethod) == 'colprofile'){
+    message("Centered column profile pre-processing detected.")
+    message("Performing pre-processing on data")
+    df <- lapply(df,CCpreproc)
+    message("Pre-processing completed.")
+  }else{
+    message("No pre-processing detected.")
+    df <- lapply(df,as.matrix)
+  }
   
   # ensuring all arguments are matrices
   bl <- lapply(bl,as.matrix)
-  df <- lapply(df,as.matrix)
   
   if(dim(df[[1]])[[2]] != dim(bl[[1]])[[1]]){
     stop(paste('Error: mismatched number of features in omic ',1))
