@@ -49,7 +49,7 @@ predict_gs <- function(mcia_results, df){
   new_gs <- df[[1]] %*% bl[[1]] # block score matrix for 1st omic
   new_gs <- t(t(new_gs)*bw[1,]) # applying block weight
   
-  # for each omics type, a
+  # for each omics type
   if(num_omics >1){
     for( i in 2:num_omics){
       if(dim(df[[i]])[[2]] != dim(bl[[i]])[[1]]){

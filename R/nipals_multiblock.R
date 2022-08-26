@@ -29,6 +29,8 @@
 #' \item `eigvals` a matrix containing the eigenvalue for each computed global score. 
 #' \item `block scores` a list of matrices, each contains the scores for one block
 #' \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
+#' \item `block score weights` a matrix containing weights for each block score of each order used to construct the global scores.  
+#' \item `preprocMethod` the preprocessing method used on the data.
 #' }
 #' @param plots an option to display varios plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
@@ -167,6 +169,11 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
             main = "Global Score Eigenvalues ")
     
+    
+    ####  Plot 3 - Block contributions to global scores
+    # bsweights <- results_list$block_score_weights
+    # heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
+    # 
   }else if (tolower(plots) == 'global'){
     #### Plot 1 - first two scores as (x,y) coordinates
     
@@ -201,8 +208,14 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     names(barploteigs) <- 1:num_PCs
     barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
             main = "Global Score Eigenvalues ")
+    
+    
+    ####  Plot 3 - Block contributions to global scores
+    # bsweights <- results_list$block_score_weights
+    # heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
+    # 
+    
   }
   
-  
-  return(results_list)
+return(results_list)
 }
