@@ -70,10 +70,10 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   
   # Computing global loadings at final iteration
   gl <- bl_list[[1]]*gw[1]
-  names(gl) <- names(bl_list[[1]])
+  names(gl) <- rownames(bl_list[[1]])
   nblocks <- length(ds)
   for(i in 2:nblocks){
-    temp_names <- c(names(gl),names(bl_list[[i]]))
+    temp_names <- c(names(gl),rownames(bl_list[[i]]))
     gl <- c(gl, bl_list[[i]]*gw[i])
     names(gl) <- temp_names
   }
