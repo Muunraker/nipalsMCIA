@@ -115,106 +115,14 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   
   # Plotting results
   if(tolower(plots) == 'all'){
-    #### Plot 1 - first two scores as (x,y) coordinates
+    par(mfrow = c(1,2))
+    MCIA_plots(results_list,'projection') # first two orders of scores
+    MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     
-    
-    # Normalize global and block scores to unit variance
-    gs_norms <- apply(results_list$global_scores,2,function(x){sqrt(var(x))})
-    gs_normed <- t(t(results_list$global_scores) / gs_norms)
-    gl_normed <- t(t(results_list$global_loadings) / gs_norms)
-    gw_normed <- t(t(results_list$block_score_weights) / gs_norms)
-    
-    bs_normed <- list()
-    bl_normed <- list() 
-    for(i in 1:length(results_list$block_scores)){
-      bs_norms <-apply(results_list$block_scores[[i]],2,function(x){sqrt(var(x))})
-      bs_normed[[i]] <- t(t(results_list$block_scores[[i]]) / bs_norms)
-      bl_normed[[i]] <- t(t(results_list$block_loadings[[i]]) / bs_norms)
-    }
-    
-    # Getting bounds for projection plot
-    min_bs1 <- min(sapply(lapply(bs_normed, `[`,,1) , min)) # minimum 1st block score
-    min_bs2 <- min(sapply(lapply(bs_normed, `[`,,2) , min)) # minimum 2nd block score
-    max_bs1 <- max(sapply(lapply(bs_normed, `[`,,1) , max)) # maximum 1st block score
-    max_bs2 <- max(sapply(lapply(bs_normed, `[`,,2) , max)) # maximum 2nd block score
-    
-    min_x <- min(c(min_bs1, min(gs_normed[,1]))) # minimum x coordinate in plot
-    min_y <- min(c(min_bs2, min(gs_normed[,2]))) # minimum y coordinate in plot
-    max_x <- max(c(max_bs1, max(gs_normed[,1]))) # maximum x coordinate in plot
-    max_y <- max(c(max_bs2, max(gs_normed[,2]))) # maximum y coordinate in plot
-    
-    # Plotting first two global scores
-    par(mfrow=c(1,2))
-    plot(gs_normed[,1],gs_normed[,2],main = "First and Second Order Scores",  
-         xlab="1st Order Scores", ylab="2nd Order Scores",
-         col="black",
-         xlim=c(min_x, max_x),
-         ylim=c(min_y, max_y),
-         cex = .5,pch = 16)
-    grid()
-    # Plotting block scores (shapes correspond to different blocks)
-    for(j in 1:length(bs_normed)){
-      bs_j <- bs_normed[[j]]
-      points(bs_j[,1],bs_j[,2], col="black",cex = 1,pch = j-1)
-      # Line segments joining block scores to central global score:
-      segments(bs_j[,1],bs_j[,2],gs_normed[,1],gs_normed[,2], col="black")
-    }
-    legend("bottomleft",legend = c(names(data_blocks)),pch = 1:length(data_blocks)-1,
-           cex = 1)
-    
-    
-    ####  Plot 2 - Eigenvalues of scores up to num_PCs
-    barploteigs <- unlist(eigvals)^2
-    names(barploteigs) <- 1:num_PCs
-    barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
-            main = "Global Score Eigenvalues ")
-    
-    
-    ####  Plot 3 - Block contributions to global scores
-    # bsweights <- results_list$block_score_weights
-    # heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
-    # 
   }else if (tolower(plots) == 'global'){
-    #### Plot 1 - first two scores as (x,y) coordinates
-    
-    
-    # Normalize global scores to unit variance
-    gs_norms <- apply(results_list$global_scores,2,function(x){sqrt(var(x))})
-    gs_normed <- t(t(results_list$global_scores) / gs_norms)
-    gl_normed <- t(t(results_list$global_loadings) / gs_norms)
-    gw_normed <- t(t(results_list$block_score_weights) / gs_norms)
-    
-    
-    # Getting bounds for projection plot
-    
-    min_x <-  min(gs_normed[,1]) # minimum x coordinate in plot
-    min_y <-  min(gs_normed[,2]) # minimum y coordinate in plot
-    max_x <-  max(gs_normed[,1]) # maximum x coordinate in plot
-    max_y <-  max(gs_normed[,2]) # maximum y coordinate in plot
-    
-    # Plotting first two global scores
-    par(mfrow=c(1,2))
-    plot(gs_normed[,1],gs_normed[,2],main = "First and Second Order Global Scores",  
-         xlab="1st Order Scores", ylab="2nd Order Scores",
-         col="black",
-         xlim=c(min_x, max_x),
-         ylim=c(min_y, max_y),
-         cex = 1)
-    grid()
-    
-    
-    ####  Plot 2 - Eigenvalues of scores up to num_PCs
-    barploteigs <- unlist(eigvals)^2
-    names(barploteigs) <- 1:num_PCs
-    barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
-            main = "Global Score Eigenvalues ")
-    
-    
-    ####  Plot 3 - Block contributions to global scores
-    # bsweights <- results_list$block_score_weights
-    # heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
-    # 
-    
+    par(mfrow = c(1,2))
+    MCIA_plots(results_list,'projection_global') # first two global scores
+    MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
   }
   
 return(results_list)
