@@ -9,7 +9,15 @@ RoxygenNote: 7.2.1
 Depends:
     R (>= 3.5.0)
 Imports:
-    pracma
+    pracma,
+    ggplot2,
+    reshape2,
+    stringr,
+    ggpubr,
+    gridExtra,
+    dplyr,
+    circlize,
+    ComplexHeatmap
 Author: Max Mattessich[aut, cre],
 Maintainer: Max Mattessich <maximilianmattessich2027@u.northwestern.edu>
 Encoding: UTF-8
