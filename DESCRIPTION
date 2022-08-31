@@ -16,7 +16,8 @@ Imports:
     ggpubr,
     gridExtra,
     dplyr,
-    circlize
+    circlize,
+    ComplexHeatmap
 Author: Max Mattessich[aut, cre],
 Maintainer: Max Mattessich <maximilianmattessich2027@u.northwestern.edu>
 Encoding: UTF-8
