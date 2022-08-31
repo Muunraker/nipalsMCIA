@@ -7,7 +7,7 @@
 nipals_multiblock(
   data_blocks,
   preprocMethod = "colprofile",
-  num_PCs = 2,
+  num_PCs = 10,
   tol = 1e-12,
   max_iter = 1000,
   deflationMethod = "block",
@@ -47,6 +47,8 @@ a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
 \item `eigvals` a matrix containing the eigenvalue for each computed global score. 
 \item `block scores` a list of matrices, each contains the scores for one block
 \item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
+\item `block score weights` a matrix containing weights for each block score of each order used to construct the global scores.  
+\item `preprocMethod` the preprocessing method used on the data.
 }
 }
 \description{
