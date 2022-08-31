@@ -6,18 +6,19 @@ library("circlize")
 #library("dplyr")
 #library('biomaRt')
 
-#' Plotting a heatmap of global_loadings versus features
+#' Plotting a heatmap of global_loadings
 #'
-#' @description Plots a heatmap of MCIA global_loadings versus factors
+#' @description Plots a heatmap of MCIA global_loadings
 #' @param global_loadings the global_loadings matrix after running MCIA
 #' @param data_blocks the list of matrices used to calculate the MCIA factors
 #' @param omic_name the name of the omic that should be plot, should be in data_blocks
 #' @param select_features a vector of numbers to filter features 
-#' @return the ggplot2 object
+#' @return plot a plot object from ComplexHeatmap
 #' @export
 global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                                                    data_blocks,
                                                    omic_name, 
+                                                   select_factors=NULL,
                                                    select_features=NULL){
     
         # get the index of the omics we need
@@ -40,100 +41,42 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
         global_end = global_start + ncol(data_blocks[[omics_index]]) - 1
         
         # extract data for current omic
-        # transpose so rows are the latent factors and columns are the features
+        # transpose so rows are the factors and columns are the features
         omic_data = t(global_loadings[seq(global_start, global_end),])
         
         # rename rows and columns for plotting
-        rownames(omic_data) = paste0("LF", seq(1, nrow(omic_data)))
+        rownames(omic_data) = paste0("Factor", seq(1, nrow(omic_data)))
         colnames(omic_data) = colnames(data_blocks[[omic_name]])
         
         # make a heatmap of the correlations
         #color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
         coltitle = sprintf(sprintf("%s Features", omic_name))
         
-        # filter features basd on select_features 
+        # filter factors based on select_factors 
+        if (!is.null(select_factors)){
+            omic_data = omic_data[select_factors,]
+        }
+        
+        # filter features based on select_features 
         if (!is.null(select_features)){
             omic_data = omic_data[, select_features]
         }
         
         # plot the heatmap
-        p = Heatmap(omic_data, 
-                name = "GL Score", 
+        plot = Heatmap(omic_data, 
+                name = "Gobal Loading", 
                 column_title = coltitle,
-                row_title = "Latent Factors",
+                row_title = "Factors",
                 row_names_gp = gpar(fontsize = 7),
                 show_column_names = T,
                 show_row_names = T,
-                row_names_side = "right"
+                row_names_side = "right",
+                show_column_dend = F,
+                cluster_columns = F,
+                cluster_rows = F
         )    
-      return(p)
+      return(plot)
 }
-
-
-
-#' Plotting a heatmap of global_loadings versus features
-#'
-#' @description Plots a heatmap of MCIA global_loadings versus factors
-#' @param global_loadings the global_loadings matrix after running MCIA
-#' @param data_blocks the list of matrices used to calculate the MCIA factors
-#' @param omic_name the name of the omic that should be plot, should be in data_blocks
-#' @param select_features a vector of numbers to filter features 
-#' @return the ggplot2 object
-#' @export
-global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
-                                                   data_blocks,
-                                                   omic_name, 
-                                                   select_features=NULL){
-    
-        # get the index of the omics we need
-        omics_index = which(names(data_blocks) == omic_name)
-        
-        # find at what index we should start in the global loadings
-        if (omics_index == 1){
-            global_start = 1 
-        } else {
-            i = 1
-            global_start = 0
-            while (i != omics_index){
-                global_start = global_start + ncol(data_blocks[[i]])
-                i = i + 1
-            }
-        }
-        
-        # global_end is global_start plus the number or rows in the 
-        # data_blocks of omic_name
-        global_end = global_start + ncol(data_blocks[[omics_index]]) - 1
-        
-        # extract data for current omic
-        # transpose so rows are the latent factors and columns are the features
-        omic_data = t(global_loadings[seq(global_start, global_end),])
-        
-        # rename rows and columns for plotting
-        rownames(omic_data) = paste0("LF", seq(1, nrow(omic_data)))
-        colnames(omic_data) = colnames(data_blocks[[omic_name]])
-        
-        # make a heatmap of the correlations
-        #color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
-        coltitle = sprintf(sprintf("%s Features", omic_name))
-        
-        # filter features basd on select_features 
-        if (!is.null(select_features)){
-            omic_data = omic_data[, select_features]
-        }
-        
-        # plot the heatmap
-        p = Heatmap(omic_data, 
-                name = "GL Score", 
-                column_title = coltitle,
-                row_title = "Latent Factors",
-                row_names_gp = gpar(fontsize = 7),
-                show_column_names = T,
-                show_row_names = T,
-                row_names_side = "right"
-        )    
-      return(p)
-}
-
 
 
 #' Plot a correlation heatmap of global scores versus features using ComplexHeatmap
@@ -145,16 +88,16 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
 #' @param feature_mat the input matrix used to calculate the MCIA factors
 #' @param feature_name the name of the input
 #' @param select_features a vector of numbers to filter features 
-#' @return the ggplot2 object
+#' @return plot a plot object from ComplexHeatmap
 #' @export
 corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
                                             feature_mat,
-                                            feature_name="Feature",
+                                            feature_name="",
                                             select_features=NULL){
         
         # correlate the factors and task
         lf_corrs = cor(global_scores, feature_mat)
-        rownames(lf_corrs) = paste("LF", seq(1, nrow(lf_corrs)))
+        rownames(lf_corrs) = paste("Factor", seq(1, nrow(lf_corrs)))
         
         # filter features basd on select_features 
         if (!is.null(select_features)){
@@ -163,18 +106,21 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
         
         # make a heatmap of the correlations
         color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
-        title = sprintf('MCIA latent factors versus %s', feature_name)
-        p = Heatmap(lf_corrs, 
+        title = sprintf('%s Features', feature_name)
+        plot = Heatmap(lf_corrs, 
                 name = "Pearson's R", 
                 column_title = title,
-                row_title = "Latent Factors",
+                row_title = "Factors",
                 row_names_gp = gpar(fontsize = 7),
                 col = color_func,
                 show_column_names = T,
                 show_row_names = T,
-                row_names_side = "right"
+                row_names_side = "right",
+                cluster_rows = F,
+                show_column_dend = F,
+                cluster_columns = F
         )    
-      return(p)
+      return(plot)
 }
 
 
@@ -187,7 +133,7 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
 #' @param feature_mat the input matrix used to calculate the MCIA factors
 #' @param feature_name the name of the input
 #' @param select_features a vector of numbers to filter features 
-#' @return the ggplot2 object
+#' @return plot a plot object from ggplot2
 #' @export
 corr_heatmap_fvl_ggplot2 <- function(global_scores,
                                      feature_mat, 
@@ -200,8 +146,8 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
     colnames(lf_corrs) = c('Factor', 'Feature', 'Corr')
     
     # make a heatmap of the correlations
-    title = sprintf('MCIA latent factors versus %s', feature_name)
-    p = ggplot(lf_corrs, aes(Feature, Factor, fill=Corr)) + 
+    title = sprintf('Factors versus %s', feature_name)
+    plot = ggplot(lf_corrs, aes(Feature, Factor, fill=Corr)) + 
         geom_tile() + 
         ggtitle(title) + 
         theme(plot.title = element_text(size=12)) + 
@@ -209,7 +155,7 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
         scale_y_continuous(breaks=seq(0,nrow(lf_corrs),1))
     
-    return(p)
+    return(plot)
 }
 
 #' Perform biological annotation-based comparison 
