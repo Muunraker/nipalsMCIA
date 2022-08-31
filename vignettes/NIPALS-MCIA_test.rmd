@@ -1,0 +1,38 @@
+---
+title: "Analysis of Multi-Omics Data with Multiple Co-Inertia Analysis via Nonlinear Iterative Partial Least Squares (NIPALS)"
+author: "Maximilian Mattessich"
+date: '2022-06-27'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Quick Start 
+
+The package can be installed directly from Github via the \verb+devtools+ package:
+
+```{r installing package, echo = T, results = 'hide',error=FALSE, warning=FALSE,message=FALSE}
+install.packages("devtools",repos = "http://cran.us.r-project.org") 
+library(devtools)# required for install_github
+
+install_github("Muunraker/NIPALS-MCIA")
+library(nipalsMCIA)
+
+```
+
+A test dataset of NCI60 cancer cell line data with 3 blocks (mRNA, proteins, and micro-RNA) is included to illustrate how the main MCIA function works with multi-omics data:
+```{r loading data}
+data(NCI60) # loads data as data_blocks
+summary(data_blocks)
+```
+
+The main NIPALS function includes a pre-processing option for the data. The results include a plot of the first two global scores as well as an eigenvalue scree plot to aid variable selection.
+```{r computing MCIA,message=FALSE}
+
+# Main NIPALS function
+results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10,
+                             plots='all', tol=1e-12)
+
+```
