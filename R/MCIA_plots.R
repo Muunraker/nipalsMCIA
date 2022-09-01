@@ -16,6 +16,14 @@
 #' @param cluserColors Option to specify cluster color strings.
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
+#' @examples
+#' # Plotting clusters with different colors
+#' data(NCI60)
+#' mcia_res <- nipals_multiblock(data_blocks,num_PCs = 10, plots = 'none', tol=1e-12)
+#' CNS = 1:6; LEU = 7:12; ME = 13:21;
+#' clus_list <- list(CNS, LEU, ME)
+#' clus_colors <- list("red", "green","blue")
+#' MCIA_plots(mcia_res,'projection',orders = c(1,2),clusters = clus_list)
 #' 
 #' @export
 MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),

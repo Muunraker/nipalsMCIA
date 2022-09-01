@@ -34,6 +34,7 @@ nipals_multiblock(
 \item{plots}{an option to display varios plots of results: \itemize{
 \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 \item `global` displays only global score projections and eigenvalue scree plot
+\item `none` does not display plots
 }}
 
 \item{maxIter}{a number for the maximum number of times NIPALS should iterate}
