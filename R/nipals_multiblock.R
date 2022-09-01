@@ -35,6 +35,7 @@
 #' @param plots an option to display varios plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 #' \item `global` displays only global score projections and eigenvalue scree plot
+#' \item `none` does not display plots
 #' }
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
@@ -123,6 +124,10 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     par(mfrow = c(1,2))
     MCIA_plots(results_list,'projection_global') # first two global scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
+  }else if (tolower(plots) == 'none'){
+    
+  }else{
+    message("No known plotting options specified - skipping plots.")
   }
   
 return(results_list)
