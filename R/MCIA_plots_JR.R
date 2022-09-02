@@ -52,11 +52,11 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
         }
         
         # plot the heatmap
-        p = Heatmap(omic_data, 
+        p = ComplexHeatmap::Heatmap(omic_data, 
                 name = "GL Score", 
                 column_title = coltitle,
                 row_title = "Latent Factors",
-                row_names_gp = gpar(fontsize = 7),
+                row_names_gp = grid::gpar(fontsize = 7),
                 show_column_names = T,
                 show_row_names = T,
                 row_names_side = "right"
@@ -117,11 +117,11 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
         }
         
         # plot the heatmap
-        p = Heatmap(omic_data, 
+        p = ComplexHeatmap::Heatmap(omic_data, 
                 name = "GL Score", 
                 column_title = coltitle,
                 row_title = "Latent Factors",
-                row_names_gp = gpar(fontsize = 7),
+                row_names_gp = grid::gpar(fontsize = 7),
                 show_column_names = T,
                 show_row_names = T,
                 row_names_side = "right"
@@ -159,11 +159,11 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
         # make a heatmap of the correlations
         color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
         title = sprintf('MCIA latent factors versus %s', feature_name)
-        p = Heatmap(lf_corrs, 
+        p = ComplexHeatmap::Heatmap(lf_corrs, 
                 name = "Pearson's R", 
                 column_title = title,
                 row_title = "Latent Factors",
-                row_names_gp = gpar(fontsize = 7),
+                row_names_gp = grid::gpar(fontsize = 7),
                 col = color_func,
                 show_column_names = T,
                 show_row_names = T,
