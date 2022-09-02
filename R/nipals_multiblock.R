@@ -35,6 +35,7 @@
 #' @param plots an option to display varios plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 #' \item `global` displays only global score projections and eigenvalue scree plot
+#' \item `none` does not display plots
 #' }
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
@@ -45,7 +46,38 @@
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000, 
                               deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
+  omics_names <- names(data_blocks)
   
+  # Check for omics names and assign generic name if null
+  if(is.null(omics_names)){
+    omics_names <- paste("omic",1:length(data_blocks),sep="")
+    names(data_blocks) <- omics_names
+  }
+  
+  # Formatting feature labels to include omic type
+  for(i in 1:num_blocks){
+    oName <- omics_names[[i]] # omic names
+    fNames <- names(data_blocks[[i]]) # feature names
+    
+    # Error catching for no names - creates default values
+    if(is.null(fNames)){
+      message(paste("feature names omic",i))
+      fNames <- paste("feature",1:dim(data_blocks[[i]])[[2]],sep="_") 
+    }
+    
+    # Checking if omics names are already at the end of feature names
+    lastchars <- strsplit(fNames[[1]],split="_")
+    lastchars <- lastchars[[1]][[length(lastchars[[1]])]]
+    
+    # If features do not have omics name at end of name, add it
+    if(!tolower(lastchars) == oName){
+      new_names <- paste(fNames,oName,sep = "_")
+      names(data_blocks[[i]]) <- new_names
+    }
+  }
+  
+  
+  # Pre-processing data
   if(tolower(preprocMethod) == 'colprofile'){
     message("Performing centered column profile pre-processing...")
     data_blocks <- lapply(data_blocks,CCpreproc)
@@ -118,11 +150,17 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     par(mfrow = c(1,2))
     MCIA_plots(results_list,'projection') # first two orders of scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
+    par(mfrow = c(1,1))
     
   }else if (tolower(plots) == 'global'){
     par(mfrow = c(1,2))
     MCIA_plots(results_list,'projection_global') # first two global scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
+    par(mfrow = c(1,1))
+  }else if (tolower(plots) == 'none'){
+    
+  }else{
+    message("No known plotting options specified - skipping plots.")
   }
   
 return(results_list)
