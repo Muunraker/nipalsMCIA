@@ -1,6 +1,9 @@
 ---
-title: "NIPALS-MCIA-JR"
-author: "Joaquin Reyna"
+title: "Vignette1 - Introduction & Main"
+author:
+    - Max Mattessich
+    - Joaquin Reyna
+    - Anna Konstorum
 date: "9/1/2022"
 output:
   pdf_document: default
@@ -15,14 +18,14 @@ knitr::opts_chunk$set(echo = TRUE)
 library(nipalsMCIA)
 ```
 
-## Interpreting Global Scores
+## Part 1: Interpreting Global Scores
 MCIA calculates a global scores matrix that is $n \times k$ where $n$ is the number of samples and $k$ is the number of factors. Each entry $M_{ik}$ represents the strength of factor $k$ to sample $i$. As such, you may be interested in further dissecting the global scores matrix in order to understand, for a given sample, what factors capture the most the MCIA decomposition. 
 .
 .
 .
-tbd
+(tbd)
 
-## Interpreting Global Loadings
+## Part 2: Interpreting Global Loadings
 In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
 
 

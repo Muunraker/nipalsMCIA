@@ -1,6 +1,9 @@
 ---
 title: "Mini-Lecture"
-author: "Joaquin Reyna"
+author:
+    - Max Mattessich
+    - Joaquin Reyna
+    - Anna Konstorum
 date: "9/1/2022"
 output: pdf_document
 ---
@@ -27,5 +30,8 @@ knitr::include_graphics("images/MCIA-Pipeline.png")
 | $G$ | The global scores matrix which is $n \times (m_1 + ... + m_r)$ | 
 | $L$ | The global loadings matrix which is $(m_1 + ... + m_r) \times k$ | 
 
-
+.
+.
+.
+(tbd)
 
