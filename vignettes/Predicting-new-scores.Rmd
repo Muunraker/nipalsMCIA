@@ -1,6 +1,6 @@
 ---
 title: "Predicting new MCIA scores"
-author: "Anna Konstorum"
+author: "Max Mattesich, Joaquin Reyna, Anna Konstorum"
 date: '2022-09-01'
 output: pdf_document
 ---
