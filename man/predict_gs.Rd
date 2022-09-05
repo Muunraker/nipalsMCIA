@@ -4,13 +4,11 @@
 \alias{predict_gs}
 \title{Prediction of new global scores based on block loadings and weights}
 \usage{
-predict_gs(bl, bw, df)
+predict_gs(mcia_results, df)
 }
 \arguments{
-\item{bl}{a list of matrices of block loadings, where each matrix corresponds
-to one omics type with dimensions "features" x "number of loadings"}
-
-\item{bw}{a matrix of block weights, with dimensions "number of omics" x "number of loadings"}
+\item{mcia_results}{an mcia object output by nipals_multiblock() containing block
+scores, weights, and pre-processing identifier.}
 
 \item{df}{a list of data matrices to make predictions from, where each entry 
 corresponds to one omics type in "sample" x " features" format.
