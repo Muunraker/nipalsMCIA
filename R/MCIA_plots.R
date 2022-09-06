@@ -23,7 +23,8 @@
 #' CNS = 1:6; LEU = 7:12; ME = 13:21;
 #' clus_list <- list(CNS, LEU, ME)
 #' clus_colors <- list("red", "green","blue")
-#' MCIA_plots(mcia_res,'projection',orders = c(1,2),clusters = clus_list)
+#' MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = clus_list, 
+#'            clusterColors = clus_colors, legend_loc = "bottomleft")
 #' 
 #' @export
 MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),

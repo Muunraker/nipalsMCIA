@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^R/test_vignette_visualizations\.R$
 ^test_vignette_visualizations\.R$
+^LICENSE\.md$

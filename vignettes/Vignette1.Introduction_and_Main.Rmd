@@ -1,0 +1,60 @@
+---
+title: "Vignette1 - Introduction & Main"
+author:
+    - Max Mattessich
+    - Joaquin Reyna
+    - Anna Konstorum
+date: "9/1/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Interpreting Global Scores
+MCIA calculates a global scores matrix that is $n \times k$ where $n$ is the number of samples and $k$ is the number of factors. Each entry $M_{ik}$ represents the strength of factor $k$ to sample $i$. As such, you may be interested in further dissecting the global scores matrix in order to understand, for a given sample, what factors capture the most the MCIA decomposition...(to be continued)
+
+### Running MCIA on NCI60 Data
+```{r}
+library(nipalsMCIA)
+data(NCI60)
+results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10,
+              plots='none', tol=1e-12)
+```
+
+### Projection Plot: Understanding the relationships between factors
+...(to be continued)
+
+### Scree Plot with Global Score eigenvalues
+...(to be continued)
+
+### Heatmap of the Global Score Matrix ($G$): Visualizing the clustering of samples and factors  
+```{r}
+gs_scores = results$global_scores
+colnames(gs_scores) = paste0('F', seq(1, ncol(results$global_scores)))
+p = ComplexHeatmap::Heatmap(gs_scores, 
+    name = "GS Score", 
+    column_title = "Factors",
+    row_title = "Samples",
+    row_names_gp = grid::gpar(fontsize = 7),
+    show_column_names = T,
+    show_row_names = T,
+    row_names_side = "right"
+)    
+p
+```
+
+## Part 2: Interpreting Global Loadings
+In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
+
+### Heatmap of Omic Contributions to block scores  
+...(to be continued)
+
+### Scree Plot: Determining the variance explained per factor
+...(to be continued)
+
+### Pathway analysis for the top factors using data from gene-centric omics blocks 
+...(to be continued)

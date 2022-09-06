@@ -1,5 +1,3 @@
-library(nipalsMCIA)
-source("correlate_factors_to_features.R")
 data(NCI60)
 
 ######## Run basic MCIA example ########
