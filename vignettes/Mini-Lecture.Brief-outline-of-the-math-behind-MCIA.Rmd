@@ -1,5 +1,5 @@
 ---
-title: "Mini-Lecture"
+title: "Mini-Lecture: Brief outline of the math behind MCIA"
 author:
     - Max Mattessich
     - Joaquin Reyna
@@ -12,12 +12,10 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Theory
+# Introduction
 Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality  reduction method which takes as input multiple datasets from the same sample but different different experimental sources. This method then calculates factors that find relationships across all data sources and the resulting matrix compositions can be used for a variety of downstream analyses.
 
-```{r, echo=FALSE, out.width="100%", fig.align="center", fig.cap="Generic MCIA pipline. There are three data blocks $X^1, X^2,$ and $X^3$ which are being decomposed via MCIA to produce a global scores matrix."}
-knitr::include_graphics("images/MCIA-Pipeline.png")
-```
+# Theory
 
 # Table of abbreviations
 | Abbreviation | Description |
