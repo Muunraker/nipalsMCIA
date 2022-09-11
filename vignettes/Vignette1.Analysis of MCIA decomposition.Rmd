@@ -1,26 +1,43 @@
 ---
-title: "Vignette1 - Analysis of MCIA decomposition"
+title: "Vignette1 - Understanding the Results of MCIA"
 author:
     - Max Mattessich
     - Joaquin Reyna
     - Anna Konstorum
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
 date: "9/1/2022"
 output:
   pdf_document: default
   html_document: default
 ---
 
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, echo=FALSE, include=FALSE}
 library(nipalsMCIA)
 library(ggplot2)
 ```
 
 ## Part 1: Interpreting Global Factor Scores
-MCIA calculates a global factor scores matrix that is $n \times k$ where $n$ is the number of samples and $k$ is the number of factors. Each entry $M_{ij}$ represents the strength of factor $j$ to sample $i$. As such, you may be interested in further dissecting the global scores matrix in order to understand, for a given sample, what factors capture the most the MCIA decomposition...(to be continued)
+
+The main MCIA function `nipals_multiblock()` outputs a global factor score matrix $\mb F$ that is $n \times r$, where $n$ is the number of samples and $r$ is the number of factors chosen by the user with the `num_PCs = r` argument. Each column of this matrix represents one of the orders of global factors computed, i.e.
+$$
+\mb F = \begin{pmatrix}
+		| & |&  & |\\
+		\mb f^{(1)} &\mb f^{(2)} & \hdots & \mb f^{(r)}\\
+		| & |&  & |
+	\end{pmatrix} \in \mathbb{R}^{n \times r}
+$$
+
+This matrix encodes a low-dimensional representation of the datset, with the $i$-th row yielding $r$-dimensional coordinates of the $i$-th sample.  
 
 ### Running MCIA on NCI60 Data and basic visualization
 ```{r}
