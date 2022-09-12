@@ -1,0 +1,86 @@
+---
+title: "Vignette1 - Understanding the Results of MCIA"
+author:
+    - Max Mattessich
+    - Joaquin Reyna
+    - Anna Konstorum
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+date: "9/1/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, include=FALSE}
+library(nipalsMCIA)
+library(ggplot2)
+```
+
+## Part 1: Interpreting Global Factor Scores
+
+The main MCIA function `nipals_multiblock()` outputs a global factor score matrix $\mb F$ that is $n \times r$, where $n$ is the number of samples and $r$ is the number of factors chosen by the user with the `num_PCs = r` argument. Each column of this matrix represents one of the orders of global factors computed, i.e.
+$$
+\mb F = \begin{pmatrix}
+		| & |&  & |\\
+		\mb f^{(1)} &\mb f^{(2)} & \hdots & \mb f^{(r)}\\
+		| & |&  & |
+	\end{pmatrix} \in \mathbb{R}^{n \times r}
+$$
+
+This matrix encodes a low-dimensional representation of the datset, with the $i$-th row yielding $r$-dimensional coordinates of the $i$-th sample.  
+
+### Running MCIA on NCI60 Data and basic visualization
+```{r}
+data(NCI60)
+results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10, tol=1e-12)
+```
+
+### Visualize only global factor scores
+```{r visualize training model, fig.height=4}
+cancer_type <- substr(rownames(data_blocks$mrna), 1, 2)
+MCIA_out<-data.frame(results$global_scores[,1:2])
+MCIA_out$Cancer_type<-cancer_type
+colnames(MCIA_out)<-c("Factor_1", "Factor_2", "Cancer_type")
+ggplot(data = MCIA_out, aes(x=Factor_1, y=Factor_2, color=Cancer_type))+
+  geom_point(size=3) + 
+  theme_bw() +
+  ggtitle("MCIA for NCI60 training data")
+```
+
+### Visualizing the clustering of samples by factor scores
+```{r}
+gs_scores = results$global_scores
+colnames(gs_scores) = paste0('F', seq(1, ncol(results$global_scores)))
+p = ComplexHeatmap::Heatmap(gs_scores, 
+    name = "GS Score", 
+    column_title = "Factors",
+    row_title = "Samples",
+    row_names_gp = grid::gpar(fontsize = 7),
+    show_column_names = T,
+    show_row_names = T,
+    row_names_side = "right"
+)    
+p
+```
+
+## Part 2: Interpreting Global Loadings
+In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
+
+### Pseudoeigenvalues representing the contribution of each omic to the global factor score
+...(to be continued)
+
+### Scree Plot: Visualizing the top features per factor
+...(to be continued)
+
+### Pathway analysis for the top factors using data from gene-centric omics blocks 
+...(to be continued)
