@@ -89,6 +89,7 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     max_x <- max(c(max_bs1, max(gs_normed[,orders[[1]]]))) # maximum x coordinate in plot
     max_y <- max(c(max_bs2, max(gs_normed[,orders[[2]]]))) # maximum y coordinate in plot
     
+    clusterColors <- c(clusterColors,colors()) # adding all available colors for large numbers of clusters
     if(length(clusters) > length(clusterColors)){
       stop("Too many clusters - please specify a color for each cluster.")
     }
@@ -153,6 +154,7 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     max_x <-  max(gs_normed[,orders[[1]]]) # maximum x coordinate in plot
     max_y <-  max(gs_normed[,orders[[2]]]) # maximum y coordinate in plot
     
+    clusterColors <- c(clusterColors,colors()) # adding all available colors for large numbers of clusters
     if(length(clusters) > length(clusterColors)){
       stop("Too many clusters - please specify a color for each cluster.")
     }
@@ -168,7 +170,8 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
          col=clusterColors[[1]],
          xlim=c(min_x, max_x),
          ylim=c(min_y, max_y),
-         cex = 1)
+         pch = 16,
+         cex = 0.5)
     grid()
     
     # Cluster 2+
