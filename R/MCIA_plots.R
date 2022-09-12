@@ -12,8 +12,12 @@
 #' \item `block_weights_heatmap` - a heatmap of block weightings for each order of global score.
 #' }
 #' @param orders Option to selecct orders of factors to plot against each other (for projection plots)
-#' @param clusters Option for list of indices of known clusters (for projection plots).
-#' @param cluserColors Option to specify cluster color strings.
+#' @param clusters Option to plot clusters in projection plots, with two options:\itemize{
+#' \item `none` (default) - no clusters plotted
+#' \item `metadata` - provide cluster labels in the `metadata` field of the `mcia_result` argument. 
+#' `metadata` field must be a list of strings of cluster names for each sample/row in the dataset.  
+#' }
+#' @param clusterColors Option to specify cluster color strings.
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
 #' @examples
@@ -21,21 +25,44 @@
 #' data(NCI60)
 #' mcia_res <- nipals_multiblock(data_blocks,num_PCs = 10, plots = 'none', tol=1e-12)
 #' CNS = 1:6; LEU = 7:12; ME = 13:21;
-#' clus_list <- list(CNS, LEU, ME)
+#' nameslist <- list()
+#' nameslist[CNS] <- "CNS"
+#' nameslist[LEU] <- "Leukemia"
+#' nameslist[ME] <- "Melanoma"
+#' mcia_res$metadata <- nameslist
 #' clus_colors <- list("red", "green","blue")
-#' MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = clus_list, 
+#' MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = 'metadata', 
 #'            clusterColors = clus_colors, legend_loc = "bottomleft")
 #' 
 #' @export
 MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
-                       clusters=list(1:dim(mcia_result$global_score)[[1]]),
+                       clusters = 'none',
                        clusterColors = list("red","green","blue","yellow","brown",
                                             "orange","maroon","magenta","turquoise",
                                             "darkgreen","darkblue","gold","pink"),
                        legend_loc = "bottomleft"){
+  
+  
+  # Resolving clusters - only for projection plots
+  if(tolower(clusters) == 'none'){
+    clusters = list(1:dim(mcia_result$global_score)[[1]])
+  } else if(tolower(clusters) == 'metadata'){
+    # find clusters from metadata
+    clusNames <- unique(unlist(mcia_result$metadata))
+    clusters <- list()
+    for(cName in clusNames){
+      clusters <-  c(clusters, list(grep(cName, mcia_result$metadata)))
+    }
+    names(clusters) <- clusNames
+    
+  } else{
+    message("Cluster option not recognized, defaulting to no clusters.")
+    clusters = list(1:dim(mcia_result$global_score)[[1]])
+  }
+  
 
   if(tolower(plotType) == 'projection'){
-###  Plot 1 - projection plot
+  ###  Plot 1 - projection plot
     
     # Normalize global and block scores to unit variance
     gs_norms <- apply(mcia_result$global_scores,2,function(x){sqrt(var(x))})
@@ -111,7 +138,7 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
   
   }else if(tolower(plotType) == 'projection_global'){
     
-### Plot 2 - projection plot global score only      
+  ### Plot 2 - projection plot global score only      
     # Normalize global scores to unit variance
     gs_norms <- apply(mcia_result$global_scores,2,function(x){sqrt(var(x))})
     gs_normed <- t(t(mcia_result$global_scores) / gs_norms)
@@ -154,14 +181,14 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     
     
   }else if(tolower(plotType) == 'gs_eigvals'){
-####  Plot 3 - Eigenvalues of scores up to num_PCs
+  ####  Plot 3 - Eigenvalues of scores up to num_PCs
     barploteigs <- unlist(mcia_result$eigvals)^2
     names(barploteigs) <- 1:length(mcia_result$eigvals)
     barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
             main = "Global Score Eigenvalues ")
     
   }else if(tolower(plotType) == 'block_weights_heatmap'){
-#### Plot 4 - Heatmap of block score weights
+  #### Plot 4 - Heatmap of block score weights
     bsweights <- mcia_result$block_score_weights
     heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
     
