@@ -1,5 +1,5 @@
 ---
-title: "Mini-Lecture: Brief outline of the math behind MCIA"
+title: "Mini-Lecture: Overview of the NIPALS-MCIA pipeline"
 author:
     - Max Mattessich
     - Joaquin Reyna
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-The Mini-Lecture, Brief outline of the math behind MCIA, covered the mathematical aspects of MCIA, this second Mini-Lecture will focus on the standard preprocessing of multi-block data and post-processing following MCIA. The target audience of this Mini-Lecture are bioinformaticians or any other general practitioners.
+The Mini-Lecture, Brief outline of the math behind MCIA, covered the mathematical aspects of MCIA, this second Mini-Lecture will focus on the standard preprocessing of multi-block data and post-processing following MCIA. The target audience of this Mini-Lecture are bioinformaticians as well as other practitioners in data science.
 
 ```{r, echo=FALSE, out.width="100%", fig.align="center", fig.cap="Generic MCIA pipline. There are three data blocks $X^1, X^2,$ and $X^3$ which are being decomposed via MCIA to produce a global scores matrix."}
 knitr::include_graphics("images/MCIA-Pipeline.png")

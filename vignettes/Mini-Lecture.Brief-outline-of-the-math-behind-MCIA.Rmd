@@ -19,15 +19,19 @@ Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality  reduction method 
 
 # Table of abbreviations
 | Abbreviation | Description |
-|-------:|:------|
-| $X^j$ | The $j$-th data block |
-| $r$ | Total number of data blocks |
-| $m_j$ | The number of columns in the $j$-th datablock |
-| $n$ | The number of samples | 
-| $k$ | The number of factors |
-| $G$ | The global scores matrix which is $n \times (m_1 + ... + m_r)$ | 
-| $L$ | The global loadings matrix which is $(m_1 + ... + m_r) \times k$ | 
-
+|-:|:------|
+| $X$ | Dataset matrix or global data matrix (MCIA) typically in $\mathbb{R}^{n \times p}$ |
+| $p$ | The number of columns/variables/features of the global data matrix |
+| $n$ | The number of rows/samples/observations of the global and block data matrices | 
+| $X_k$ | $k^{th}$ Data block matrix in the multi-block stucture (MCIA) | 
+| $p_k$ | The number of columns/variables/features f the $h^{th}$ block data matrix | 
+| $N$ | The number of blocks in the multi-block structure of $X$ | 
+| $f^{(j)}$ | PC score of order $j$ (PCA) or global score of order j (MCIA) | 
+| $a^{(j)}$ | PC loading of order $j$ (PCA) or global loading of order j (MCIA) |
+| $f_k^{(j)}$ | Block score for block $k$ of order $j$ | 
+| $a_k^{(j)}$ | Block loading for block $k$ of order $j$ | 
+| $S$ or $S_X$ | Covariance matrix of dataset $X$ | 
+| $T^{(j)}$ | the $n \times N$ matrix with columns consisting of the order-j block scores |
 .
 .
 .
