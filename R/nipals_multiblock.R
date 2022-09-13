@@ -19,6 +19,7 @@
 #' @param max_iter a number for the maximum number of times NIPALS should iterate
 #' @param metadata a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
 #' May have multiple columns, but rows and row names must match the data frames in `data_blocks`.
+#' @param coloring Optional argument with the column name of the `metadata` data frame used to define plotting colors
 #' @param deflationMethod an option for the desired deflation method, either: \itemize{
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
@@ -46,7 +47,7 @@
 #' 
 #' @export
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
-                              metadata = NULL, deflationMethod = 'block',plots="all"){
+                              metadata = NULL, coloring = 'none', deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
   
@@ -152,13 +153,13 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   # Plotting results
   if(tolower(plots) == 'all'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection') # first two orders of scores
+    MCIA_plots(results_list,'projection',coloring = coloring) # first two orders of scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     par(mfrow = c(1,1))
     
   }else if (tolower(plots) == 'global'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection_global') # first two global scores
+    MCIA_plots(results_list,'projection_global',coloring = coloring) # first two global scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     par(mfrow = c(1,1))
   }else if (tolower(plots) == 'none'){
