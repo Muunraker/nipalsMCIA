@@ -10,6 +10,8 @@ nipals_multiblock(
   num_PCs = 10,
   tol = 1e-12,
   max_iter = 1000,
+  metadata = NULL,
+  coloring = "none",
   deflationMethod = "block",
   plots = "all"
 )
@@ -26,6 +28,13 @@ nipals_multiblock(
 
 \item{tol}{a number for the tolerance on the stopping criterion for NIPALS}
 
+\item{max_iter}{a number for the maximum number of times NIPALS should iterate}
+
+\item{metadata}{a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
+May have multiple columns, but rows and row names must match the data frames in `data_blocks`.}
+
+\item{coloring}{Optional argument with the column name of the `metadata` data frame used to define plotting colors}
+
 \item{deflationMethod}{an option for the desired deflation method, either: \itemize{
 \item `block` deflation via block loadings (for MCIA, default)
 \item `global` deflation via global scores (for CPCA)
@@ -36,8 +45,6 @@ nipals_multiblock(
 \item `global` displays only global score projections and eigenvalue scree plot
 \item `none` does not display plots
 }}
-
-\item{maxIter}{a number for the maximum number of times NIPALS should iterate}
 }
 \value{
 a list containing the following: \itemize{
