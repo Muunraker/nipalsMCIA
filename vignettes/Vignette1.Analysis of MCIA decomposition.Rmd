@@ -1,5 +1,5 @@
 ---
-title: "Vignette1 - Understanding the Results of MCIA"
+title: "Vignette 1 - Understanding the Results of MCIA"
 author:
     - Max Mattessich
     - Joaquin Reyna
@@ -19,6 +19,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(42) # NIPALS starts with a random vector
 ```
 
 ```{r, echo=FALSE, include=FALSE}
@@ -37,30 +38,70 @@ $$
 	\end{pmatrix} \in \mathbb{R}^{n \times r}
 $$
 
-This matrix encodes a low-dimensional representation of the datset, with the $i$-th row yielding $r$-dimensional coordinates of the $i$-th sample.  
+This matrix encodes a low-dimensional representation of the dataset, with the $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th sample. 
 
-### Running MCIA on NCI60 Data and basic visualization
+### Running MCIA on NCI60 Data and Basic Visualization
+
+`NIPALS-MCIA` includes a sample multi-omics dataset modified from data collected on the NCI-60 cancer cell lines [CITE: Meng, 2016]. This can be used to illustrate low-dimensional plotting with the global factors.
+
+
+First, we compute the first 10 global factors for the dataset:
+```{r,warning=FALSE,message=FALSE,fig.height=3}
+data(NCI60) # this creates the dataset as `data_blocks`
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', num_PCs = 10, tol=1e-12)
+```
+By default, `nipals_multiblock()` returns a plot of the first two global factors, with the block factors plotted as shapes connected to the global factors. If a block (in this case, one omics type) is plotted far from its corresponding global factor, this is an indication that the block does not agree with the whole-dataset trend. This may indicate batch effects in data collection, or indicate some underlying difference between blocks. 
+
+The second plot returned is a scree plot of factor singular values, where higher values indicate a given order of factor is more important. This can be interpreted exactly the same as an eigenvalue scree plot in principal component analysis.
+
+### Visualizing only global factor scores
+For clustering, it is useful to only look at global factors (Without block factors). The `MCIA_plots()` function can be used to generate this plot with the `projection_global` argument:
+
+```{r Visualize Clusters, fig.height=3,fig.width=3}
+MCIA_plots(mcia_results,'projection_global',orders = c(1,2), legend_loc = "bottomleft")
+```
+
+It may be helpful to color points by some external label. The `MCIA_plots()` function can do this with a `metadata` argument. The `metadata` object is a dataframe of labels for each sample, possibly containing multiple types of external data. For instance, each of the 21 samples in the NCI-60 dataset relates to one of three cancer types: CNS, Leukemia, or Melanoma. Thus we create the metadata object with the `cancerType` column:
+
 ```{r}
-data(NCI60)
-results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 10, tol=1e-12)
+CNS = 1:6; LEU = 7:12; ME = 13:21;
+nameslist <- list(1:21)
+nameslist[CNS] <- "CNS"
+nameslist[LEU] <- "Leukemia"
+nameslist[ME] <- "Melanoma"
+metadata_NCI60 <- data.frame(cancerType = unlist(nameslist))
+row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
+
+View(metadata_NCI60)
+
 ```
 
-### Visualize only global factor scores
-```{r visualize training model, fig.height=4}
-cancer_type <- substr(rownames(data_blocks$mrna), 1, 2)
-MCIA_out<-data.frame(results$global_scores[,1:2])
-MCIA_out$Cancer_type<-cancer_type
-colnames(MCIA_out)<-c("Factor_1", "Factor_2", "Cancer_type")
-ggplot(data = MCIA_out, aes(x=Factor_1, y=Factor_2, color=Cancer_type))+
-  geom_point(size=3) + 
-  theme_bw() +
-  ggtitle("MCIA for NCI60 training data")
+This object can be passed into the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`. 
+
+```{r,warning=FALSE,message=FALSE}
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', 
+                                  metadata = metadata_NCI60,
+                                  plots = 'none',num_PCs = 10, tol=1e-12)
+# Alternative method for adding metadata:
+mcia_results$metadata <- metadata_NCI60
+
 ```
+
+The `coloring` argument of `MCIA_plots()` can be used to determine which column of `metadata` is used for coloring the projection plots. In this case the column is `cancerType`:
+```{r Visualize Clusters Coloring, fig.height=3,fig.width=3}
+MCIA_plots(mcia_results,'projection_global',orders = c(1,2),coloring = 'cancerType',
+           legend_loc = "bottomleft")
+```
+
+Clusters of samples can be computed from the global factors using any method, such as k-means clustering. 
+
+
+
 
 ### Visualizing the clustering of samples by factor scores
 ```{r}
-gs_scores = results$global_scores
-colnames(gs_scores) = paste0('F', seq(1, ncol(results$global_scores)))
+gs_scores = mcia_results$global_scores
+colnames(gs_scores) = paste0('F', seq(1, ncol(mcia_results$global_scores)))
 p = ComplexHeatmap::Heatmap(gs_scores, 
     name = "GS Score", 
     column_title = "Factors",

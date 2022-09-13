@@ -43,7 +43,7 @@ Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method d
 # Mathematical Theory
 MCIA works on datasets that are made up of multiple blocks of variables measured on the same set of samples. Since each data block has the same number of rows, we define the global data matrix as
 $$
-\mb X = \Big[ \mb X_1 | \mb X_2 | ... | \mb X_N \Big] \in \mathbb{R}^{n \times p}, \hspace{2em} p = \sum\limits_b p_b.
+\mb X = \Big[ \mb X_1 | \mb X_2 | ... | \mb X_N \Big] \in \mathbb{R}^{n \times p}, \hspace{2em} p = \sum\limits_{b=1}^N p_b.
 $$
 It is sometimes helpful to compare MCIA to the better-known Principal Component Analysis (PCA). The global scores/factors and loadings are broadly similar to the principal component scores and loadings respectively of matrix $\mb X$, although they are **not** identical.
 
