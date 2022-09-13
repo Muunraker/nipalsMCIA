@@ -12,12 +12,12 @@
 #' \item `block_weights_heatmap` - a heatmap of block weightings for each order of global score.
 #' }
 #' @param orders Option to selecct orders of factors to plot against each other (for projection plots)
-#' @param clusters Option to plot clusters in projection plots, with two options:\itemize{
-#' \item `none` (default) - no clusters plotted
-#' \item `metadata` - provide cluster labels in the `metadata` field of the `mcia_result` argument. 
-#' `metadata` field must be a list of strings of cluster names for each sample/row in the dataset.  
+#' @param coloring Option to plot clusters/colors in projection plots, with two options:\itemize{
+#' \item `none` (Default) - no clusters/colors plotted.
+#' \item A character string of the column name of the `mcia_result$metadata` dataframe 
+#' determining which color groupings to use (projection plots only) 
 #' }
-#' @param clusterColors Option to specify cluster color strings.
+#' @param labelColors Option to specify  colors for labels.
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
 #' @examples
@@ -32,32 +32,46 @@
 #' mcia_res$metadata <- nameslist
 #' clus_colors <- list("red", "green","blue")
 #' MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = 'metadata', 
-#'            clusterColors = clus_colors, legend_loc = "bottomleft")
+#'            labelColors = clus_colors, legend_loc = "bottomleft")
 #' 
 #' @export
 MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
-                       clusters = 'none',
-                       clusterColors = list("red","green","blue","yellow","brown",
+                       coloring = 'none',
+                       labelColors = list("red","green","blue","yellow","brown",
                                             "orange","maroon","magenta","turquoise",
                                             "darkgreen","darkblue","gold","pink"),
                        legend_loc = "bottomleft"){
   
-  
-  # Resolving clusters - only for projection plots
-  if(tolower(clusters) == 'none'){
-    clusters = list(1:dim(mcia_result$global_score)[[1]])
-  } else if(tolower(clusters) == 'metadata'){
-    # find clusters from metadata
-    clusNames <- unique(unlist(mcia_result$metadata))
-    clusters <- list()
-    for(cName in clusNames){
-      clusters <-  c(clusters, list(grep(cName, mcia_result$metadata)))
-    }
-    names(clusters) <- clusNames
+  # resolving coloring for projection plots only
+  if(tolower(plotType) == 'projection' | tolower(plotType) == 'projection_global' ){
     
-  } else{
-    message("Cluster option not recognized, defaulting to no clusters.")
-    clusters = list(1:dim(mcia_result$global_score)[[1]])
+    # no coloring
+    if(tolower(coloring) == 'none'){
+      coloring = list(1:dim(mcia_result$global_score)[[1]]) # all one color
+    
+    # coloring from metadata
+    } else if(is.character(coloring)){
+      # find clusters from metadata
+      searchstr <- paste("\\b",coloring,"\\b",sep="")
+      idx <- grep(searchstr,names(mcia_result$metadata))
+      if(any(length(idx)<1)){
+        stop("Column name for coloring not found in metadata.")
+      }
+      idx <- idx[[1]] # catching if two columns happen to have the same name.
+      
+      clusNames <- unique(unlist(mcia_result$metadata[idx]))
+      coloring <- list()
+      # creating a list of indices to color each 'cluster'
+      for(cName in clusNames){
+        coloring <-  c(coloring, list(grep(cName, mcia_result$metadata[[idx]])))
+      }
+      names(coloring) <- clusNames # coloring is now a list of indices
+      
+    # coloring option not recognized  
+    } else{
+      message("Cluster option not recognized, defaulting to no clusters.")
+      coloring = list(1:dim(mcia_result$global_score)[[1]])
+    }
   }
   
 
@@ -89,20 +103,20 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     max_x <- max(c(max_bs1, max(gs_normed[,orders[[1]]]))) # maximum x coordinate in plot
     max_y <- max(c(max_bs2, max(gs_normed[,orders[[2]]]))) # maximum y coordinate in plot
     
-    clusterColors <- c(clusterColors,colors()) # adding all available colors for large numbers of clusters
-    if(length(clusters) > length(clusterColors)){
-      stop("Too many clusters - please specify a color for each cluster.")
+    labelColors <- c(labelColors,colors()) # adding all available colors for large numbers of clusters
+    if(length(coloring) > length(labelColors)){
+      stop("Too many rows for the number of colors - please specify a color for each cluster.")
     }
     
     # Cluster 1
     # Plotting global scores
-    indx <- clusters[[1]]
-    if(length(clusters)==1){
-      clusterColors[[1]] = "black"
+    indx <- coloring[[1]]
+    if(length(coloring)==1){
+      labelColors[[1]] = "black"
     }
-    plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Score Projection Plot",  
-         xlab=paste('Order ',orders[[1]],' Scores'), ylab=paste('Order ',orders[[2]],' Scores'),
-         col=clusterColors[[1]],
+    plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Factor Plot",  
+         xlab=paste('Order ',orders[[1]],' Factors'), ylab=paste('Order ',orders[[2]],' Factors'),
+         col=labelColors[[1]],
          xlim=c(min_x, max_x),
          ylim=c(min_y, max_y),
          cex = .5,pch = 16)
@@ -111,22 +125,22 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     for(j in 1:length(bs_normed)){
       bs_j <- bs_normed[[j]]
       points(bs_j[indx,orders[[1]]],bs_j[indx,orders[[2]]], 
-             col=clusterColors[[1]],cex = 1,pch = j-1)
+             col=labelColors[[1]],cex = 1,pch = j-1)
       # Line segments joining block scores to central global score:
       segments(bs_j[indx,orders[[1]]],bs_j[indx,orders[[2]]],gs_normed[indx,orders[[1]]],
-        gs_normed[indx,orders[[2]]], col=clusterColors[[1]])
+        gs_normed[indx,orders[[2]]], col=labelColors[[1]])
     }
     
     # Cluster 2+
-    if(length(clusters)>1){
-      for(i in 2:length(clusters)){
-        indx <- clusters[[i]]
-        points(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=clusterColors[[i]],cex = .5,pch = 16)
+    if(length(coloring)>1){
+      for(i in 2:length(coloring)){
+        indx <- coloring[[i]]
+        points(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=labelColors[[i]],cex = .5,pch = 16)
         for(j in 1:length(bs_normed)){
           bs_j <- bs_normed[[j]]
-          points(bs_j[indx,orders[[1]]],bs_j[indx,orders[[2]]], col=clusterColors[[i]],cex = 1,pch = j-1)
+          points(bs_j[indx,orders[[1]]],bs_j[indx,orders[[2]]], col=labelColors[[i]],cex = 1,pch = j-1)
           segments(bs_j[indx,orders[[1]]],bs_j[indx,orders[[2]]],
-                   gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=clusterColors[[i]])
+                   gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=labelColors[[i]])
         }  
       }
     }
@@ -154,20 +168,20 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     max_x <-  max(gs_normed[,orders[[1]]]) # maximum x coordinate in plot
     max_y <-  max(gs_normed[,orders[[2]]]) # maximum y coordinate in plot
     
-    clusterColors <- c(clusterColors,colors()) # adding all available colors for large numbers of clusters
-    if(length(clusters) > length(clusterColors)){
-      stop("Too many clusters - please specify a color for each cluster.")
+    labelColors <- c(labelColors,colors()) # adding all available colors for large numbers of clusters
+    if(length(coloring) > length(labelColors)){
+      stop("Too many rows for the number of colors - please specify a color for each cluster.")
     }
     
     # Cluster 1
     # Plotting global scores
-    indx <- clusters[[1]]
-    if(length(clusters)==1){
-      clusterColors[[1]] = "black"
+    indx <- coloring[[1]]
+    if(length(coloring)==1){
+      labelColors[[1]] = "black"
     }
-    plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Score Projection Plot",  
-         xlab=paste('Order ',orders[[1]],' Scores'), ylab=paste('Order ',orders[[2]],' Scores'),
-         col=clusterColors[[1]],
+    plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Global Factor Plot",  
+         xlab=paste('Order ',orders[[1]],' Factors'), ylab=paste('Order ',orders[[2]],' Factors'),
+         col=labelColors[[1]],
          xlim=c(min_x, max_x),
          ylim=c(min_y, max_y),
          pch = 16,
@@ -175,10 +189,10 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
     grid()
     
     # Cluster 2+
-    if(length(clusters)>1){
-      for(i in 2:length(clusters)){
-        indx <- clusters[[i]]
-        points(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=clusterColors[[i]],cex = .5,pch = 16)
+    if(length(coloring)>1){
+      for(i in 2:length(coloring)){
+        indx <- coloring[[i]]
+        points(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]], col=labelColors[[i]],cex = .5,pch = 16)
       }
     }
     
@@ -187,13 +201,13 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
   ####  Plot 3 - Eigenvalues of scores up to num_PCs
     barploteigs <- unlist(mcia_result$eigvals)^2
     names(barploteigs) <- 1:length(mcia_result$eigvals)
-    barplot(barploteigs, xlab="Global Score Order", cex.names = 1, 
-            main = "Global Score Eigenvalues ")
+    barplot(barploteigs, xlab="Global Factor Score Order", cex.names = 1, 
+            main = "Global Factor Score Eigenvalues ")
     
   }else if(tolower(plotType) == 'block_weights_heatmap'){
   #### Plot 4 - Heatmap of block score weights
     bsweights <- mcia_result$block_score_weights
-    heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Score Order")
+    heatmap(bsweights, Rowv = NA, Colv = NA, cexRow= 1.5, xlab="Global Factor Score Order")
     
   }else{
     stop('Unknown selection for plotType - please run help("MCIA_plots")')

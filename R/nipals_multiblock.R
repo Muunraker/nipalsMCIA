@@ -16,7 +16,10 @@
 #' }
 #' @param num_PCs the maximum order of scores/loadings
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
-#' @param maxIter a number for the maximum number of times NIPALS should iterate
+#' @param max_iter a number for the maximum number of times NIPALS should iterate
+#' @param metadata a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
+#' May have multiple columns, but rows and row names must match the data frames in `data_blocks`.
+#' @param coloring a the column name of the `metadata` frame you wish to color by in plots.
 #' @param deflationMethod an option for the desired deflation method, either: \itemize{
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
@@ -43,8 +46,8 @@
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000, 
-                              deflationMethod = 'block',plots="all"){
+nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
+                              metadata = NULL, deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
   
@@ -144,6 +147,8 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
                       block_scores, block_loadings, eigvals, tolower(preprocMethod))
   names(results_list) <- c('global_scores','global_loadings','block_score_weights',
                            'block_scores','block_loadings', 'eigvals','preprocMethod')
+  results_list$metadata <- metadata
+  
   
   # Plotting results
   if(tolower(plots) == 'all'){
