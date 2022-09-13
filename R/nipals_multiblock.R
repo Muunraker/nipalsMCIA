@@ -19,7 +19,6 @@
 #' @param max_iter a number for the maximum number of times NIPALS should iterate
 #' @param metadata a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
 #' May have multiple columns, but rows and row names must match the data frames in `data_blocks`.
-#' @param coloring a the column name of the `metadata` frame you wish to color by in plots.
 #' @param deflationMethod an option for the desired deflation method, either: \itemize{
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
