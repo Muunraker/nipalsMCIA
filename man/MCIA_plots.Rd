@@ -8,7 +8,7 @@ MCIA_plots(
   mcia_result,
   plotType,
   orders = c(1, 2),
-  clusters = list(1:dim(mcia_result$global_score)[[1]]),
+  clusters = "none",
   clusterColors = list("red", "green", "blue", "yellow", "brown", "orange", "maroon",
     "magenta", "turquoise", "darkgreen", "darkblue", "gold", "pink"),
   legend_loc = "bottomleft"
@@ -26,11 +26,15 @@ MCIA_plots(
 
 \item{orders}{Option to selecct orders of factors to plot against each other (for projection plots)}
 
-\item{clusters}{Option for list of indices of known clusters (for projection plots).}
+\item{clusters}{Option to plot clusters in projection plots, with two options:\itemize{
+\item `none` (default) - no clusters plotted
+\item `metadata` - provide cluster labels in the `metadata` field of the `mcia_result` argument. 
+`metadata` field must be a list of strings of cluster names for each sample/row in the dataset.  
+}}
+
+\item{clusterColors}{Option to specify cluster color strings.}
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
-
-\item{cluserColors}{Option to specify cluster color strings.}
 }
 \description{
 Function to generate descriptive plots for MCIA.
@@ -43,9 +47,13 @@ Plotting function for a variety of MCIA visualization options.
 data(NCI60)
 mcia_res <- nipals_multiblock(data_blocks,num_PCs = 10, plots = 'none', tol=1e-12)
 CNS = 1:6; LEU = 7:12; ME = 13:21;
-clus_list <- list(CNS, LEU, ME)
+nameslist <- list()
+nameslist[CNS] <- "CNS"
+nameslist[LEU] <- "Leukemia"
+nameslist[ME] <- "Melanoma"
+mcia_res$metadata <- nameslist
 clus_colors <- list("red", "green","blue")
-MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = clus_list, 
+MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = 'metadata', 
            clusterColors = clus_colors, legend_loc = "bottomleft")
 
 }
