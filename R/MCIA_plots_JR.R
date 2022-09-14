@@ -217,7 +217,8 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
 #' pathways
 #' @return the selectivity scores across the given factors
 #' @export
-gsea_report <- function(metagenes, path.database, factors=NULL, pval.thr=0.05){
+gsea_report <- function(metagenes, path.database, factors=NULL, pval.thr=0.05,
+                        nproc=4){
     
     # Load annotation database
     pathways <- fgsea::gmtPathways(path.database)
@@ -243,7 +244,7 @@ gsea_report <- function(metagenes, path.database, factors=NULL, pval.thr=0.05){
         
         # Compute GSEA
         fgseaRes <- fgsea::fgseaMultilevel(pathways, scores, nPermSimple = 10000,
-                                    minSize=15, maxSize=500)
+                                    minSize=15, maxSize=500, nproc=nproc)
     
         
         # Report if at least one pathway is significant and
