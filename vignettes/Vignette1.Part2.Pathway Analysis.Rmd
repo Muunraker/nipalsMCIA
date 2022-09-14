@@ -1,0 +1,90 @@
+---
+title: "Vignette 1 - Understanding the Results of MCIA"
+author:
+    - Max Mattessich
+    - Joaquin Reyna
+    - Anna Konstorum
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+date: "9/1/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42) # NIPALS starts with a random vector
+```
+
+```{r, echo=FALSE,include=FALSE}
+library(nipalsMCIA)
+library(ggplot2)
+library(tidyverse)
+library(fgsea)
+```
+
+## Part 2: Interpreting Global Loadings
+### Pathway analysis for the top factors using data from gene-centric omics blocks 
+
+First, we compute the first 10 global factors for the dataset:
+```{r,warning=FALSE,message=FALSE,fig.height=3}
+data(NCI60) # this creates the dataset as `data_blocks`
+mcia_results <- nipals_multiblock(data_blocks,
+                                  preprocMethod='colprofile',
+                                  plots = 'none',
+                                  num_PCs = 10,
+                                  tol=1e-12)
+```
+
+The NCI60 data set includes gene expression data and its corresponding global loading matrix is a gene by factor matrix.  We can learn more about what pathways a given factor may be capturing by running each factor vector (column of the global loadings matrix) through a gene set enrichment analysis (GSEA). In the previous sections we saw how much each mRNA factor is contributing to the MCIA decomposition and so we will focus on factors X, Y, Z. We will start by running gsea_report() which reports on the p-value of the most significant pathway as well as the total number of significant pathways. Finally the report will summarize all factors using the selectivity score as described by Cantini et al., 2021 (more details below).
+
+#### Gather data and genrate the report
+```{r, warning=FALSE}
+# extract mRNA global loadings
+mrna_gfscores <- mcia_results$global_loadings
+mrna_rows = str_detect(row.names(mrna_gfscores), '_mrna')
+mrna_gfscores <- mrna_gfscores[mrna_rows,]
+row.names(mrna_gfscores) <- str_remove(rownames(mrna_gfscores), "_[0-9]*_.*")
+
+# load pathway data
+path.database = '../data/c2.cp.reactome.v6.2.symbols.gmt'
+pathways <- fgsea::gmtPathways(path.database)
+
+# generate the GSEA report 
+geneset_report = gsea_report(mrna_gfscores, path.database,
+                      factors = seq(1,10), pval.thr = 0.05,                            nproc=4) 
+```
+#### Investigating the GSEA Summary Table
+The report comes in the form of a list where the first element is a data frame with summary level of the GSEA analysis per factor. Ideally, each factor is capturing a very select number of pathways with a high significance. From this report (below) we can see that the most significant pathway is associated with Factor3 and see can also see that there is a large variation in the number of total (significant) pathways ranging from 7 (Factor 8) to 143 (Factor 4).
+```{r}
+geneset_report[[1]]
+```
+Using the previous table we can see that something interesting is going on with Factor3 so we can re-run GSEA one more time for this factor in order to get a full list of top pathways:
+
+```{r}
+factor3_paths = fgseaMultilevel(pathways, mrna_gfscores[,3], nPermSimple = 10000, minSize=15, nproc = 4, maxSize=500)
+
+sig_path3 = factor3_paths[min(factor3_paths$pval) == factor3_paths$pval,]
+```
+
+The top scoring pathway is REACTOME_CELL_CYCLE which makes sense give this is cancer data set. This analysis can be repeated as necessary to make sense of other gene based factor loadings. 
+
+#### Investigating the Selectivity Score
+The second element in the report is the selectivity score which is calculated as follows:
+$$
+    S = Selectivity\,Score = (N_c + N_f) / 2L
+$$
+where $N_c$ is the total number of clinical annotations associated with at least a factor, $N_f$ the total number of factors associated with at least a clinical annotation, and $L$ the total number of associations between clinical annotations and factors. $S$ has a maximum value of 1 when each factor is associated with one and only one clinical/biological annotation, and a minimum of 0 in the opposite case. An optimal method should thus maximize its number of factors associated with clinical/biological annotations without having a too low selectivity.
+
+```{r}
+geneset_report[[2]]
+```
+
+For the mRNA global loadings we can see that there is low selectivity for enriched pathways which suggests that there is some overlap between the signals capture by each factor.
+
