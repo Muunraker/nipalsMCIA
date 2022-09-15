@@ -2,7 +2,8 @@
 title: "Predicting new MCIA scores"
 author: "Max Mattesich, Joaquin Reyna, Anna Konstorum"
 date: '2022-09-01'
-output: pdf_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +50,7 @@ MCIA_train <- nipals_multiblock(data_blocks_train, preprocMethod='colprofile',nu
 The metadata for cancer type is contained in the sample name (before the period)  
 e.g. 'ME.UACC_62' is type 'ME'
 
-```{r visualize training model, fig.height=4}
+```{r visualize training model, fig.height=4, fig.align='center'}
 cancer_type <- substr(rownames(data_blocks_train$mrna), 1, 2)
 MCIA_out<-data.frame(MCIA_train$global_scores[,1:2])
 MCIA_out$Cancer_type<-cancer_type
@@ -72,7 +73,7 @@ MCIA_test_scores <- predict_gs(MCIA_train,data_blocks_test)
 
 We once again plot the top two factor scores for both the training and test datasets
 
-```{r visualize both models, fig.height=4}
+```{r visualize both models, fig.height=4, fig.align='center'}
 cancer_type <- substr(rownames(data_blocks_test$mrna), 1, 2)
 MCIA_out_test<-data.frame(MCIA_test_scores[,1:2])
 MCIA_out_test$Cancer_type<-cancer_type
