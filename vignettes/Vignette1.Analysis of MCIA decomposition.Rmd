@@ -9,8 +9,8 @@ header-includes:
    - \usepackage{amsfonts}
 date: "9/1/2022"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 \newcommand{\mb}[1]{\mathbf{#1}}

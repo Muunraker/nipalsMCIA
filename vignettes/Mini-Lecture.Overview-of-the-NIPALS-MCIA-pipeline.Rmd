@@ -1,11 +1,13 @@
 ---
-title: "Mini-Lecture: Brief outline of the math behind MCIA"
+title: "Mini-Lecture: Overview-of-the-NIPALS-MCIA-pipeline"
 author:
     - Max Mattessich
     - Joaquin Reyna
     - Anna Konstorum
 date: "9/1/2022"
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
