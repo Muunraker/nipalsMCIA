@@ -25,6 +25,7 @@ set.seed(42) # NIPALS starts with a random vector
 ```{r, echo=FALSE, include=FALSE}
 library(nipalsMCIA)
 library(ggplot2)
+library(ComplexHeatmap)
 ```
 
 ## Part 1: Interpreting Global Factor Scores
@@ -72,7 +73,7 @@ nameslist[ME] <- "Melanoma"
 metadata_NCI60 <- data.frame(cancerType = unlist(nameslist))
 row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
 
-View(metadata_NCI60)
+#View(metadata_NCI60)
 
 ```
 
@@ -118,10 +119,35 @@ p
 In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
 
 ### Pseudoeigenvalues representing the contribution of each omic to the global factor score
-...(to be continued)
+```{r, fig.width=4, fig.height=1.5}
+## Should make into a function
+bs_weights<-as.matrix(data.frame(mcia_results$block_score_weights))
+colnames(bs_weights)<-c(1:10)
+Heatmap(bs_weights, cluster_columns=FALSE, cluster_rows=FALSE, name = "weight",
+                        column_title_side = "bottom", column_title = "Factor")
+```
 
 ### Scree Plot: Visualizing the top features per factor
-...(to be continued)
+```{r, fig.height=2.5, fig.width=5.5}
+# make into function
+gl<-mcia_results$global_loadings
+omic_list<-gsub("^.*_", "", rownames(gl))
+factor<-4
+gl_f<-data.frame(gl[,factor])
+gl_f$omic<-omic_list
+colnames(gl_f)<-c("weight",'omic')
+gl_f_ord<-gl_f[order(gl_f$weight, decreasing=TRUE),]
+
+# look at mRNA (need to filter since issue with miRNA omic name)
+gl_f_ord_mRNA<-gl_f_ord[gl_f_ord$omic=="mrna",]
+omic_name<-sub("_.*", "",rownames(gl_f_ord_mRNA) )
+gl_f_ord_mRNA$omic_name<-sub("_.*", "",rownames(gl_f_ord_mRNA) )
+ggplot(gl_f_ord_mRNA[0:30,], aes(x=factor(omic_name,level=omic_name), y=weight))+
+      geom_point()+
+      theme_bw()+
+      xlab('Feature')+
+      theme(axis.text.x=element_text(angle=45, hjust=1))
+```
 
 ### Pathway analysis for the top factors using data from gene-centric omics blocks 
 ...(to be continued)
