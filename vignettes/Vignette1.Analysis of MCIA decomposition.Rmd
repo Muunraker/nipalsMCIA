@@ -28,6 +28,23 @@ library(ggplot2)
 library(ComplexHeatmap)
 ```
 
+## Introduction 
+In the mini-lectures we covered in detail the math behind MCIA as well as a generic pipeline for using MCIA. In this vignette we will cover the most important functions within the nipalsMCIA packages as well as downstream analyses that help can interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block data. For this vignette we are using a cancer data set from (Meng et al., 2016) and includes 21 subjects with three data blocks. The data blocks include mRNA levels (12895 features), microRNA levels (537 features) and protein levels (7016 features). Without a multi-block method, researchers may try to use feature reduction methods on each block individually but this strategy ignores relationships between different blocks or under-appreciates signals which are specific to one block. In the context of the NCI60 data set and this vignette, we will show you the power of MCIA to find important relationships between mRNA, microRNA and proteins. More specifically, we will show you how to interpret the global factor scores in Part 1 and global loadings in Part 2. 
+
+**Preview of the NCI60 dataset**
+The NCI60 data set has been included with the nipalsMCIA package and is easily available as show below.
+```{r}
+# load the dataset, uses the name data_blocks
+data(NCI60)
+data_blocks$mrna[1:5,1:3]
+
+data_blocks$miRNA[1:5,1:3]
+
+data_blocks$prot[1:5,1:3]
+
+```
+
+
 ## Part 1: Interpreting Global Factor Scores
 
 The main MCIA function `nipals_multiblock()` outputs a global factor score matrix $\mb F$ that is $n \times r$, where $n$ is the number of samples and $r$ is the number of factors chosen by the user with the `num_PCs = r` argument. Each column of this matrix represents one of the orders of global factors computed, i.e.
@@ -41,14 +58,9 @@ $$
 
 This matrix encodes a low-dimensional representation of the dataset, with the $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th sample. 
 
-### Running MCIA on NCI60 Data and Basic Visualization
-
-`NIPALS-MCIA` includes a sample multi-omics dataset modified from data collected on the NCI-60 cancer cell lines [CITE: Meng, 2016]. This can be used to illustrate low-dimensional plotting with the global factors.
-
-
-First, we compute the first 10 global factors for the dataset:
+### Running MCIA and Basic Visualizations
+To begin, we compute the first 10 global factors for the data set:
 ```{r,warning=FALSE,message=FALSE,fig.height=3}
-data(NCI60) # this creates the dataset as `data_blocks`
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', num_PCs = 10, tol=1e-12)
 ```
 By default, `nipals_multiblock()` returns a plot of the first two global factors, with the block factors plotted as shapes connected to the global factors. If a block (in this case, one omics type) is plotted far from its corresponding global factor, this is an indication that the block does not agree with the whole-dataset trend. This may indicate batch effects in data collection, or indicate some underlying difference between blocks. 
@@ -97,9 +109,8 @@ MCIA_plots(mcia_results,'projection_global',orders = c(1,2),coloring = 'cancerTy
 Clusters of samples can be computed from the global factors using any method, such as k-means clustering. 
 
 
-
-
 ### Visualizing the clustering of samples by factor scores
+We may also be interested in the clustering of samples by their factors scores, to do this analyses we will the the XX function.
 ```{r}
 gs_scores = mcia_results$global_scores
 colnames(gs_scores) = paste0('F', seq(1, ncol(mcia_results$global_scores)))
@@ -114,6 +125,7 @@ p = ComplexHeatmap::Heatmap(gs_scores,
 )    
 p
 ```
+From these heatmap we can see that samples cluster quite strongly by factor 1 signals (to be continued....want to have sample names to explain more if possible)
 
 ## Part 2: Interpreting Global Loadings
 In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
