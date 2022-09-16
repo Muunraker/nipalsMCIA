@@ -22,5 +22,9 @@ Imports:
     fgsea,
     tidyverse
 Author: Max Mattessich[aut, cre],
-Maintainer: Max Mattessich <maximilianmattessich2027@u.northwestern.edu>
+Maintainer: Max Mattessich <maximilian.mattessich@northwestern.edu>
 Encoding: UTF-8
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
