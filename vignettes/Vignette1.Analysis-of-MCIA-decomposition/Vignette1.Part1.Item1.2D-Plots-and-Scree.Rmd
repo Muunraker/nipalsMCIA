@@ -1,0 +1,86 @@
+---
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+output:
+  html_document: default
+---
+
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
+```{r setup-V1-P1-I1, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42) # NIPALS starts with a random vector
+```
+
+```{r, echo=FALSE, include=FALSE}
+library(nipalsMCIA)
+library(ggplot2)
+library(ComplexHeatmap)
+```
+
+<!-- Loading NCI60 data and running nipals_multiblock()
+    whenever running from individual Rmarkdowns -->
+```{r child="Load-Shared-Vars.Rmd", include=FALSE}
+```
+
+
+## Part 1: Interpreting Global Factor Scores<br/>
+
+### nipals_multiblock() Generates Basic Visualizations
+In the introduction we showed how to calculate the MCIA decomposition using
+`nipals_multiblock()` but used the parameter `plots='none'`. By default, this
+function will generate two plots which help establish an initial intuition for
+the MCIA decomposition. Here we will re-run `nipals_multiblock()` and omit the
+`plots` parameter (default=all):
+```{r, warning=FALSE, message=FALSE, fig.height=4, fig.width=8, fig.align='center'}
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',
+                                  num_PCs = 10, tol=1e-12)
+```
+
+The first plot returned visualizes the first two global factors, with the block factors plotted as shapes connected to the global factors. If a block (in this case, one omics type) is plotted far from its corresponding global factor, this is an indication that the block does not agree with the whole-dataset trend. This may indicate batch effects in data collection, or indicate some underlying difference between blocks. 
+
+The second plot returned is a scree plot of factor singular values, where higher values indicate a given order of factor is more important. This can be interpreted exactly the same as an eigenvalue scree plot in principal component analysis.
+
+### Visualizing only global factor scores
+For clustering, it is useful to only look at global factors (without block factors). The `MCIA_plots()` function can be used to generate this plot with the `projection_global` argument:
+
+```{r Visualize Clusters, fig.height=4, fig.width=4, fig.align='center'}
+MCIA_plots(mcia_results,'projection_global',orders = c(1,2), legend_loc = "bottomleft")
+```
+
+It may be helpful to color points by some external label. The `MCIA_plots()` function can do this with a `metadata` argument. The `metadata` object is a dataframe of labels for each sample, possibly containing multiple types of external data. For instance, each of the 21 samples in the NCI-60 dataset relates to one of three cancer types: CNS, Leukemia, or Melanoma. Thus we create the metadata object with the `cancerType` column:
+
+```{r}
+CNS = 1:6; LEU = 7:12; ME = 13:21;
+nameslist <- list(1:21)
+nameslist[CNS] <- "CNS"
+nameslist[LEU] <- "Leukemia"
+nameslist[ME] <- "Melanoma"
+metadata_NCI60 <- data.frame(cancerType = unlist(nameslist))
+row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
+
+#View(metadata_NCI60)
+
+```
+
+This object can be passed into the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`. 
+
+```{r, warning=FALSE, message=FALSE}
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', 
+                                  metadata = metadata_NCI60,
+                                  plots = 'none',num_PCs = 10, tol=1e-12)
+# Alternative method for adding metadata:
+mcia_results$metadata <- metadata_NCI60
+
+```
+
+The `coloring` argument of `MCIA_plots()` can be used to determine which column of `metadata` is used for coloring the projection plots. In this case the column is `cancerType`:
+```{r Visualize Clusters Coloring, fig.height=4, fig.width=4, fig.align='center'}
+MCIA_plots(mcia_results,'projection_global',orders = c(1,2),coloring = 'cancerType',
+           legend_loc = "bottomleft")
+```
+
+Clusters of samples can be computed from the global factors using any method, such as k-means clustering. 

@@ -1,0 +1,14 @@
+<!-- This markdown is only for variable loading and sharing across the other
+markdown files that are using code. In particular, the NCI60 and
+mcia_results are required across most sections so this script is imported
+as necessary.-->
+```{r, echo=FALSE, include=FALSE}
+if (!exists("data_blocks")){
+    data(NCI60)
+}
+
+if (!exists("mcia_results")){
+    mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',
+                                  num_PCs = 10, tol=1e-12, plots = 'none')
+}
+```
