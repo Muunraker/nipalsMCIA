@@ -1,4 +1,3 @@
-#library("dplyr")
 #library('biomaRt')
 
 #' Plotting a heatmap of global_loadings versus features
@@ -209,141 +208,102 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
 
 #' Perform biological annotation-based comparison 
 #'
-#' @description Runs fgsea for the input gene list
-#' @param genes a vector of gene names according to HUGO nomenclature 
-#' @param factorizations = already computed factorizations
-#' @param path.database = path to a GMT annotation file
+#' @description Runs fgsea for the input gene vector
+#' @param metagenes Vector of gene scores where the row names are HUGO symbols 
+#' @param path.database path to a GMT annotation file
+#' @param factor vector of factors which should be analyzed
 #' @param pval.thr = p-value threshold (default to 0.05)
-#' @return selectivity Selectivity (fraction of significant annotations per all significant factors)
-#' @return nonZeroFacs Number of unique factors that were significant at least once
-#' @return total_pathways = Number of clinical annotations with at least one significant factor component
+#' @return data frame with the most significant p-value number of significant
+#' pathways
+#' @return the selectivity scores across the given factors
 #' @export
-biological_comparison <- function(factorizations, path.database, pval.thr=0.05){
-    
-    # Annotation databases used for biological enrichment
-    path.database <- "data/bio_annotations/c2.cp.reactome.v6.2.symbols.gmt" #REACTOME
-
-    library("fgsea", quietly = TRUE)
+gsea_report <- function(metagenes, path.database, factors=NULL, pval.thr=0.05,
+                        nproc=4){
     
     # Load annotation database
-    pathways <- gmtPathways(path.database)
+    pathways <- fgsea::gmtPathways(path.database)
     
-    # Containers to report results
-    report_number <- numeric(0)
-    report_nnzero <- numeric(0)
-    report_select <- numeric(0)
-    
-    # For each factorization method
-    for(i in 1:length(factorizations)){
-        
-        cat(paste0("Studying factor: ", i, "\n"))
-        
-        # Extract metagenes found by factorization method
-        cat("# Extract metagenes found by factorization method\n")
-        metagenes <- factorizations[[i]][[3]][[1]]
-        
-        #cat("metagenes 1:\n")
-        #print(metagenes[1:10, 1:10])
-        
-        # Number of factors
-        num.factors <- ncol(metagenes)
-        cat(paste0("# Number of factors: ", num.factors, "\n"))
-        
-        #cat("metagenes 2:\n")
-        #print(metagenes[1:10, 1:10])
-        
-        # Rename columns
-        cat("# Rename columns\n")
-        colnames(metagenes) <- 1:num.factors
-        
-        # Rename rows to remove "|" characters and keep only the gene name before
-        cat("# Rename rows to remove '|' characters and keep only the gene name before\n")
-        rownames(metagenes) <- gsub("\\|",".",rownames(metagenes))
-        rownames(metagenes) <- gsub("\\..*","",rownames(metagenes))
-        
-        # Remove duplicated gene names that could confuse fgsea
-        cat("# Remove duplicated gene names that could confuse fgsea\n")
-        duplicated_names <- unique(rownames(metagenes)[duplicated(rownames(metagenes))])
-        metagenes <- metagenes[!(rownames(metagenes) %in% duplicated_names), ]
-        
-        #cat("metagenes 3:\n")
-        #print(metagenes[1:10, 1:10])
-        
-        # Variables
-        min_pval <- numeric(0)
-        path <- numeric(0)
-        n <- 0
-        
-        # Calculate biological annotation enrichment.
-        cat("# Calculate biological annotation enrichment.\n")
-        # For each factor,
-        for(j in 1:num.factors){
-          
-            # Assign gene names
-            cat("\t# Assign gene names\n")
-            rnk <- setNames(as.matrix(metagenes[,j]), rownames(metagenes))
-            
-            # Compute fgsea
-            cat("\t# Compute fgsea\n")
-            #fgseaRes <- fgsea(pathways, rnk, minSize=15, maxSize=500, nperm=1000)
-            fgseaRes <- fgseaMultilevel(pathways, rnk, nPermSimple = 10000,minSize=15, maxSize=500)
-            
-            # If at least one pathway is significant
-            cat("\t# If at least one pathway is significant\n")
-            
-            print(paste0("fgseaRes: ", fgseaRes))
-            
-            
-            if(sum(fgseaRes$padj < pval.thr)!=0){
-                
-                # Count this factor
-                n <- n+1
-                
-                # Keep min adjusted p-value
-                min_pval <- rbind(min_pval, min(fgseaRes$padj))
-                
-                # Keep names of significant pathways
-                path <- c(path, fgseaRes[fgseaRes$padj<pval.thr, "pathway"])
-                
-            } else {
-                min_pval <- rbind(min_pval, NA)
-            }
-        }
-
-        # Report number of unique significant pathways  
-        cat("# Report number of unique significant pathways\n")
-        if(length(path)==0){
-            report_number <- rbind(report_number, 0)
-        }else{
-            report_number <- rbind(report_number, length(unique(path)))
-        }
-        
-        # Report selectivity 
-        cat("# Report selectivity\n")
-        if(length(unique(path))==0){
-            report_select <- rbind(report_select, NA)
-        }else{
-            al<-length(unique(path))/length(path)
-            fl<-length(which(!is.na(min_pval)))/length(path)
-            report_select <- rbind(report_select, (al+fl)/2)
-        }
-        
-        # Report number of factors associated with at least one significant pathway
-        cat("# Report number of factors associated with at least one significant pathway\n")
-        report_nnzero <- rbind(report_nnzero, n)    
-    
-        cat("\n")
+    # Number of factors
+    if (is.null(factors)){
+        factors <- seq(ncol(metagenes))
     }
     
-    # reporting the selectivity, number of factors associated with at 
-    # least one significant pathway, and the total number of significant
-    # pathways
-    out <- data.frame(selectivity=report_select,
-                      nonZeroFacs=report_nnzero,
-                      total_pathways=report_number)
+    # Containers to report results
+    report_min_pval <- numeric(0)
+    report_number <- numeric(0)
+    sig_paths <- numeric(0)
+    
+    # Calculate biological annotation enrichment, for each factor
+    for(j in factors){
+        
+        print(paste0('Running GSEA for Factor', j))
+      
+        # Extract a vector of scores for GSEA and set rownams
+        # to HUGO symbols
+        scores <- setNames(as.matrix(metagenes[,j]), rownames(metagenes))
+        
+        # Compute GSEA
+        fgseaRes <- fgsea::fgseaMultilevel(pathways, scores, nPermSimple = 10000,
+                                    minSize=15, maxSize=500, nproc=nproc)
+    
+        
+        # Report if at least one pathway is significant and
+        # the min-pvalue from all pathways
+        if(sum(fgseaRes$padj < pval.thr)!=0){
+            
+            # Report the minimum p-value
+            min_pval = min(fgseaRes$padj)
+            report_min_pval <- rbind(report_min_pval, min_pval)
+            
+            # Keep names of significant pathways
+            curr_sig_paths = fgseaRes[fgseaRes$padj < pval.thr, "pathway"]
+            sig_paths <- c(sig_paths, curr_sig_paths)
+            
+            # Report number of unique significant pathways  
+            report_number <- rbind(report_number, dplyr::n_distinct(curr_sig_paths))
+            
+        } else{
+            
+            # Report the minimum p-value, assigning NA
+            report_min_pval <- rbind(report_min_pval, NA)
+            
+            # Report number of unique significant pathways, assigning 0
+            report_number <- rbind(report_number, 0)
+        }
+    }
+    
+    # Report selectivity
+    # Selectivity is calculated best across ALL factors
+    # The formula is give within https://www.nature.com/articles/s41467-020-20430-7
+    # and section "Selectivity Score". SS = (Nc + Nf) / 2L
+    # Nc is the total number of clinical annotations associated with at
+    # least a factor, Nf the total number of factors associated with at
+    # least a clinical annotation, and L the total number of
+    # associations between clinical annotations and factors. S has a
+    # maximum value of 1 when each factor is associated with one and
+    # only one clinical/biological annotation, and a minimum of 0 in
+    # the opposite case. An optimal method should thus maximize its
+    # number of factors associated with clinical/biological annotations
+    # without having a too low selectivity.
+    Nc <- n_distinct(sig_paths)
+    Nf <- length(which(!is.na(min_pval)))
+    L <- length(sig_paths)
+    SS = (Nc + Nf) / (2* L)
+    
+    # Setting up the final reporting data structure with list containing
+    # two values, the first is a dataframe where the rows are factors and
+    # the columns is composed of the following fields:
+    # - the minimum p-value of all pathways
+    # - the total number of significant pathways
+    # Lastly, the second value is the selectivity value which assesses whether
+    # the set of factors are capturing very different gene sets/pathways from
+    # one another
+    out <- list()
+    out[[1]] <- data.frame(min_pval=report_min_pval,
+                           total_pathways=report_number)
+    row.names(out[[1]]) <- paste0('Factor', factors)
+    
+    out[[2]] <- SS
+    names(out) <- c('per-factor-results', 'selectivity')
     return(out)
 }
-
-#bio_comp = biological_comparison(out$factorizations, path.database, pval.thr=0.05)
-#fn = paste0(results_folder, 'report.tsv')
-#write.table(bio_comp, file=fn, quote = F, sep="\t")
