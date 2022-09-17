@@ -16,17 +16,15 @@ Imports:
     pracma,
     ggplot2,
     reshape2,
-    stringr,
-    ggpubr,
-    gridExtra,
+    grid,
     dplyr,
     circlize,
     ComplexHeatmap,
-    fgsea,
-    tidyverse
+    fgsea
 Url: https://github.com/Muunraker/nipalsMCIA
 Encoding: UTF-8
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+biocViews: GeneTarget, SingleCell

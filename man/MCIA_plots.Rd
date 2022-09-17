@@ -43,17 +43,11 @@ Function to generate descriptive plots for MCIA.
 Plotting function for a variety of MCIA visualization options.
 }
 \examples{
-# Plotting clusters with different colors
 data(NCI60)
-mcia_res <- nipals_multiblock(data_blocks,num_PCs = 10, plots = 'none', tol=1e-12)
-CNS = 1:6; LEU = 7:12; ME = 13:21;
-nameslist <- list()
-nameslist[CNS] <- "CNS"
-nameslist[LEU] <- "Leukemia"
-nameslist[ME] <- "Melanoma"
-mcia_res$metadata <- nameslist
+mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
+                              plots = 'none', tol=1e-12)
 clus_colors <- list("red", "green","blue")
-MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = 'metadata', 
+MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
            labelColors = clus_colors, legend_loc = "bottomleft")
 
 }

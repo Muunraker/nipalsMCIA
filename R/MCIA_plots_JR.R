@@ -8,6 +8,8 @@
 #' @param omic_name the name of the omic that should be plot, should be in data_blocks
 #' @param select_features a vector of numbers to filter features 
 #' @return the ggplot2 object
+#' @importFrom grid gpar
+#' @importFrom ComplexHeatmap Heatmap
 #' @export
 global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                                                    data_blocks,
@@ -56,8 +58,8 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                 column_title = coltitle,
                 row_title = "Latent Factors",
                 row_names_gp = grid::gpar(fontsize = 7),
-                show_column_names = T,
-                show_row_names = T,
+                show_column_names = TRUE,
+                show_row_names = TRUE,
                 row_names_side = "right"
         )    
       return(p)
@@ -73,6 +75,8 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
 #' @param omic_name the name of the omic that should be plot, should be in data_blocks
 #' @param select_features a vector of numbers to filter features 
 #' @return the ggplot2 object
+#' @importFrom grid gpar
+#' @importFrom ComplexHeatmap Heatmap
 #' @export
 global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                                                    data_blocks,
@@ -121,8 +125,8 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                 column_title = coltitle,
                 row_title = "Latent Factors",
                 row_names_gp = grid::gpar(fontsize = 7),
-                show_column_names = T,
-                show_row_names = T,
+                show_column_names = TRUE,
+                show_row_names = TRUE,
                 row_names_side = "right"
         )    
       return(p)
@@ -140,6 +144,9 @@ global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
 #' @param feature_name the name of the input
 #' @param select_features a vector of numbers to filter features 
 #' @return the ggplot2 object
+#' @importFrom ComplexHeatmap Heatmap
+#' @importFrom grid gpar
+#' @importFrom circlize colorRamp2
 #' @export
 corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
                                             feature_mat,
@@ -156,7 +163,7 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
         }
         
         # make a heatmap of the correlations
-        color_func = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
+        color_func = circlize::colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
         title = sprintf('MCIA latent factors versus %s', feature_name)
         p = ComplexHeatmap::Heatmap(lf_corrs, 
                 name = "Pearson's R", 
@@ -164,8 +171,8 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
                 row_title = "Latent Factors",
                 row_names_gp = grid::gpar(fontsize = 7),
                 col = color_func,
-                show_column_names = T,
-                show_row_names = T,
+                show_column_names = TRUE,
+                show_row_names = TRUE,
                 row_names_side = "right"
         )    
       return(p)
@@ -182,6 +189,8 @@ corr_heatmap_fvl_ComplexHeatmap <- function(global_scores,
 #' @param feature_name the name of the input
 #' @param select_features a vector of numbers to filter features 
 #' @return the ggplot2 object
+#' @importFrom ggplot2 ggplot geom_tile ggtitle theme scale_fill_distiller scale_y_continuous aes element_text
+#' @importFrom reshape2 melt
 #' @export
 corr_heatmap_fvl_ggplot2 <- function(global_scores,
                                      feature_mat, 
@@ -190,18 +199,18 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
   
     # correlate the factors and task
     lf_corrs = cor(global_scores, feature_mat)
-    lf_corrs = melt(lf_corrs)
+    lf_corrs = reshape2::melt(lf_corrs)
     colnames(lf_corrs) = c('Factor', 'Feature', 'Corr')
     
     # make a heatmap of the correlations
     title = sprintf('MCIA latent factors versus %s', feature_name)
-    p = ggplot(lf_corrs, aes(Feature, Factor, fill=Corr)) + 
-        geom_tile() + 
-        ggtitle(title) + 
-        theme(plot.title = element_text(size=12)) + 
-        scale_fill_distiller(palette = 'RdYlBu', limits=c(-1, 1)) + 
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
-        scale_y_continuous(breaks=seq(0,nrow(lf_corrs),1))
+    p = ggplot2::ggplot(lf_corrs, ggplot2::aes(Feature, Factor, fill=Corr)) + 
+        ggplot2::geom_tile() + 
+        ggplot2::ggtitle(title) + 
+        ggplot2::theme(plot.title = ggplot2::element_text(size=12)) + 
+        ggplot2::scale_fill_distiller(palette = 'RdYlBu', limits=c(-1, 1)) + 
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+        ggplot2::scale_y_continuous(breaks=seq(0,nrow(lf_corrs),1))
     
     return(p)
 }
@@ -216,6 +225,8 @@ corr_heatmap_fvl_ggplot2 <- function(global_scores,
 #' @return data frame with the most significant p-value number of significant
 #' pathways
 #' @return the selectivity scores across the given factors
+#' @importFrom fgsea gmtPathways fgseaMultilevel
+#' @importFrom dplyr n_distinct
 #' @export
 gsea_report <- function(metagenes, path.database, factors=NULL, pval.thr=0.05,
                         nproc=4){

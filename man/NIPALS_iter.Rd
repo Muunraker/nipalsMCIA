@@ -29,5 +29,4 @@ utility function for `nipals_multiblock` to be used between deflation steps.
 }
 \examples{
 nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
-
 }

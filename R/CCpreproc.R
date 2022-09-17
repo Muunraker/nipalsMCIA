@@ -12,6 +12,8 @@
 #' }
 #' @param df the data frame to apply pre-processing to, in "sample" x "variable" format 
 #' @return the processed data frame
+#' @examples 
+#' preproced_df <- CCpreproc(df)
 #' @export
 CCpreproc <- function(df){
   temp_df <- as.matrix(df)

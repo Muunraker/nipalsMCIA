@@ -15,7 +15,7 @@
 #' @return a list containing the global/block scores, loadings and weights for a given order
 #' @examples 
 #' nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
-#' 
+#' @importFrom pracma rand
 #' @export
 NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   

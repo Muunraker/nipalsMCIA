@@ -35,12 +35,12 @@ addpath('<path to MATLAB_MCIA>\Functions')
 The package currently includes only one vignette - a cut version of a three-omic NCI-60
 cancer cell line dataset. Only one function call is needed to perform MCIA: 
 ```{r}
-data(NCI60) # import data as "data_blocks"
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 8, tol=1e-9)
-
+data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
+mcia_results <- nipals_multiblock(data_blocks,  preprocMethod='colprofile',
+    metadata = metadata_NCI60, coloring = "cancerType",num_PCs = 10, tol=1e-12)
 ```
 Note: this dataset is reproduced from the omicade4 package (Meng et. al., 2014). This package assumes
-all input datasets are in sample by feature format. 
+all input datasets are in sample by feature format.
 
 Meng, C., Kuster, B., Culhane, A. C., & Gholami, A. M. (2014). A multivariate approach to the integration of multi-omics datasets. BMC bioinformatics, 15(1), 1-13.
 

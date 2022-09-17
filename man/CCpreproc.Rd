@@ -25,3 +25,6 @@ Performs the following steps on a given data frame: \itemize{
 \item Divides the whole data frame by its total variance (the sqrt of the sum of singular values)
 }
 }
+\examples{
+preproced_df <- CCpreproc(df)
+}
