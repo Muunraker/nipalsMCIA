@@ -8,3 +8,4 @@
 *.un~
 .Rproj.user
 /Meta/
+inst/doc
