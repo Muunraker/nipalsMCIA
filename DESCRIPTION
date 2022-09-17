@@ -2,8 +2,11 @@ Package: nipalsMCIA
 Version: 0.1.0
 Date: 2022-06-04
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
-Authors@R: c(person("Max","Mattessich", role = c("aut", "cre"),
-                     email = "maximilianmattessich2027@u.northwestern.edu"))
+Authors@R: c(
+    person("Maximilian", "Mattessich", email = "maximilian.mattessich@northwestern.edu",role = "cre"),
+    person("Anna", "Konstorum",role = "aut"),
+    person("Joaquin", "Reyna",role = "aut"),
+    person("Eden", "Aron",role = "aut"))
 Description: Computes Multiple Co-Inertia Analysis (MCIA) for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).
 License: GPL (>= 3)
 RoxygenNote: 7.2.1
@@ -21,8 +24,7 @@ Imports:
     ComplexHeatmap,
     fgsea,
     tidyverse
-Author: Max Mattessich[aut, cre],
-Maintainer: Max Mattessich <maximilian.mattessich@northwestern.edu>
+Url: https://github.com/Muunraker/nipalsMCIA
 Encoding: UTF-8
 Suggests: 
     knitr,

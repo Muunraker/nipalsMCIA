@@ -4,7 +4,13 @@
 \alias{gsea_report}
 \title{Perform biological annotation-based comparison}
 \usage{
-gsea_report(metagenes, path.database, factors = NULL, pval.thr = 0.05)
+gsea_report(
+  metagenes,
+  path.database,
+  factors = NULL,
+  pval.thr = 0.05,
+  nproc = 4
+)
 }
 \arguments{
 \item{metagenes}{Vector of gene scores where the row names are HUGO symbols}
