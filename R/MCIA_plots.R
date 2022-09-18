@@ -27,7 +27,7 @@
 #' clus_colors <- list("red", "green","blue")
 #' MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
 #'            labelColors = clus_colors, legend_loc = "bottomleft")
-#' 
+#' @return Displays the desired plots
 #' @export
 MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
                        coloring = 'none',

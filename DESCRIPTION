@@ -27,4 +27,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-biocViews: GeneTarget, SingleCell
+biocViews: Software, Clustering, Classification, MultipleComparison

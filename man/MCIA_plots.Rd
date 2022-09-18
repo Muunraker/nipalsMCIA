@@ -36,6 +36,9 @@ determining which color groupings to use (projection plots only)
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
 }
+\value{
+Displays the desired plots
+}
 \description{
 Function to generate descriptive plots for MCIA.
 }
@@ -49,5 +52,4 @@ mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 
 clus_colors <- list("red", "green","blue")
 MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
            labelColors = clus_colors, legend_loc = "bottomleft")
-
 }
