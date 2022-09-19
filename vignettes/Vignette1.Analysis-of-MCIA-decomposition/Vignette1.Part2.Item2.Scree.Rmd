@@ -1,0 +1,49 @@
+---
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+output:
+  html_document: default
+---
+
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
+```{r setup-V1-P2-I2, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42) # NIPALS starts with a random vector
+```
+
+```{r, echo=FALSE, include=FALSE}
+library(nipalsMCIA)
+library(ggplot2)
+library(ComplexHeatmap)
+```
+
+<!-- Loading NCI60 data and running nipals_multiblock()
+    whenever running from individual Rmarkdowns -->
+```{r child="Load-Shared-Vars.Rmd", include=FALSE}
+```
+
+### Scree Plot: Visualizing the top features per factor
+```{r, fig.height=2.5, fig.width=5.5}
+# make into function
+gl<-mcia_results$global_loadings
+omic_list<-gsub("^.*_", "", rownames(gl))
+factor<-4
+gl_f<-data.frame(gl[,factor])
+gl_f$omic<-omic_list
+colnames(gl_f)<-c("weight",'omic')
+gl_f_ord<-gl_f[order(gl_f$weight, decreasing=TRUE),]
+
+# look at mRNA (need to filter since issue with miRNA omic name)
+gl_f_ord_mRNA<-gl_f_ord[gl_f_ord$omic=="mrna",]
+omic_name<-sub("_.*", "",rownames(gl_f_ord_mRNA) )
+gl_f_ord_mRNA$omic_name<-sub("_.*", "",rownames(gl_f_ord_mRNA) )
+ggplot(gl_f_ord_mRNA[0:30,], aes(x=factor(omic_name,level=omic_name), y=weight))+
+      geom_point()+
+      theme_bw()+
+      xlab('Feature')+
+      theme(axis.text.x=element_text(angle=45, hjust=1))
+```
