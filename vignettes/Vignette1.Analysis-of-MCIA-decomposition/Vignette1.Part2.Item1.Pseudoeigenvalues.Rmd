@@ -27,7 +27,7 @@ library(ComplexHeatmap)
 ```
 
 ## Part 2: Interpreting Global Loadings
-In addition to the global scores matrix, MCIA also calculates a global loadings matrix that is $(m_1 + ... + m_j + ... + m_R) \times k$ where $m_j$ is the number of features within the omics matrix $X^j$ and $K$ is the number of factors calculated. This second matrix provides information as to the contribution  
+In addition to the global scores matrix, MCIA also calculates a global loadings matrix $A$ that is $p\times r$.
 
 ### Pseudoeigenvalues representing the contribution of each omic to the global factor score
 ```{r, fig.width=4, fig.height=1.5, fig.align='center'}

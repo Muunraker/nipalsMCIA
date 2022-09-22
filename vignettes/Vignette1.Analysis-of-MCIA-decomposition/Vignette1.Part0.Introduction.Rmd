@@ -71,7 +71,7 @@ This matrix encodes a low-dimensional representation of the data set, with the
 $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th
 sample. 
 
-The `global_scores` matrix is represented by $\mb A$ tht is $p \times r$, where
+The `global_loadings` matrix is represented by $\mb A$ tht is $p \times r$, where
 $p$ is the number of features across all omics and $r$ is as before. Each column
 of this matrix represents one of the orders of global loadings computed, i.e.
 $$
