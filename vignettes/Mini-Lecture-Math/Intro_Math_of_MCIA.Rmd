@@ -8,7 +8,8 @@ header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
 date: "9/1/2022"
-output: pdf_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}

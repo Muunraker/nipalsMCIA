@@ -31,27 +31,53 @@ library(ComplexHeatmap)
 
 ### nipals_multiblock() Generates Basic Visualizations
 In the introduction we showed how to calculate the MCIA decomposition using
-`nipals_multiblock()` but used the parameter `plots='none'`. By default, this
-function will generate two plots which help establish an initial intuition for
-the MCIA decomposition. Here we will re-run `nipals_multiblock()` and omit the
-`plots` parameter (default=all):
+`nipals_multiblock()` but used the parameter `plots='none'` to avoid the default
+plotting behavior of this function. By default, this function will generate two
+plots which help establish an initial intuition for the MCIA decomposition.
+Here we will re-run `nipals_multiblock()` and omit the `plots` parameter
+(default=all):
 ```{r, warning=FALSE, message=FALSE, fig.height=4, fig.width=8, fig.align='center'}
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',
                                   num_PCs = 10, tol=1e-12)
 ```
 
-The first plot returned visualizes the first two global factors, with the block factors plotted as shapes connected to the global factors. If a block (in this case, one omics type) is plotted far from its corresponding global factor, this is an indication that the block does not agree with the whole-dataset trend. This may indicate batch effects in data collection, or indicate some underlying difference between blocks. 
+The first plot visualizes each sample using factor 1 and 2 as a lower
+dimensional representation (Factor plot). Each sample is actually represented by
+4 points, a center point (solid block dot) which represents to global factor
+score, a mRNA factor score (square), a miRNA factor score (circle), and a
+protein factor score (triangle). The last three omic-specific block factor
+scores are connected to the global factor point by lines. If a block factor
+scores is plotted far from its corresponding global factor score then this is
+an indication that the block does not agree with/contribute to the trend found
+by the global decomposition but can also be an proxy for batch effects within
+a particular block if points from a block are consistently far away from their
+global point. As an example, we can take a look at the global factor score at
+$(-1.1, 0.4)$, the block factor scores are all quite near which suggests all
+three omics are contributing somewhat equally, this is contrast to the global
+factor score at $(-0.3, 0.9)$ where the mRNA factor score is close but the
+mRNA and miRNA are far from their respective global factor score.
 
-The second plot returned is a scree plot of factor singular values, where higher values indicate a given order of factor is more important. This can be interpreted exactly the same as an eigenvalue scree plot in principal component analysis.
+The second plot is a scree plot of singular values corresponding to global
+factors, higher values assign a greater importance and can be interpreted
+exactly the same as an eigenvalue scree plot in principal component analysis.
 
-### Visualizing only global factor scores
-For clustering, it is useful to only look at global factors (without block factors). The `MCIA_plots()` function can be used to generate this plot with the `projection_global` argument:
+### Visualizing a Factor Plot with Only Global Factor Scores
+For clustering, it is useful to look at global factor scores without block
+factor scores. The `MCIA_plots()` function can be used to generate such a plot
+using `plotType=projection_global` as show below:
 
 ```{r Visualize Clusters, fig.height=4, fig.width=4, fig.align='center'}
 MCIA_plots(mcia_results,'projection_global',orders = c(1,2), legend_loc = "bottomleft")
 ```
 
-It may be helpful to color points by some external label. The `MCIA_plots()` function can do this with a `metadata` argument. The `metadata` object is a dataframe of labels for each sample, possibly containing multiple types of external data. For instance, each of the 21 samples in the NCI-60 dataset relates to one of three cancer types: CNS, Leukemia, or Melanoma. Thus we create the metadata object with the `cancerType` column:
+In addition, factor plots are most helpful when points are colored by a
+meaningful label such as cancer type. The `MCIA_plots()` function can include
+such data using the `metadata` argument. The `metadata` arguments requires a
+dataframe where rows are samples and columns are different labels, allowing
+for a variety of visualization objectives/explorations. For instance, each of
+the 21 samples in the NCI-60 dataset represents a patient with one of three
+cancer types: CNS, Leukemia, or Melanoma. Thus we create a metadata dataframe
+with a column for cancer type, `cancerType`:
 
 ```{r}
 CNS = 1:6; LEU = 7:12; ME = 13:21;
@@ -63,10 +89,9 @@ metadata_NCI60 <- data.frame(cancerType = unlist(nameslist))
 row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
 
 #View(metadata_NCI60)
-
 ```
 
-This object can be passed into the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`. 
+This dataframe can be passed into the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`. 
 
 ```{r, warning=FALSE, message=FALSE}
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', 
@@ -83,4 +108,4 @@ MCIA_plots(mcia_results,'projection_global',orders = c(1,2),coloring = 'cancerTy
            legend_loc = "bottomleft")
 ```
 
-Clusters of samples can be computed from the global factors using any method, such as k-means clustering. 
+Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.

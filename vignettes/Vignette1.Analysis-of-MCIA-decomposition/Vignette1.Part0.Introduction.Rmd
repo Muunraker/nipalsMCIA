@@ -22,7 +22,7 @@ library(ComplexHeatmap)
 ```
 
 ## Introduction 
-In the mini-lectures we covered in detail the math behind MCIA as well as a generic pipeline for using MCIA. In this vignette we will cover the most important functions within the nipalsMCIA packages as well as downstream analyses that help can interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block data. For this vignette we are using a cancer data set from (Meng et al., 2016) and includes 21 subjects with three data blocks. The data blocks include mRNA levels (12895 features), microRNA levels (537 features) and protein levels (7016 features). Without a multi-block method, researchers may try to use feature reduction methods on each block individually but this strategy ignores relationships between different blocks or under-appreciates signals which are specific to one block. In the context of the NCI60 data set and this vignette, we will show you the power of MCIA to find important relationships between mRNA, microRNA and proteins. More specifically, we will show you how to interpret the global factor scores in Part 1 and global loadings in Part 2. 
+In the mini-lectures we covered in detail the math behind MCIA as well as a generic pipeline. In this vignette we will cover the most important functions within the nipalsMCIA package as well as downstream analyses that help can interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block data. For this vignette we are using a cancer data set from (Meng et al., 2016) that includes 21 subjects with three data blocks. The data blocks include mRNA levels (12895 features), microRNA levels (537 features) and protein levels (7016 features). Without a multi-block method, researchers may try to use feature reduction methods on each block individually but this strategy ignores relationships between different blocks or under-appreciates signals which are specific to one block. In the context of the NCI60 data set and this vignette, we will show you the power of MCIA to find important relationships between mRNA, microRNA and proteins. More specifically, we will show you how to interpret the global factor scores in Part 1 and global loadings in Part 2. 
 
 **Preview of the NCI60 dataset**  
 
@@ -71,7 +71,7 @@ This matrix encodes a low-dimensional representation of the data set, with the
 $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th
 sample. 
 
-The `global_scores` matrix is represented by $\mb A$ tht is $p \times r$, where
+The `global_loadings` matrix is represented by $\mb A$ tht is $p \times r$, where
 $p$ is the number of features across all omics and $r$ is as before. Each column
 of this matrix represents one of the orders of global loadings computed, i.e.
 $$
