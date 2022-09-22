@@ -1,12 +1,9 @@
 #library('biomaRt')
 
-#' Plotting a heatmap of global_loadings versus features
+#' Plotting a heatmap of global factors scores (sample v. factors)
 #'
-#' @description Plots a heatmap of MCIA global_loadings versus factors
-#' @param global_loadings the global_loadings matrix after running MCIA
-#' @param data_blocks the list of matrices used to calculate the MCIA factors
-#' @param omic_name the name of the omic that should be plot, should be in data_blocks
-#' @param select_features a vector of numbers to filter features 
+#' @description Plots a heatmap of MCIA global scores 
+#' @param global_scores the global_scores matrix after running MCIA
 #' @return the ggplot2 object
 #' @export
 global_scores_heatmap_ComplexHeatmap <- function(global_scores){
