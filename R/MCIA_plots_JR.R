@@ -9,6 +9,29 @@
 #' @param select_features a vector of numbers to filter features 
 #' @return the ggplot2 object
 #' @export
+global_scores_heatmap_ComplexHeatmap <- function(global_scores){
+    colnames(global_scores) = paste0('F', seq(1, ncol(global_scores)))
+    p = ComplexHeatmap::Heatmap(global_scores, 
+                                name = "GS Score", 
+                                column_title = "Factors",
+                                row_title = "Samples",
+                                row_names_gp = grid::gpar(fontsize = 7),
+                                show_column_names = T,
+                                show_row_names = T,
+                                row_names_side = "right"
+    )    
+    return(p)
+}
+
+#' Plotting a heatmap of global_loadings versus features
+#'
+#' @description Plots a heatmap of MCIA global_loadings versus factors
+#' @param global_loadings the global_loadings matrix after running MCIA
+#' @param data_blocks the list of matrices used to calculate the MCIA factors
+#' @param omic_name the name of the omic that should be plot, should be in data_blocks
+#' @param select_features a vector of numbers to filter features 
+#' @return the ggplot2 object
+#' @export
 global_loadings_heatmap_ComplexHeatmap <- function(global_loadings,
                                                    data_blocks,
                                                    omic_name, 
