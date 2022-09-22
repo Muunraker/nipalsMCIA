@@ -10,7 +10,7 @@ output:
 \newcommand{\var}{\text{var}}
 \newcommand{\cov}{\text{cov}}
 
-```{r setup-V1-P2-I2, include=FALSE}
+```{r setup-V1-P2-I2, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 set.seed(42) # NIPALS starts with a random vector
 ```
@@ -22,10 +22,11 @@ library(nipalsMCIA)
 
 <!-- Loading NCI60 data and running nipals_multiblock()
     whenever running from individual Rmarkdowns -->
-```{r child="Load-Shared-Vars.Rmd", include=FALSE}
+```{r child = "Load-Shared-Vars.Rmd", include = FALSE}
 ```
 
-```{r, echo=FALSE, include=FALSE}
+
+```{r, echo = FALSE, include = FALSE}
 library(ggplot2)
 library(ComplexHeatmap)
 library(RColorBrewer)
@@ -33,124 +34,138 @@ library(ggpubr)
 ```
 
 ### New functions to visualize loadings
-```{r, fig.height=2.5, fig.width=5.5}
+```{r, fig.height = 2.5, fig.width = 5.5}
 
 # This list will be available as part of the output of nipals_multiblock() function in the future
-omic_list<-omic_list<-c("mrna","miRNA","prot")
+omic_list <- c("mrna","miRNA","prot")
 
 # create a dataframe attributing specific colors to each color in omic_list
-omic_colors<-function(omic_list){
-   color_dict<-data.frame(brewer.pal(n=length(omic_list), name="Set1"))
-   rownames(color_dict)<-omic_list
-   colnames(color_dict)<-c('color')
+omic_colors <- function(omic_list) {
+   color_dict <- data.frame(brewer.pal(n = length(omic_list), name = "Set1"))
+   rownames(color_dict) <- omic_list
+   colnames(color_dict) <- c('color')
    return(color_dict)
 }
 
+# named list of colors instead
+colors_omics <- c("miRNA" = "#41b6c4", "mrna" = "#2c7fb8", "prot" = "#253494") # shades of blue
+
 # Create a dataframe with ranked loadings for factor of interest
-# Ranking can be by absolute value (absolute=TRUE), 
-# by all omics or just one (omic="all", omic="miRNA", etc.)
-# by positive -> negative (pos=TRUE) or negative -> postive (pos=FALSE), only relevant if absolute=FALSE
-
-ord_loadings <-function(mcia_out,omic="all",absolute=FALSE, pos=TRUE,factor=1){
-
-gl<-mcia_out$global_loadings
-omic_name<-gsub("^.*_", "", rownames(gl))
-
-gl_f<-data.frame(gl[,factor])
-gl_f$omic<-omic_name
-gl_f$omic<-as.factor(gl_f$omic)
-colnames(gl_f)<-c("loading","omic")
-
-if (absolute==FALSE){
-   if (pos==TRUE) {gl_f_ord<-gl_f[order(gl_f$loading, decreasing=TRUE),]}
-   else {gl_f_ord<-gl_f[order(gl_f$loading, decreasing=FALSE),]}
-}
-else {
-   gl_f_abs<-gl_f
-   gl_f_abs$abs<-abs(gl_f_abs$loading)
-   gl_f_ord<-gl_f_abs[order(gl_f_abs$abs,decreasing=TRUE),]}
-
-if (omic!="all"){
-   gl_f_ord<-gl_f_ord[gl_f_ord$omic==omic,]
-}
-
-gl_f_ord$omic_name<-rownames(gl_f_ord)
-gl_f_ord$factor<-factor
-
-return(gl_f_ord)
+# Ranking can be by absolute value (absolute = TRUE), 
+# by all omics or just one (omic = "all", omic = "miRNA", etc.)
+# by positive -> negative (pos = TRUE) or negative -> postive (pos = FALSE), only relevant if absolute = FALSE
+ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE, pos = TRUE, factor = 1) {
+   gl <- mcia_out$global_loadings
+   omic_name <- gsub("^.*_", "", rownames(gl))
+   
+   gl_f <- data.frame(gl[,factor])
+   gl_f$omic <- omic_name
+   gl_f$omic <- as.factor(gl_f$omic)
+   colnames(gl_f) <- c("loading", "omic")
+   
+   if (absolute == FALSE) {
+      if (pos == TRUE) {gl_f_ord <- gl_f[order(gl_f$loading, decreasing = TRUE),]}
+      else {gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE),]}
+   }
+   else {
+      gl_f_abs <- gl_f
+      gl_f_abs$abs <- abs(gl_f_abs$loading)
+      gl_f_ord <- gl_f_abs[order(gl_f_abs$abs, decreasing = TRUE),]}
+   
+   if (omic != "all") {
+      gl_f_ord <- gl_f_ord[gl_f_ord$omic == omic,]
+   }
+   
+   gl_f_ord$omic_name <- rownames(gl_f_ord)
+   gl_f_ord$factor <- factor
+   
+   return(gl_f_ord)
 }
 
 ### Visualize loadings in output from ord_loadings functions
 # n_feat is number of features to visualize
-vis_load_ord<-function(gl_f_ord, omic_list, n_feat=30){
-   colors_omic<-omic_colors(omic_list)
-   n_plot<-min(nrow(gl_f_ord),n_feat)
-   omic_subset<-names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
-   color_vals<-colors_omic[omic_subset,'color']
-   ggplot(gl_f_ord[1:n_plot,], aes(x=factor(omic_name,level=omic_name), y=loading,color=omic))+
-         geom_point()+
-         theme_bw()+
-         xlab('Feature')+
-         theme(axis.text.x=element_text(angle=45, hjust=1,size=6))+
-         scale_color_manual(values=color_vals)
+vis_load_ord <- function(gl_f_ord, omic_list, n_feat = 30) {
+   # colors_omic <- omic_colors(omic_list)
+   n_plot <- min(nrow(gl_f_ord), n_feat)
+   omic_subset <- names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
+   # color_vals <- colors_omic[omic_subset, 'color']
+   color_vals <- colors_omics[omic_subset]
+   
+   ggplot(data = gl_f_ord[1:n_plot,], 
+          aes(x = factor(omic_name, level = omic_name), y = loading, color = omic)) +
+      geom_point() +
+      theme_bw() +
+      xlab('Feature') +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+      scale_color_manual(values = color_vals)
 }
          
 ### Visualize all feature loadings on two axes
+vis_load_plot <- function(mcia_out, axes = c(1,2), omic_list) {
+   gl <- mcia_out$global_loadings
+   omic_name <- gsub("^.*_", "", rownames(gl))
+   gl_f <- data.frame(gl[,axes])
+   gl_f$omic <- omic_name
+   gl_f$omic <- as.factor(gl_f$omic)
    
-vis_load_plot<-function(mcia_out,axes=c(1,2),omic_list){
-
-   gl<-mcia_out$global_loadings
-   omic_name<-gsub("^.*_", "", rownames(gl))
-   gl_f<-data.frame(gl[,axes])
-   gl_f$omic<-omic_name
-   gl_f$omic<-as.factor(gl_f$omic)
+   # colors_omic <- data.frame(brewer.pal(n = length(omic_list), name = "Set1"))
+   # rownames(colors_omic) <- omic_list
+   # colnames(colors_omic) <- c('color')
    
-   colors_omic<-data.frame(brewer.pal(n=length(omic_list), name="Set1"))
-   rownames(colors_omic)<-omic_list
-   colnames(colors_omic)<-c('color')
+   colnames(gl_f) <- c(paste0('Axis_',axes[1]),paste0('Axis_',axes[2]),"omic")
+   # color_vals <- omic_colors(omic_list)$color
    
-   colnames(gl_f)<-c(paste0('Axis_',axes[1]),paste0('Axis_',axes[2]),"omic")
-   color_vals<-omic_colors(omic_list)$color
-   out<-ggplot(gl_f, aes_string(x=colnames(gl_f)[1], y=colnames(gl_f)[2], color="omic"))+
-      geom_point(alpha=0.3)+
-      theme_bw()+
-      scale_color_manual(values=color_vals)
-   return(out)
+   color_vals <- colors_omics[omic_subset]
+   
+   ggplot(data = gl_f, 
+          aes_string(x = colnames(gl_f)[1], y = colnames(gl_f)[2], color = "omic")) +
+      geom_point(alpha = 0.3) +
+      theme_bw() +
+      scale_color_manual(values = color_vals)
 }
 
 ```
 
 ### Scree Plot: Visualizing the top features per factor
-```{r, fig.width=5, fig.height=2}
 
-all_pos_1<-ord_loadings(mcia_results, omic="all",absolute=FALSE,pos=TRUE,factor=1)
-mrna_pos_1<-ord_loadings(mcia_results, omic="mrna",absolute=FALSE,pos=TRUE,factor=1)
-all_abs_2<-ord_loadings(mcia_results, omic="all",absolute=TRUE,pos=TRUE,factor=2)
-prot_abs_2<-ord_loadings(mcia_results, omic="prot",absolute=TRUE,pos=TRUE,factor=2)
-
-all_pos_1_vis<-vis_load_ord(all_pos_1,omic_list)
-mrna_pos_1_vis<-vis_load_ord(mrna_pos_1,omic_list)
-all_abs_2_vis<-vis_load_ord(all_abs_2,omic_list)
-prot_abs_2_vis<-vis_load_ord(prot_abs_2,omic_list)
-
+```{r, fig.width = 5, fig.height = 2}
+# define the loadings
+all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
+                          absolute = FALSE, pos = TRUE, factor = 1)
+mrna_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "mrna", 
+                           absolute = FALSE, pos = TRUE, factor = 1)
+all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
+                          absolute = TRUE, pos = TRUE, factor = 2)
+prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot", 
+                           absolute = TRUE, pos = TRUE, factor = 2)
 ```
 
 ```{r}
-ggarrange(all_pos_1_vis,mrna_pos_1_vis)
+all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_list = omic_list)
+mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_list = omic_list)
+
+ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
 ```{r}
-ggarrange(all_abs_2_vis,prot_abs_2_vis)
+all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_list = omic_list)
+prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_list = omic_list)
+
+ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
+
 ```{r}
-all_abs_5<-ord_loadings(mcia_results, omic="all",absolute=FALSE,pos=TRUE,factor=4)
-all_abs_5_vis<-vis_load_ord(all_abs_5,n_feat=60,omic_list)
+all_abs_5 <- ord_loadings(mcia_results, omic = "all", 
+                          absolute = FALSE, pos = TRUE, factor = 4)
+all_abs_5_vis <- vis_load_ord(gl_f_ord = all_abs_5, omic_list = omic_list, n_feat = 60)
+
 all_abs_5_vis
 ```
 
 
 ### Visualize all feature loadings on two axes
+
 ```{r}
-axes_1_2<-vis_load_plot(mcia_results, axes<-c(1,4),omic_list)
+axes_1_2 <- vis_load_plot(mcia_results, axes = c(1, 4), omic_list)
 axes_1_2
 ```
