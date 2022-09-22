@@ -8,8 +8,8 @@ MCIA_plots(
   mcia_result,
   plotType,
   orders = c(1, 2),
-  clusters = "none",
-  clusterColors = list("red", "green", "blue", "yellow", "brown", "orange", "maroon",
+  coloring = "none",
+  labelColors = list("red", "green", "blue", "yellow", "brown", "orange", "maroon",
     "magenta", "turquoise", "darkgreen", "darkblue", "gold", "pink"),
   legend_loc = "bottomleft"
 )
@@ -26,15 +26,18 @@ MCIA_plots(
 
 \item{orders}{Option to selecct orders of factors to plot against each other (for projection plots)}
 
-\item{clusters}{Option to plot clusters in projection plots, with two options:\itemize{
-\item `none` (default) - no clusters plotted
-\item `metadata` - provide cluster labels in the `metadata` field of the `mcia_result` argument. 
-`metadata` field must be a list of strings of cluster names for each sample/row in the dataset.  
+\item{coloring}{Option to plot clusters/colors in projection plots, with two options:\itemize{
+\item `none` (Default) - no clusters/colors plotted.
+\item A character string of the column name of the `mcia_result$metadata` dataframe 
+determining which color groupings to use (projection plots only) 
 }}
 
-\item{clusterColors}{Option to specify cluster color strings.}
+\item{labelColors}{Option to specify  colors for labels.}
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
+}
+\value{
+Displays the desired plots
 }
 \description{
 Function to generate descriptive plots for MCIA.
@@ -43,17 +46,10 @@ Function to generate descriptive plots for MCIA.
 Plotting function for a variety of MCIA visualization options.
 }
 \examples{
-# Plotting clusters with different colors
 data(NCI60)
-mcia_res <- nipals_multiblock(data_blocks,num_PCs = 10, plots = 'none', tol=1e-12)
-CNS = 1:6; LEU = 7:12; ME = 13:21;
-nameslist <- list()
-nameslist[CNS] <- "CNS"
-nameslist[LEU] <- "Leukemia"
-nameslist[ME] <- "Melanoma"
-mcia_res$metadata <- nameslist
+mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
+                              plots = 'none', tol=1e-12)
 clus_colors <- list("red", "green","blue")
-MCIA_plots(mcia_res,'projection',orders = c(1,2), clusters = 'metadata', 
-           clusterColors = clus_colors, legend_loc = "bottomleft")
-
+MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
+           labelColors = clus_colors, legend_loc = "bottomleft")
 }

@@ -70,7 +70,8 @@ function, then used to deflate the data matrix according to the desired deflatio
 This process is repeated up to the desired maximum order of scores/loadings.
 }
 \examples{
- NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
+ NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
+                                   preprocMethod='colprofile', deflationMethod = 'block')
  MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 

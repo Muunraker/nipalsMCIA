@@ -41,7 +41,8 @@
 #' \item `none` does not display plots
 #' }
 #' @examples 
-#'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 2, tol = 1e-7, maxIter = 1000, deflationMethod = 'block')
+#'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
+#'                                    preprocMethod='colprofile', deflationMethod = 'block')
 #'  MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
 #'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
@@ -64,7 +65,6 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     
     # Error catching for no names - creates default values
     if(is.null(fNames)){
-      message(paste("feature names omic",i))
       fNames <- paste("feature",1:dim(data_blocks[[i]])[[2]],sep="_") 
     }
     
@@ -73,7 +73,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     lastchars <- lastchars[[1]][[length(lastchars[[1]])]]
     
     # If features do not have omics name at end of name, add it
-    if(!tolower(lastchars) == oName){
+    if(!tolower(lastchars) == oName & !lastchars ==oName){
       new_names <- paste(fNames,oName,sep = "_")
       names(data_blocks[[i]]) <- new_names
     }
