@@ -182,7 +182,7 @@ colors_omics<-get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
 ```
 
-### Scree Plot: Visualizing the top features per factor
+### Scree Plot: Visualizing the top features per factor.
 
 ```{r, fig.width = 5, fig.height = 2}
 # define the loadings
