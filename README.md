@@ -21,7 +21,7 @@ You can install the development version of nipalsMCIA from
 
 ``` r
 library(devtools)
-devtools::install_github("Muunraker/nipalsMCIA",ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
                          force = TRUE, build_vignettes = TRUE)
 library(nipalsMCIA)
 ```
@@ -36,11 +36,13 @@ frame containing the cancer type associated with each cell line.
 
 ``` r
 data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
+
 summary(data_blocks)
 #>       Length Class      Mode
 #> mrna  12895  data.frame list
 #> miRNA   537  data.frame list
 #> prot   7016  data.frame list
+
 metadata_NCI60
 #>               cancerType
 #> CNS.SF_268           CNS
@@ -66,19 +68,21 @@ metadata_NCI60
 #> ME.MDA_MB_435   Melanoma
 ```
 
-Note: this dataset is reproduced from the omicade4 package (Meng et.
-al., 2014). This package assumes all input datasets are in sample by
-feature format.
+Note: this dataset is reproduced from the [omicade4
+package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
+(Meng et. al., 2014). This package assumes all input datasets are in
+sample by feature format.
 
 The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
 
 ``` r
-mcia_results <- nipals_multiblock(data_blocks,  preprocMethod='colprofile',
-                      metadata = metadata_NCI60, coloring = "cancerType",num_PCs = 10, tol=1e-12)
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
+                                  metadata = metadata_NCI60, coloring = "cancerType", 
+                                  num_PCs = 10, tol = 1e-12)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-call-mcia-1.png" width="100%" />
 
 Here `numPCs` is the dimension of the low-dimensional embedding of the
 data chosen by the user.
