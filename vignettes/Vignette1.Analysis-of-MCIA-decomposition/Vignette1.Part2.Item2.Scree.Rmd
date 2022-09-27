@@ -47,8 +47,8 @@ Functions to import into DESCRIPTION:
 #' @examples
 #' colors_omics <- get_colors(mcia_out)
 
-get_colors<-function(mcia_out){
-   omic_list<-names(mcia_out$block_loadings)
+get_colors <- function(mcia_out) {
+   omic_list <- names(mcia_out$block_loadings)
    colors_omics <- scales::viridis_pal(option = "D")(length(omic_list))
    names(colors_omics) <- omic_list
    return(colors_omics)
@@ -72,13 +72,12 @@ get_colors<-function(mcia_out){
 #'                          absolute = FALSE, descending = TRUE, factor = 1)
 
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE, descending = TRUE, factor = 1) {
-   
    # list of omics plus 'all'
-   omics_names<- names(mcia_out$block_loadings)
-   omics_names<-c(omics_names,'all')
+   omics_names <- names(mcia_out$block_loadings)
+   omics_names <- c(omics_names, 'all')
    
    # Return error if omic not chosen from omics_names list
-   if (!(omic %in% omics_names)){stop("Error: choose appropriate omic")}
+   if (!(omic %in% omics_names)) {stop("Error: choose appropriate omic")}
    
    # Get global loadings and list of omics
    gl <- mcia_out$global_loadings
@@ -122,24 +121,23 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE, descending = 
 #' @param colors_omics named list of colors associated with omics,
 #' output of get_colors() function
 #' @param n_feat number of features to visualize
-#' @param pl display plot (pl=TRUE) inline
 #' @examples
-#' vis_load_ord(all_pos_1_df,colors_omics=colors_omics, pl=TRUE)
-#' all_pos_1_vis<-vis_load_ord(all_pos_1_df,colors_omics=colors_omics, pl=FALSE)
+#' vis_load_ord(all_pos_1_df, colors_omics = colors_omics)
 
-vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15, pl=TRUE) {
+vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
    n_plot <- min(nrow(gl_f_ord), n_feat)
    omic_subset <- names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
    color_vals <- colors_omics[omic_subset]
    
-   p<-ggplot(data = gl_f_ord[1:n_plot,], 
-          aes(x = factor(omic_name, level = omic_name), y = loading, color = omic)) +
-      geom_point() +
-      theme_bw() +
-      xlab('Feature') +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-      scale_color_manual(values = color_vals)
-   if (pl==TRUE){plot(p)}
+   p <- ggplot(data = gl_f_ord[1:n_plot,], 
+          aes(x = factor(omic_name, level = omic_name), 
+              y = loading, color = omic)) +
+         geom_point() +
+         theme_bw() +
+         xlab('Feature') +
+         theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+         scale_color_manual(values = color_vals)
+   
    return(p)
 }
 ```
@@ -164,57 +162,67 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
    gl_f$omic <- as.factor(gl_f$omic)
    
    colnames(gl_f) <- c(paste0('Axis_', axes[1]), paste0('Axis_', axes[2]), "omic")
-   color_vals <- colors_omics
    
-   p<-ggplot(data = gl_f, 
-          aes_string(x = colnames(gl_f)[1], y = colnames(gl_f)[2], color = "omic")) +
-      geom_point(alpha = 0.3) +
-      theme_bw() +
-      scale_color_manual(values = color_vals)
-   plot(p)
+   p <- ggplot(data = gl_f, 
+               aes_string(x = colnames(gl_f)[1], 
+                          y = colnames(gl_f)[2], color = "omic")) +
+         geom_point(alpha = 0.3) +
+         theme_bw() +
+         scale_color_manual(values = colors_omics)
+   return(p)
 }
 ```
 
 ### Visualize all feature loadings on two axes
 
 ```{r}
-colors_omics<-get_colors(mcia_results)
+colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
 ```
 
-### Scree Plot: Visualizing the top features per factor.
+### Scree Plot: Visualizing the top features per factor
 
-```{r, fig.width = 5, fig.height = 2}
+#### Factor 1
+
+```{r, fig.width = 10, fig.height = 5}
 # define the loadings
 all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
                           absolute = FALSE, descending = TRUE, factor = 1)
 mrna_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "mrna", 
                            absolute = FALSE, descending = TRUE, factor = 1)
-all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
-                          absolute = TRUE, descending = TRUE, factor = 2)
-prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot", 
-                           absolute = TRUE, descending = TRUE, factor = 2)
-```
 
-```{r, fig.width=10, fig.height=5}
-
-all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, colors_omics=colors_omics,pl=FALSE)
-mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1,colors_omics=colors_omics,pl=FALSE)
+# visualization
+all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, colors_omics = colors_omics)
+mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, colors_omics = colors_omics)
 
 ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-```{r, fig.width=10, fig.height=5}
-all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, colors_omics=colors_omics, pl=FALSE)
-prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, colors_omics=colors_omics, pl=FALSE)
+#### Factor 2
+
+```{r, fig.width = 10, fig.height = 5}
+# define the loadings
+all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
+                          absolute = TRUE, descending = TRUE, factor = 2)
+prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot", 
+                           absolute = TRUE, descending = TRUE, factor = 2)
+
+# visualization
+all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, colors_omics = colors_omics)
+prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, colors_omics = colors_omics)
 
 ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
 
-```{r, fig.width=10, fig.height=4}
-all_4 <- ord_loadings(mcia_results, omic = "all", 
-                          absolute = FALSE, descending = TRUE, factor = 4)
-all_4_plot<-vis_load_ord(gl_f_ord = all_4, colors_omics=colors_omics, n_feat = 60,pl=TRUE)
+#### Factor 4
+
+```{r, fig.width = 10, fig.height = 4}
+all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE, 
+                      descending = TRUE, factor = 4)
+all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics, 
+                           n_feat = 60)
+
+all_4_plot
 ```
 
 
