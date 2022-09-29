@@ -37,8 +37,8 @@ plots which help establish an initial intuition for the MCIA decomposition.
 Here we will re-run `nipals_multiblock()` and omit the `plots` parameter
 (default=all):
 ```{r, warning=FALSE, message=FALSE, fig.height=4, fig.width=8, fig.align='center'}
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',
-                                  num_PCs = 10, tol=1e-12)
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
+                                  num_PCs = 10, tol = 1e-12)
 ```
 
 The first plot visualizes each sample using factor 1 and 2 as a lower
@@ -64,48 +64,44 @@ exactly the same as an eigenvalue scree plot in principal component analysis.
 ### Visualizing a Factor Plot with Only Global Factor Scores
 For clustering, it is useful to look at global factor scores without block
 factor scores. The `MCIA_plots()` function can be used to generate such a plot
-using `plotType=projection_global` as show below:
+using `plotType="projection_global"` as show below:
 
 ```{r Visualize Clusters, fig.height=4, fig.width=4, fig.align='center'}
-MCIA_plots(mcia_results,'projection_global',orders = c(1,2), legend_loc = "bottomleft")
+MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomleft")
 ```
 
 In addition, factor plots are most helpful when points are colored by a
 meaningful label such as cancer type. The `MCIA_plots()` function can include
 such data using the `metadata` argument. The `metadata` arguments requires a
-dataframe where rows are samples and columns are different labels, allowing
+data frame where rows are samples and columns are different labels, allowing
 for a variety of visualization objectives/explorations. For instance, each of
 the 21 samples in the NCI-60 dataset represents a patient with one of three
-cancer types: CNS, Leukemia, or Melanoma. Thus we create a metadata dataframe
-with a column for cancer type, `cancerType`:
-
+cancer types: CNS, Leukemia, or Melanoma. We have provided this metadata 
+as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`: 
 ```{r}
-CNS = 1:6; LEU = 7:12; ME = 13:21;
-nameslist <- list(1:21)
-nameslist[CNS] <- "CNS"
-nameslist[LEU] <- "Leukemia"
-nameslist[ME] <- "Melanoma"
-metadata_NCI60 <- data.frame(cancerType = unlist(nameslist))
-row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
-
-#View(metadata_NCI60)
+metadata_NCI60
 ```
 
-This dataframe can be passed into the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`. 
+In order to use this data it must be converted into a data frame and passed as
+part of the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`:
 
 ```{r, warning=FALSE, message=FALSE}
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile', 
-                                  metadata = metadata_NCI60,
-                                  plots = 'none',num_PCs = 10, tol=1e-12)
-# Alternative method for adding metadata:
-mcia_results$metadata <- metadata_NCI60
+# Conversion of metadata to data frame 
+metadata_NCI60 <- data.frame(cancerType = unlist(metadata_NCI60))
+row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
 
+# Adding metadata as part of the nipals_multiblock() function
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile", 
+                                  metadata = metadata_NCI60, plots = "none",
+                                  num_PCs = 10, tol = 1e-12)
+
+# Alternative method for adding metadata
+mcia_results$metadata <- metadata_NCI60
 ```
 
-The `coloring` argument of `MCIA_plots()` can be used to determine which column of `metadata` is used for coloring the projection plots. In this case the column is `cancerType`:
+The `coloring` argument of `MCIA_plots()` can then be used to determine which column of `metadata` is used for coloring the projection plots, in this case the column is `cancerType`:
 ```{r Visualize Clusters Coloring, fig.height=4, fig.width=4, fig.align='center'}
-MCIA_plots(mcia_results,'projection_global',orders = c(1,2),coloring = 'cancerType',
-           legend_loc = "bottomleft")
+MCIA_plots(mcia_results, "projection_global", orders = c(1,2), coloring = "cancerType", legend_loc = "bottomleft")
 ```
 
 Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.
