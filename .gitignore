@@ -10,3 +10,5 @@
 /Meta/
 inst/doc
 /doc/
+.gitignore
+.DS_Store
