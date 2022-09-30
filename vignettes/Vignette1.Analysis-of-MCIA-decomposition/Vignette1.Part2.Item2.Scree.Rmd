@@ -15,21 +15,16 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(42) # NIPALS starts with a random vector
 ```
 
-
-```{r}
+```{r, echo = FALSE, include = FALSE}
+library(ggplot2)
+library(ggpubr)
 library(nipalsMCIA)
+library(scales)
 ```
 
 <!-- Loading NCI60 data and running nipals_multiblock()
-    whenever running from individual Rmarkdowns -->
+     whenever running from individual Rmarkdowns -->
 ```{r child = "Load-Shared-Vars.Rmd", include = FALSE}
-```
-
-
-```{r, echo = FALSE, include = FALSE}
-library(ggplot2)
-library(scales)
-library(ggpubr)
 ```
 
 Functions to import into DESCRIPTION:
@@ -224,5 +219,3 @@ all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
 
 all_4_plot
 ```
-
-

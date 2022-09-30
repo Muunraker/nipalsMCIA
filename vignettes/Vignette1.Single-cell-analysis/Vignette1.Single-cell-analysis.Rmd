@@ -1,7 +1,6 @@
 ---
 title: "Single cell analysis"
 author: "Edel Aron"
-date: '2022-09-20'
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
@@ -18,10 +17,10 @@ knitr::opts_chunk$set(echo = TRUE)
 You will need the [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) package from Bioconductor. It contains 9 different publicly available datasets from 10x Genomics.
 
 ```{r load-packages, echo = FALSE, include = FALSE}
-library(TENxPBMCData)
+library(ggplot2)
 library(nipalsMCIA)
+library(TENxPBMCData)
 ```
-
 
 ## Loading the data
 
@@ -35,5 +34,47 @@ counts(tenx_pbmc5k_CITEseq)
 
 # CITE-Seq data
 counts(altExp(tenx_pbmc5k_CITEseq))
+```
+
+
+## Match NCI60 structure
+
+*Just for testing*
+
+```{r examine-structure}
+# import data as "data_blocks" and metadata as "metadata_NCI60"
+data(NCI60)
+
+summary(data_blocks)
+
+metadata_NCI60
+
+# data_blocks$mrna
+```
+```{r match-structure}
+data_blocks_sc <- list()
+data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
+data_blocks_sc$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k_CITEseq))))
+
+summary(data_blocks_sc)
+
+save(data_blocks_sc, file = "data_blocks_sc.Rda")
+```
+
+
+
+## Results
+
+```{r original}
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
+                                  metadata = metadata_NCI60, coloring = "cancerType", 
+                                  num_PCs = 10, tol = 1e-12)
+```
+
+
+```{r sc, eval = FALSE}
+mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile',
+                                  # metadata = metadata_NCI60, coloring = "cancerType", 
+                                  num_PCs = 5, tol = 1e-12)
 ```
 
