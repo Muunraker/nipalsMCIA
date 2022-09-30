@@ -1,39 +1,68 @@
 ---
-title: "Mini-Lecture: Brief outline of the math behind MCIA"
+title: "Introduction to the Math of Multiple Co-Inertia Analysis"
 author:
     - Max Mattessich
     - Joaquin Reyna
     - Anna Konstorum
-date: "9/1/2022"
-output: pdf_document
+    - Edel Aron
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+ knitr::opts_chunk$set(echo = TRUE)
 ```
 
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+<!-- \DeclareMathOperator*{\argmax}{argmax } -->
+
 # Introduction
-Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality  reduction method which takes as input multiple datasets from the same sample but different different experimental sources. This method then calculates factors that find relationships across all data sources and the resulting matrix compositions can be used for a variety of downstream analyses.
+Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method designed to work on data that can be organized into several blocks of variables measured on the same subjects. These blocks could indicate variables of different categories (e.g. genes vs. protiens) or different experiments conducted on the same subjects. MCIA creates a set of 'factors' or 'scores' vectors along with accompanying 'loadings' vectors that aim to highlight trends common across all datsets. 
 
-# Theory
+# Notation for Initial Values, Dimensions and Parameters
+| Notation | Description |
+|--:|:------|
+| $\mb X_b \in \mathbb{R}^{n \times p_b}$ | The matrix representing data block $b$, in samples-by-features format |
+| $\mb X \in \mathbb{R}^{n \times p}$ | The global (concatenated) matrix of data blocks |
+| $p_b$ | The number of variables/features in block $b$ |
+| $p$ | The total number of variables/features, $p = \sum p_b$ |
+| $n$ | The number of samples/rows in the data (constant across all blocks) | 
+| $N$ | The number of blocks in the data |
+| $r$ | The target dimension of the low-dimensional representation of the data|
 
-# Table of abbreviations
-| Abbreviation | Description |
-|-:|:------|
-| $X$ | Dataset matrix or global data matrix (MCIA) typically in $\mathbb{R}^{n \times p}$ |
-| $p$ | The number of columns/variables/features of the global data matrix |
-| $n$ | The number of rows/samples/observations of the global and block data matrices | 
-| $X_k$ | $k^{th}$ Data block matrix in the multi-block stucture (MCIA) | 
-| $p_k$ | The number of columns/variables/features f the $h^{th}$ block data matrix | 
-| $N$ | The number of blocks in the multi-block structure of $X$ | 
-| $f^{(j)}$ | PC score of order $j$ (PCA) or global score of order j (MCIA) | 
-| $a^{(j)}$ | PC loading of order $j$ (PCA) or global loading of order j (MCIA) |
-| $f_k^{(j)}$ | Block score for block $k$ of order $j$ | 
-| $a_k^{(j)}$ | Block loading for block $k$ of order $j$ | 
-| $S$ or $S_X$ | Covariance matrix of dataset $X$ | 
-| $T^{(j)}$ | the $n \times N$ matrix with columns consisting of the order-j block scores |
-.
-.
-.
-(tbd)
+# Notation for Output and Intermediate Vector and Matrices 
+| Notation | Description |
+|--:|:------|
+| $\mb A \in \mathbb{R}^{p \times r}$ | The global loadings matrix |
+| $\mb F \in \mathbb{R}^{n \times r}$  | The global scores matrix |
+| $\mb A_b \in \mathbb{R}^{p_b \times r}$ | The block loadings matrix for block $b$ |
+| $\mb F_b \in \mathbb{R}^{n \times r}$  | The block score matrix calculated from the block loading matrices $A_b$ |
+| $\mb a^{(j)} \in \mathbb{R}^{p \times 1}$ | The $j$-th order global loadings vector |
+| $\mb f^{(j)} \in \mathbb{R}^{n \times 1}$  | The $j$-th order global score factor |
+| $\mb a_b^{(j)} \in \mathbb{R}^{p_b \times 1}$ | The $j$-th order block loadings vector for block $b$ |
+| $\mb f_b^{(j)} \in \mathbb{R}^{n \times 1}$  | The $j$-th order block score factor for block $b$ |
+| $\mb G \in \mathbb{R}^{N \times r}$  | The block score weights matrix |
+| $\mb e \in \mathbb{R}^{r \times 1}$  | The psuedo-eigenvalues calculated for each factor |
+
+# Mathematical Theory
+MCIA works on datasets that are made up of multiple blocks of variables measured on the same set of samples. Since each data block has the same number of rows, we define the global data matrix as
+$$
+\mb X = \Big[ \mb X_1 | \mb X_2 | ... | \mb X_N \Big] \in \mathbb{R}^{n \times p}, \hspace{2em} p = \sum\limits_{b=1}^N p_b.
+$$
+It is sometimes helpful to compare MCIA to the better-known Principal Component Analysis (PCA). The global scores/factors and loadings are broadly similar to the principal component scores and loadings respectively of matrix $\mb X$, although they are **not** identical.
+
+## The Objective Function
+The ultimate goal of MCIA is to provide a set of scores and loadings vectors of decreasing optimality up to a user-chosen target dimension $r$. These vectors then can be used as a low-dimensional representation of the data or to find associations between variables or blocks. MCIA defines optimality as maximizing the sum of squared covariance between a set of block scores $\mb f_b$ and a global score $\mb f$, i.e.
+\begin{equation}
+	\label{eq:mcia_optimCrit}
+	\text{argmax}_{\mb f_1,...,\mb f_N,\mb f} \hspace{0.5em} \sum_{b=1}^N\text{cov}^2(\mb f_b,\mb f ),
+\end{equation} 
+where $\mb f_b = \mb X_b \mb a_b$ for $b=1,..,N$ and $\mb f = \mb X \mb a$ are linear combinations of the variables in the block and global matrices respectively. One set of factor scores $\mb f_1,...,\mb f_N, \mb f$ and loadings $\mb a_1,...,\mb a_N, \mb a$ are generated for each order desired up to the target dimension $r$. We denote these orders with a superscript, e.g. $\mb f_b^{(j)}$ is the $j$-th order block factor score for block $b$. We organize all of these block... (TBC)
+
 
