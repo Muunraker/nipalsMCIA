@@ -16,7 +16,6 @@ set.seed(42) # NIPALS starts with a random vector
 ```
 
 ```{r, echo = FALSE, include = FALSE}
-library(ggplot2)
 library(ggpubr)
 library(nipalsMCIA)
 library(scales)
@@ -41,6 +40,7 @@ Functions to import into DESCRIPTION:
 #' @return List of omics with assigned colors
 #' @examples
 #' colors_omics <- get_colors(mcia_out)
+#' @importFrom scales viridis_pal
 
 get_colors <- function(mcia_out) {
    omic_list <- names(mcia_out$block_loadings)
@@ -118,13 +118,14 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE, descending = 
 #' @param n_feat number of features to visualize
 #' @examples
 #' vis_load_ord(all_pos_1_df, colors_omics = colors_omics)
+#' @importFrom ggplot2 ggplot
 
 vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
    n_plot <- min(nrow(gl_f_ord), n_feat)
    omic_subset <- names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
    color_vals <- colors_omics[omic_subset]
    
-   p <- ggplot(data = gl_f_ord[1:n_plot,], 
+   p <- ggplot2::ggplot(data = gl_f_ord[1:n_plot,], 
           aes(x = factor(omic_name, level = omic_name), 
               y = loading, color = omic)) +
          geom_point() +
@@ -149,6 +150,7 @@ vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
 #' output of get_colors() function
 #' @examples
 #' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
+#' @importFrom ggplot2 ggplot
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
    gl <- mcia_out$global_loadings
    omic_name <- gsub("^.*_", "", rownames(gl))
@@ -158,7 +160,7 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
    
    colnames(gl_f) <- c(paste0('Axis_', axes[1]), paste0('Axis_', axes[2]), "omic")
    
-   p <- ggplot(data = gl_f, 
+   p <- ggplot2::ggplot(data = gl_f, 
                aes_string(x = colnames(gl_f)[1], 
                           y = colnames(gl_f)[2], color = "omic")) +
          geom_point(alpha = 0.3) +
@@ -169,6 +171,11 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
 ```
 
 ### Visualize all feature loadings on two axes
+MCIA returns feature loadings for each factor that can be used to understand 
+important contributions of multi-omic features to a given factor.  
+To get a sense of which omics features show highest contribution to 
+each factor, one can plot feature loadings for any two omics using the 
+`vis_load_plot` function.
 
 ```{r}
 colors_omics <- get_colors(mcia_results)
@@ -176,8 +183,14 @@ vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
 ```
 
 ### Scree Plot: Visualizing the top features per factor
+For a given factor, users can return and visualize a ranked list of top magnitude features.  
+Features can be ranked based on the users preference: either by absolute value, ascending,
+or descending values.  All features, or features in a given omic can be ranked.  
+The `ord_loadings` function returns a ranked list, and `vis_load_ord` allows users to 
+visualize the features loadings as a scree plot.
 
 #### Factor 1
+Here, we return and visualize two ranked lists for Factor 1: using all omics, or just mrna.
 
 ```{r, fig.width = 10, fig.height = 5}
 # define the loadings
@@ -194,6 +207,8 @@ ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
 #### Factor 2
+Here, we return and visualize two ranked lists for Factor 2: using all omics, or just protein,
+this time ranking features by magnitude (absolute value).
 
 ```{r, fig.width = 10, fig.height = 5}
 # define the loadings
@@ -210,6 +225,7 @@ ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
 
 #### Factor 4
+We return and visualize a ranked list for Factor 4 with the top 60 features.  One can observe that while miRNA dominate the top features, all omics in the dataset are represented.
 
 ```{r, fig.width = 10, fig.height = 4}
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE, 
