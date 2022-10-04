@@ -18,7 +18,6 @@ set.seed(42) # NIPALS starts with a random vector
 ```{r, echo = FALSE, include = FALSE}
 library(ggpubr)
 library(nipalsMCIA)
-library(scales)
 ```
 
 <!-- Loading NCI60 data and running nipals_multiblock()
@@ -30,25 +29,6 @@ Functions to import into DESCRIPTION:
 -scales
 
 ### New functions to visualize loadings
-
-```{r, fig.height = 2.5, fig.width = 5.5}
-#' Assigning colors to different omics (color-blindness friendly)
-#'
-#' @description Creates a list of omics and associated colors for plotting
-#' 
-#' @param mcia_out object returned from nipals_multiblock() function
-#' @return List of omics with assigned colors
-#' @examples
-#' colors_omics <- get_colors(mcia_out)
-#' @importFrom scales viridis_pal
-
-get_colors <- function(mcia_out) {
-   omic_list <- names(mcia_out$block_loadings)
-   colors_omics <- scales::viridis_pal(option = "D")(length(omic_list))
-   names(colors_omics) <- omic_list
-   return(colors_omics)
-}
-```
 
 ```{r}
 #' Ranked global loadings dataframe
