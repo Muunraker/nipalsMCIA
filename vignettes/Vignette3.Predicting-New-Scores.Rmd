@@ -1,9 +1,9 @@
 ---
 title: "Predicting New MCIA scores"
 author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output: 
-    rmarkdown::html_vignette
+    rmdformats::readthedown
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
   %\VignetteEngine{knitr::rmarkdown}

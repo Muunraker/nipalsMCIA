@@ -1,12 +1,12 @@
 ---
 title: "Single Cell Analysis"
 author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
 output: 
-    rmarkdown::html_vignette
+    rmdformats::readthedown
 vignette: >
   %\VignetteIndexEntry{Single-Cell-Analysis}
   %\VignetteEngine{knitr::rmarkdown}

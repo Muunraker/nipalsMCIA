@@ -1,9 +1,9 @@
 ---
 title: "Mini-Lecture: Overview of the NIPALS MCIA Pipeline"
 author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output: 
-    rmarkdown::html_vignette
+    rmdformats::readthedown
 vignette: >
   %\VignetteIndexEntry{Mini-Lecture.Overview-of-the-NIPALS-MCIA-pipeline}
   %\VignetteEngine{knitr::rmarkdown}
