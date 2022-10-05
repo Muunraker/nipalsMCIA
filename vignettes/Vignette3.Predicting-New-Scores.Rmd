@@ -1,7 +1,7 @@
 ---
-title: "Predicting new MCIA scores"
-author: "Max Mattesich, Joaquin Reyna, Anna Konstorum"
-date: '2022-09-01'
+title: "Predicting New MCIA scores"
+author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: 
     rmarkdown::html_vignette
 vignette: >

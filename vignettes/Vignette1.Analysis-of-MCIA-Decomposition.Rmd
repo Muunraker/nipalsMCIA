@@ -1,14 +1,10 @@
 ---
 title: "Analysis of MCIA Decomposition"
-author:
-    - Max Mattessich
-    - Joaquin Reyna
-    - Anna Konstorum
-    - Edel Aron
+author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
-date: "9/1/2022"
 output: 
     rmarkdown::html_vignette
 vignette: >

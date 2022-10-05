@@ -1,14 +1,10 @@
 ---
 title: "Mini-Lecture: Brief Outline of the Math Behind MCIA"
-author:
-    - Max Mattessich
-    - Joaquin Reyna
-    - Anna Konstorum
-    - Edel Aron
+author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
-date: "`r format(Sys.time(), '%d %B %Y')`"
 output: 
     rmarkdown::html_vignette
 vignette: >

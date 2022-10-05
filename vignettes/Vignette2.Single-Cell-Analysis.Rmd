@@ -1,6 +1,7 @@
 ---
 title: "Single Cell Analysis"
-author: "Edel Aron"
+author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
