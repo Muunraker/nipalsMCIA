@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the Math of Multiple Co-Inertia Analysis"
+title: "Mini-Lecture: Brief Outline of the Math Behind MCIA"
 author:
     - Max Mattessich
     - Joaquin Reyna
@@ -9,8 +9,12 @@ header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
 date: "`r format(Sys.time(), '%d %B %Y')`"
-output:
-  html_document: default
+output: 
+    rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Mini-Lecture.Brief-outline-of-the-math-behind-MCIA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

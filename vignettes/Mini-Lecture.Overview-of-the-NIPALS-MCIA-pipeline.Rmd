@@ -1,12 +1,17 @@
 ---
-title: "Mini-Lecture: Brief outline of the math behind MCIA"
+title: "Mini-Lecture: Overview of the NIPALS MCIA Pipeline"
 author:
     - Max Mattessich
     - Joaquin Reyna
     - Anna Konstorum
+    - Edel Aron
 date: "9/1/2022"
-output:
-  html_document: default
+output: 
+    rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Mini-Lecture.Overview-of-the-NIPALS-MCIA-pipeline}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup-ml-pipeline, include=FALSE}
@@ -25,7 +30,7 @@ knitr::include_graphics("../images/MCIA-Pipeline-V4.png")
 ```-->
 
 ```{r, echo=FALSE, out.width="100%", out.length="80%", fig.align="center"}
-knitr::include_graphics("../images/MCIA-Pipeline-V4.png")
+knitr::include_graphics("images/MCIA-Pipeline-V4.png")
 ```
 .
 .

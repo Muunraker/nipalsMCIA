@@ -2,8 +2,12 @@
 title: "Predicting new MCIA scores"
 author: "Max Mattesich, Joaquin Reyna, Anna Konstorum"
 date: '2022-09-01'
-output:
-  html_document: default
+output: 
+    rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Predicting-New-Scores}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup-v2, include=FALSE}
