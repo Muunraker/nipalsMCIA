@@ -18,6 +18,7 @@ set.seed(42) # NIPALS starts with a random vector
 ```{r, echo = FALSE, include = FALSE}
 library(ggpubr)
 library(nipalsMCIA)
+library(ggplot2)
 ```
 
 <!-- Loading NCI60 data and running nipals_multiblock()

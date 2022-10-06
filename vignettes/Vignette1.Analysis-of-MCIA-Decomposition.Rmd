@@ -24,8 +24,6 @@ set.seed(42) # NIPALS starts with a random vector
 
 ```{r, echo=FALSE, include=FALSE}
 library(nipalsMCIA)
-library(ggplot2)
-library(ComplexHeatmap)
 ```
 
 <!-- Including the introduction - Part 0 -->
