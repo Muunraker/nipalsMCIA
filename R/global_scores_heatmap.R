@@ -1,27 +1,29 @@
 #' Plotting a heatmap of global factors scores (sample v. factors)
 #'
 #' @description Plots a heatmap of MCIA global scores 
-#' @param global_scores the global_scores matrix after running MCIA
-#' @return the ggplot2 object
+#' @param mcia_result the mcia object matrix after running MCIA, must also
+#'   contain metadata with columns corresponding to coloring
+#' @param coloring an integer or string specifying the column that will be
+#'   used for coloring
+#' @return ComplexHeatmap object
 #' @export
 global_scores_heatmap <- function(mcia_result, coloring=1){
     
-    # extract color type and create a color pallette
-    color_types <- mcia_result$metadata[,coloring]
-    cat_colors <- scales::viridis_pal(option = "C")(length(unique(color_types)))
-    names(cat_colors) <- unique(color_types)
     
-    # extract the column names (if not provided via coloring
+    # extract the column names (if not provided via coloring)
     if (typeof(coloring) == "double"){
         color_col = names(mcia_result$metadata)[coloring]
     }
     
-    # add the colors to a HeatmapAnnotation
-    right_colors = list(cat_colors)
-    names(right_colors) = c(color_col)
+    # extract color type and create a color palette list
+    cat_values <- mcia_result$metadata[,coloring]
+    cat_colors <- get_metadata_colors(mcia_result, coloring = coloring)
+    cat_colors_list <- list(ColorType = cat_colors)
+    
+    # add the colors list to a HeatmapAnnotation obj
     row_ha = ComplexHeatmap::HeatmapAnnotation(which = "row", 
-                               ColorType = color_types,
-                               col = right_colors,
+                               ColorType = cat_values,
+                               col = cat_colors_list,
                                annotation_label = color_col,
                                show_annotation_name = FALSE)
     
