@@ -26,9 +26,6 @@ library(ggplot2)
 ```{r child = "Load-Shared-Vars.Rmd", include = FALSE}
 ```
 
-Functions to import into DESCRIPTION:
--scales
-
 ### New functions to visualize loadings
 
 ```{r}

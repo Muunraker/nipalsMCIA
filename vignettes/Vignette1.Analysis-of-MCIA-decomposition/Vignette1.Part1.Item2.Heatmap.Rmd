@@ -25,8 +25,16 @@ library(nipalsMCIA)
 ```
 
 ### Visualizing the clustering of samples by factor scores
-We may also be interested in the clustering of samples by their factors scores which can be done using `global_scores_heatmap()`:
+You may also be interested in viewing how each factor contributes to each sample, 
+for this you can visualize a heatmap using `global_scores_heatmap()`:
 ```{r, fig.align='center'}
-global_scores_heatmap(mcia_results, coloring = 1)
+global_scores_heatmap(mcia_results)
 ```
-From these heatmap we can see that samples cluster quite strongly by factor 1 signals (to be continued....want to have sample names to explain more if possible)
+In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some coloring which is availble
+throught the `coloring` parameter as shown below:  
+```{r, fig.align='center'}
+global_scores_heatmap(mcia_results, coloring = "cancerType")
+```
+This second heatmap allows us to see that global factor scores can successfully
+encode and find differences between cancer types. For theses results it is
+interesting to see that factor 1 alone can discern cancer type fairly well. 
