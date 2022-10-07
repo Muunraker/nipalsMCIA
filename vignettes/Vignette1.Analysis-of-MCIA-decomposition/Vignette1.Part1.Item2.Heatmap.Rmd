@@ -25,9 +25,8 @@ library(nipalsMCIA)
 ```
 
 ### Visualizing the clustering of samples by factor scores
-We may also be interested in the clustering of samples by their factors scores, to do this analyses we will the the XX function.
+We may also be interested in the clustering of samples by their factors scores which can be done using `global_scores_heatmap()`:
 ```{r, fig.align='center'}
-gs_scores = mcia_results$global_scores
-global_scores_heatmap(gs_scores)
+global_scores_heatmap(mcia_results, coloring = 1)
 ```
 From these heatmap we can see that samples cluster quite strongly by factor 1 signals (to be continued....want to have sample names to explain more if possible)
