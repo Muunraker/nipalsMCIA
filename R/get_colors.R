@@ -2,7 +2,7 @@
 #'
 #' @description Creates a list of omics and associated colors for plotting
 #' 
-#' @param mcia_results object returned from nipals_multiblock() function
+#' @param mcia_result object returned from nipals_multiblock() function
 #' @return List of omics with assigned colors
 #' @examples
 #' colors_omics <- get_colors(mcia_results)
@@ -15,14 +15,18 @@ get_colors <- function(mcia_result, color_func=scales::viridis_pal) {
   return(colors_omics)
 }
 
-#' Assigning colors to different omics (default: color-blindness friendly)
+#' Assigning colors to different values of a metadata column 
+#' (default: color-blindness friendly)
 #'
-#' @description Creates a list of omics and associated colors for plotting
-#' 
-#' @param mcia_results object returned from nipals_multiblock() function
-#' @return List of omics with assigned colors
+#' @description Creates a list of metadata columns and associated colors
+#'   for plotting
+#' @param mcia_result object returned from nipals_multiblock() function
+#' @param coloring an integer or string specifying the column that will be
+#'   used for coloring
+#' @param color_func a function which returns color palettes
+#' @return List of metadata columns with assigned colors
 #' @examples
-#' colors_omics <- get_colors(mcia_results)
+#' colors_omics <- get_metadata_colors(mcia_results, "cancerType")
 #' @importFrom scales viridis_pal
 #' @export
 get_metadata_colors <- function(mcia_result, coloring,
