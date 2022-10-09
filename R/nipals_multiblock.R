@@ -153,13 +153,15 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   # Plotting results
   if(tolower(plots) == 'all'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection',coloring = coloring) # first two orders of scores
+    MCIA_plots(results_list,'projection',
+               legend_loc = "bottomright",
+               coloring = coloring) # first two orders of scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     par(mfrow = c(1,1))
     
   }else if (tolower(plots) == 'global'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection_global',coloring = coloring) # first two global scores
+    MCIA_plots(results_list,'projection_global', coloring = coloring) # first two global scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     par(mfrow = c(1,1))
   }else if (tolower(plots) == 'none'){
