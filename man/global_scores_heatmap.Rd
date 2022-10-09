@@ -4,13 +4,17 @@
 \alias{global_scores_heatmap}
 \title{Plotting a heatmap of global factors scores (sample v. factors)}
 \usage{
-global_scores_heatmap(global_scores)
+global_scores_heatmap(mcia_result, coloring = NULL)
 }
 \arguments{
-\item{global_scores}{the global_scores matrix after running MCIA}
+\item{mcia_result}{the mcia object matrix after running MCIA, must also
+contain metadata with columns corresponding to coloring}
+
+\item{coloring}{an integer or string specifying the column that will be
+used for coloring}
 }
 \value{
-the ggplot2 object
+ComplexHeatmap object
 }
 \description{
 Plots a heatmap of MCIA global scores

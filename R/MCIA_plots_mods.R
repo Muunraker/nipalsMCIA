@@ -1,46 +1,42 @@
 #' projection_plot
 #'
-#' @description Function to generate a projection plot MCIA results.
+#' @description Function to generate a projection plot of MCIA results.
 #' 
-#' @details Plotting function for a project plot. 
+#' @details Plotting function for a projection plot. 
 #' 
-#' @param mcia_result MCIA results object returned from `nipals_multiblock`
+#' @param mcia_results MCIA results object returned from `nipals_multiblock`
 #' @param plotType Type of plot, with the following options \itemize{
 #' \item `projection` - scatter plot of two orders of global and block scores (aka factors).
 #' \item `projection_global` - scatter plot of two orders of global scores only (aka factors).
-#' \item `gs_eigvals` - scree plot of global score eigenvalues.
-#' \item `block_weights_heatmap` - a heatmap of block weightings for each order of global score.
 #' }
-#' @param orders Option to selecct orders of factors to plot against each other (for projection plots)
+#' @param orders Option to select orders of factors to plot against each other (for projection plots)
 #' @param coloring Option to plot clusters/colors in projection plots, with two options:\itemize{
 #' \item `none` (Default) - no clusters/colors plotted.
 #' \item A character string of the column name of the `mcia_result$metadata` dataframe 
 #' determining which color groupings to use (projection plots only) 
 #' }
-#' @param labelColors Option to specify  colors for labels.
+#' @param color_func Option to specific a color function
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
 #' @examples
 #' data(NCI60)
-#' mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
-#'                               plots = 'none', tol=1e-12)
-#' clus_colors <- list("red", "green","blue")
-#' MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
-#'            labelColors = clus_colors, legend_loc = "bottomleft")
+#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+#'                               num_PCs = 10, plots = "none", tol=1e-12)
+#' projection_plot(mcia_results, "projection", orders = c(1,2),
+#'   coloring = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
 #' @export
-projection_plot <- function(mcia_result, plotType,
-                           orders=c(1,2),
-                           coloring = NULL,
+projection_plot <- function(mcia_result, plotType, orders=c(1,2),
+                           coloring = NULL, color_func=scales::viridis_pal, 
                            legend_loc = "bottomleft"){
     
     ### Identifying the membership of samples within
     ### the clusters/categories of the coloring column
-    # case i) no, clusters/categories were not specified 
+    # case i) no coloring, clusters/categories were not specified 
     if(is.null(coloring)){
         clust_indexes = list(1:dim(mcia_result$global_score)[[1]])
         
-    # case ii) yes, clusters/categories were specified 
+    # case ii) yes coloring, clusters/categories were specified 
     } else if(is.character(coloring)){
         
         # locating the coloring column within metadata
@@ -51,8 +47,8 @@ projection_plot <- function(mcia_result, plotType,
         
         # catching if two columns happen to have the same name.
         if (length(col_idx) > 1){
-            msg = paste0('Metadata has duplicate columns for ', coloring,
-                         '. Selecting the first one for plotting.')
+            msg = paste0("Metadata has duplicate columns for ", coloring,
+                         ". Selecting the first one for plotting.")
             warning(msg)
         }
         col_idx <- col_idx[[1]] 
@@ -72,7 +68,8 @@ projection_plot <- function(mcia_result, plotType,
     }
     
     ### Resolving the cluster colors
-    plot_colors = get_metadata_colors(mcia_result, coloring = coloring)
+    plot_colors = get_metadata_colors(mcia_result, coloring = coloring,
+                                      color_func = color_func)
     if (is.null(coloring)){
       plot_colors = list("black")
     }
@@ -81,14 +78,12 @@ projection_plot <- function(mcia_result, plotType,
     if(tolower(plotType) == "projection"){
     
         # Normalize global scores to unit variance
-        print("# Normalize global scores to unit variance")
         gs_norms <- apply(mcia_result$global_scores, 2, function(x){sqrt(var(x))})
         gs_normed <- t(t(mcia_result$global_scores) / gs_norms)
         gl_normed <- t(t(mcia_result$global_loadings) / gs_norms)
         gw_normed <- t(t(mcia_result$block_score_weights) / gs_norms)
         
         # Normalize block scores to unit variance
-        print("# Normalize block scores to unit variance")
         bs_normed <- list()
         bl_normed <- list() 
         for(i in 1:length(mcia_result$block_scores)){
@@ -98,7 +93,6 @@ projection_plot <- function(mcia_result, plotType,
         }
         
         # Getting bounds for projection plot
-        print("# Getting bounds for projection plot")
         min_bs1 <- min(sapply(lapply(bs_normed, `[`,,orders[[1]]) , min)) # minimum 1st block score
         min_bs2 <- min(sapply(lapply(bs_normed, `[`,,orders[[2]]) , min)) # minimum 2nd block score
         max_bs1 <- max(sapply(lapply(bs_normed, `[`,,orders[[1]]) , max)) # maximum 1st block score
@@ -110,11 +104,9 @@ projection_plot <- function(mcia_result, plotType,
         max_y <- max(c(max_bs2, max(gs_normed[,orders[[2]]]))) # maximum y coordinate in plot
         
         # Cluster 1
-        print("# Cluster 1")
         sample_indexes <- clust_indexes[[1]]
         
         # Plotting global scores
-        print("# Plotting global scores")
         plot(gs_normed[sample_indexes, orders[[1]]],
              gs_normed[sample_indexes, orders[[2]]],
              main = "Factor Plot",  
@@ -127,7 +119,6 @@ projection_plot <- function(mcia_result, plotType,
         grid()
         
         # Plotting block scores (shapes correspond to different blocks)
-        print("# Plotting block scores (shapes correspond to different blocks)")
         for(j in 1:length(bs_normed)){
           bs_j <- bs_normed[[j]]
           points(bs_j[sample_indexes, orders[[1]]],
@@ -172,22 +163,18 @@ projection_plot <- function(mcia_result, plotType,
         if(! tolower(legend_loc) == "none"){
             # plotting legend without clusters/categories
             if(length(plot_colors) == 1){
-              print("# plotting legend without clusters/categories")
               legend(legend_loc, 
                      legend = c(names(mcia_result$block_loadings)),
                      pch = 1:length(mcia_result$block_loadings),
                      cex = 1)
             # plotting legend for clusters/categories
             } else{
-              print("# plotting legend for clusters/categories")
               leg_labels = c(names(mcia_result$block_loadings),
                              names(plot_colors))
               leg_shapes = c(1:length(mcia_result$block_loadings),
                              rep(16, length(plot_colors)))
               leg_colors = c(rep("black", length(mcia_result$block_loadings)),
                              unname(unlist(plot_colors)))
-              print('leg_colors:')
-              print(leg_colors)
               legend(legend_loc,
                      legend = leg_labels,
                      pch = leg_shapes,
@@ -196,7 +183,7 @@ projection_plot <- function(mcia_result, plotType,
             }
         }
          
-    } else if(tolower(plotType) == 'projection_global'){
+    } else if(tolower(plotType) == "projection_global"){
     
         ### Plot 2 - projection plot global score only      
         # Normalize global scores to unit variance
@@ -217,8 +204,8 @@ projection_plot <- function(mcia_result, plotType,
         plot(gs_normed[sample_indexes, orders[[1]]],
              gs_normed[sample_indexes, orders[[2]]],
              main = "Global Factor Plot",  
-             xlab=paste('Factor ', orders[[1]]),
-             ylab=paste('Factor', orders[[2]]),
+             xlab=paste("Factor ", orders[[1]]),
+             ylab=paste("Factor ", orders[[2]]),
              col=plot_colors[[1]],
              xlim=c(min_x, max_x),
              ylim=c(min_y, max_y),
@@ -236,6 +223,19 @@ projection_plot <- function(mcia_result, plotType,
                    cex = .5,pch = 16)
           }
         }
+        
+        # Adding legend
+        # plotting legend for clusters/categories
+        if(!is.null(coloring)){
+            leg_labels = c(names(plot_colors))
+            leg_shapes = c(rep(16, length(plot_colors)))
+            leg_colors = c(unname(unlist(plot_colors)))
+            legend(legend_loc,
+                   legend = leg_labels,
+                   pch = leg_shapes,
+                   col = leg_colors,
+                   cex = 1)
+        }
     }
 }
 
@@ -245,30 +245,14 @@ projection_plot <- function(mcia_result, plotType,
 #' 
 #' @details Plotting function for eigenvalues of scores up to num_PCs
 #' 
-#' @param mcia_result MCIA results object returned from `nipals_multiblock`
-#' @param plotType Type of plot, with the following options \itemize{
-#' \item `projection` - scatter plot of two orders of global and block scores (aka factors).
-#' \item `projection_global` - scatter plot of two orders of global scores only (aka factors).
-#' \item `gs_eigvals` - scree plot of global score eigenvalues.
-#' \item `block_weights_heatmap` - a heatmap of block weightings for each order of global score.
-#' }
-#' @param orders Option to selecct orders of factors to plot against each other (for projection plots)
-#' @param coloring Option to plot clusters/colors in projection plots, with two options:\itemize{
-#' \item `none` (Default) - no clusters/colors plotted.
-#' \item A character string of the column name of the `mcia_result$metadata` dataframe 
-#' determining which color groupings to use (projection plots only) 
-#' }
-#' @param labelColors Option to specify  colors for labels.
-#' @param legend_loc Option for legend location, or "none" for no legend.
+#' @param mcia_results MCIA results object returned from `nipals_multiblock`
 #' 
 #' @examples
 #' data(NCI60)
-#' mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
-#'                               plots = 'none', tol=1e-12)
-#' clus_colors <- list("red", "green","blue")
-#' MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
-#'            labelColors = clus_colors, legend_loc = "bottomleft")
-#' @return Displays the desired plots
+#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+#'                               num_PCs = 10, plots = "none", tol=1e-12)
+#' global_scores_eigenvalues_plot(mcia_results)
+#' @return Displays the contribution plot using eigenvalues
 #' @export
 global_scores_eigenvalues_plot <- function(mcia_result){
     
@@ -287,63 +271,18 @@ global_scores_eigenvalues_plot <- function(mcia_result){
 #' 
 #' @details Plotting function for heatmap of block score weights
 #' 
-#' @param mcia_result MCIA results object returned from `nipals_multiblock`
-#' @param plotType Type of plot, with the following options \itemize{
-#' \item `projection` - scatter plot of two orders of global and block scores (aka factors).
-#' \item `projection_global` - scatter plot of two orders of global scores only (aka factors).
-#' \item `gs_eigvals` - scree plot of global score eigenvalues.
-#' \item `block_weights_heatmap` - a heatmap of block weightings for each order of global score.
-#' }
-#' @param orders Option to selecct orders of factors to plot against each other (for projection plots)
-#' @param coloring Option to plot clusters/colors in projection plots, with two options:\itemize{
-#' \item `none` (Default) - no clusters/colors plotted.
-#' \item A character string of the column name of the `mcia_result$metadata` dataframe 
-#' determining which color groupings to use (projection plots only) 
-#' }
-#' @param labelColors Option to specify  colors for labels.
-#' @param legend_loc Option for legend location, or "none" for no legend.
+#' @param mcia_results MCIA results object returned from `nipals_multiblock`
 #' 
 #' @examples
 #' data(NCI60)
-#' mcia_res <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
-#'                               plots = 'none', tol=1e-12)
-#' clus_colors <- list("red", "green","blue")
-#' MCIA_plots(mcia_res,'projection',orders = c(1,2), coloring="cancerType",
-#'            labelColors = clus_colors, legend_loc = "bottomleft")
-#' @return Displays the desired plots
+#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60, num_PCs = 10, 
+#'                               plots = "none", tol=1e-12)
+#' block_weights_heatmap(mcia_results)
+
+#' @return Displays the heatmap of block weights
 #' @export
-block_weights_heatmap <- function(mcia_result)){
-    
-    # plot heatmap of block score weights
-    heatmap(mcia_result$block_score_weights, Rowv = NA, Colv = NA,
+block_weights_heatmap <- function(mcia_result){
+    heatmap(mcia_result$block_score_weights,
+            Rowv = NA, Colv = NA,
             cexRow= 1.5, xlab="Factors")
 }
-        
-    
-
-#mcia_result = mcia_results
-#coloring = 'cancerType'
-
-#plotType = 'projection_global'
-#orders = c(1,2)
-#projection_plot(mcia_result, plotType,
-#                orders=c(1,2), coloring = NULL,
-#                legend_loc = "bottomright")
-
-#plotType = 'projection'
-#projection_plot(mcia_result, plotType,
-#                orders=c(1,2), coloring = NULL,
-#                legend_loc = "bottomright")
-
-#plotType = 'projection_global'
-#orders = c(1,2)
-#projection_plot(mcia_result, plotType,
-#                orders=c(1,2), coloring = 'cancerType',
-#                legend_loc = "bottomright")
-
-#plotType = 'projection'
-#projection_plot(mcia_result, plotType,
-#                orders=c(1,2), coloring = 'cancerType',
-#                legend_loc = "bottomright")
-    
-

@@ -61,15 +61,15 @@ exactly the same as an eigenvalue scree plot in principal component analysis.
 
 ### Visualizing a Factor Plot with Only Global Factor Scores
 For clustering, it is useful to look at global factor scores without block
-factor scores. The `projection_plot()` function can be used to generate such a plot
+factor scores. The `MCIA_plots()` function can be used to generate such a plot
 using `plotType="projection_global"` as show below:
 
 ```{r Visualize Clusters, fig.height=4, fig.width=4, fig.align='center'}
-projection_plot(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomright")
+MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomleft")
 ```
 
 In addition, factor plots are most helpful when points are colored by a
-meaningful label such as cancer type. The `projection_plot()` function can include
+meaningful label such as cancer type. The `MCIA_plots()` function can include
 such data using the `metadata` argument. The `metadata` arguments requires a
 data frame where rows are samples and columns are different labels, allowing
 for a variety of visualization objectives/explorations. For instance, each of
@@ -97,9 +97,9 @@ mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
 mcia_results$metadata <- metadata_NCI60
 ```
 
-The `coloring` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for coloring the projection plots, in this case the column is `cancerType`:
+The `coloring` argument of `MCIA_plots()` can then be used to determine which column of `metadata` is used for coloring the projection plots, in this case the column is `cancerType`:
 ```{r Visualize Clusters Coloring, fig.height=4, fig.width=4, fig.align='center'}
-projection_plot(mcia_results, "projection_global", orders = c(1,2), coloring = "cancerType", legend_loc = "bottomright")
+MCIA_plots(mcia_results, "projection_global", orders = c(1,2), coloring = "cancerType", legend_loc = "bottomleft")
 ```
 
 Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.

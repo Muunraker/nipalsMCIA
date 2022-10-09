@@ -1,0 +1,71 @@
+---
+title: "Test Modular Functions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(nipalsMCIA)
+data("NCI60")
+
+metadata_NCI60 <- data.frame(cancerType = unlist(metadata_NCI60))
+row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
+
+# Adding metadata as part of the nipals_multiblock() function
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile", 
+                                  metadata = metadata_NCI60, plots = "none",
+                                  num_PCs = 10, tol = 1e-12)
+
+# Alternative method for adding metadata
+mcia_results$metadata <- metadata_NCI60
+```
+
+# Test  projection_plot
+```{r}
+coloring = 'cancerType'
+```
+
+```{r fig.height=4, fig.width=4, fig.align='center'}
+plotType = 'projection_global'
+orders = c(1,2)
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), coloring = NULL,
+                legend_loc = "bottomright")
+```
+
+```{r fig.height=4, fig.width=4, fig.align='center'}
+plotType = 'projection'
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), coloring = NULL,
+                legend_loc = "bottomright")
+```
+
+```{r fig.height=4, fig.width=4, fig.align='center'}
+plotType = 'projection_global'
+orders = c(1,2)
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), coloring = 'cancerType',
+                legend_loc = "bottomright")
+```
+
+```{r fig.height=4, fig.width=4, fig.align='center'}
+plotType = 'projection'
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), coloring = 'cancerType',
+                legend_loc = "bottomright")
+```
+
+# Test global_scores_eigenvalues_plot(mcia_results)
+```{r}
+global_scores_eigenvalues_plot(mcia_results)
+```
+
+# Test block_weights_heatmap
+```{r}
+block_weights_heatmap(mcia_results)
+```
+
+    
