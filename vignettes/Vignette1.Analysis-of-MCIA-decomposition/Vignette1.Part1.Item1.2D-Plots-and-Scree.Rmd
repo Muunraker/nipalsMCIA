@@ -65,7 +65,7 @@ factor scores. The `projection_plot()` function can be used to generate such a p
 using `plotType="projection_global"` as show below:
 
 ```{r Visualize Clusters, fig.height=4, fig.width=4, fig.align='center'}
-projection_plot(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomright")
+projection_plot(mcia_results, "projection_global", orders = c(1,2))
 ```
 
 In addition, factor plots are most helpful when points are colored by a
@@ -99,7 +99,8 @@ mcia_results$metadata <- metadata_NCI60
 
 The `coloring` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for coloring the projection plots, in this case the column is `cancerType`:
 ```{r Visualize Clusters Coloring, fig.height=4, fig.width=4, fig.align='center'}
-projection_plot(mcia_results, "projection_global", orders = c(1,2), coloring = "cancerType", legend_loc = "bottomright")
+projection_plot(mcia_results, "projection_global", orders = c(1,2),
+                coloring = "cancerType", legend_loc = "bottomright")
 ```
 
 Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.

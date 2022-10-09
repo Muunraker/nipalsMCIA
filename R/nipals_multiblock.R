@@ -154,7 +154,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   if(tolower(plots) == 'all'){
     par(mfrow = c(1,2))
     MCIA_plots(results_list,'projection',
-               legend_loc = "bottomright",
+               legend_loc = "bottomleft",
                coloring = coloring) # first two orders of scores
     MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
     par(mfrow = c(1,1))
