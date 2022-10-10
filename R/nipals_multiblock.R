@@ -64,7 +64,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     fNames <- names(data_blocks[[i]]) # feature names
     
     # Error catching for no names - creates default values
-    if(is.null(fNames)){
+    if(is.null(fNames) || nchar(fNames[1])==0){
       fNames <- paste("feature",1:dim(data_blocks[[i]])[[2]],sep="_") 
     }
     
