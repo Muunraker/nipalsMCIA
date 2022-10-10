@@ -21,7 +21,8 @@ Imports:
     circlize,
     ComplexHeatmap,
     fgsea,
-    scales
+    scales,
+    RSpectra
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8

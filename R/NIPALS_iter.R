@@ -15,7 +15,8 @@
 #' @return a list containing the global/block scores, loadings and weights for a given order
 #' @examples 
 #' nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
-#' @importFrom pracma rand
+#' @importFrom pracma rand 
+#' @importFrom RSpectra svds
 #' @export
 NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   
@@ -65,8 +66,8 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   
   # Computing eigenvalue associated with the global score
   global_matrix <- do.call(cbind,ds)
-  svdres <- svd(global_matrix)
-  eigval <- svdres$d[1]
+  svdres <- RSpectra::svds(global_matrix,1)
+  eigval <- svdres$d
   
   # Computing global loadings at final iteration
   gl <- bl_list[[1]]*gw[1]
