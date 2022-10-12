@@ -109,7 +109,7 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
       labelColors[[1]] = "black"
     }
     plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Factor Plot",  
-         xlab=paste('Order ',orders[[1]],' Factors'), ylab=paste('Order ',orders[[2]],' Factors'),
+         xlab=paste('Factor ',orders[[1]]), ylab=paste('Factor ',orders[[2]]),
          col=labelColors[[1]],
          xlim=c(min_x, max_x),
          ylim=c(min_y, max_y),
@@ -174,7 +174,7 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
       labelColors[[1]] = "black"
     }
     plot(gs_normed[indx,orders[[1]]],gs_normed[indx,orders[[2]]],main = "Global Factor Plot",  
-         xlab=paste('Order ',orders[[1]],' Factors'), ylab=paste('Order ',orders[[2]],' Factors'),
+         xlab=paste('Factor ',orders[[1]]), ylab=paste('Factor ',orders[[2]]),
          col=labelColors[[1]],
          xlim=c(min_x, max_x),
          ylim=c(min_y, max_y),
@@ -195,8 +195,8 @@ MCIA_plots <- function(mcia_result,plotType,orders=c(1,2),
   ####  Plot 3 - Eigenvalues of scores up to num_PCs
     barploteigs <- unlist(mcia_result$eigvals)^2
     names(barploteigs) <- 1:length(mcia_result$eigvals)
-    barplot(barploteigs, xlab="Global Factor Score Order", cex.names = 1, 
-            main = "Global Factor Score Eigenvalues ")
+    barplot(barploteigs, xlab="Factor Order", cex.names = 1, 
+            main = "Global Eigenvalues ")
     
   }else if(tolower(plotType) == 'block_weights_heatmap'){
   #### Plot 4 - Heatmap of block score weights

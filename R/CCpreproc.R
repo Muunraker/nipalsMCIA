@@ -41,7 +41,7 @@ CCpreproc <- function(df){
   temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
   
   # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
-  temp_df <- temp_df*(1/sqrt(sum(svd(temp_df)[[1]]^2)))
+  temp_df <- temp_df*(1/norm(temp_df,type = "F"))
   
   return(temp_df)
 }
