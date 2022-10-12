@@ -48,7 +48,7 @@
 #' 
 #' @export
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
-                              metadata = NULL, coloring = 'none', deflationMethod = 'block',plots="all"){
+                              metadata = NULL, coloring = NULL, deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
   
@@ -153,16 +153,16 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   # Plotting results
   if(tolower(plots) == 'all'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection',
+    projection_plot(results_list,'projection',
                legend_loc = "bottomleft",
                coloring = coloring) # first two orders of scores
-    MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
+    global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1,1))
     
   }else if (tolower(plots) == 'global'){
     par(mfrow = c(1,2))
-    MCIA_plots(results_list,'projection_global', coloring = coloring) # first two global scores
-    MCIA_plots(results_list,'gs_eigvals') # global score eigenvalues
+    projection_plot(results_list,'projection_global', coloring = coloring) # first two global scores
+    global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1,1))
   }else if (tolower(plots) == 'none'){
     

@@ -11,7 +11,7 @@ nipals_multiblock(
   tol = 1e-12,
   max_iter = 1000,
   metadata = NULL,
-  coloring = "none",
+  coloring = NULL,
   deflationMethod = "block",
   plots = "all"
 )
