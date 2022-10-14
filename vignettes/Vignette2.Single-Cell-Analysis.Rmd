@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 You will need the [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) package from Bioconductor. It contains 9 different publicly available datasets from 10x Genomics.
 
 ```{r load-packages, echo = FALSE, include = FALSE}
+library(dplyr)
 library(ggplot2)
 library(nipalsMCIA)
 library(TENxPBMCData)
@@ -147,10 +148,89 @@ obj <- FindNeighbors(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
 obj <- FindClusters(obj, resolution = 0.4) # verbose = FALSE
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
 
+# saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+
 # note that you can set `label = TRUE` or use the LabelClusters function to help label
 # individual clusters
-DimPlot(obj, reduction = "umap")
+plot_seurat_clusters <- UMAPPlot(obj)
+plot_seurat_clusters
 ```
+
+### Marker overlays
+
+#### Load marker genes
+
+```{r}
+# sort by Cell_Type and Marker if not already sorted
+markers_all <- read_csv(file.path("..", "data", "marker_genes.csv"),
+                        show_col_types = FALSE)
+markers_all
+```
+
+
+#### Dot plots
+
+```{r}
+p <- DotPlot(obj, features = unique(markers_all$Marker),
+             dot.scale = 3, cluster.idents = TRUE) + RotatedAxis()
+
+p$data <- suppressMessages(left_join(p$data, markers_all %>%
+                                             rename(features.plot = Marker)))
+
+p + facet_grid(cols = vars(Cell_Type), scales = 'free_x', space = "free") +
+      theme(strip.text.x = element_text(size = 8))
+```
+
+
+#### Feature plots
+
+```{r}
+FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE)
+```
+
+### Annotate cell clusters
+
+```{r}
+obj_annotations <- rbind(c("0", "Unknown"),
+                         c("1", "T cells"),
+                         c("2", "T cells"),
+                         c("3", "Unknown"),
+                         c("4", "Natural killers"),
+                         c("5", "B cells"),
+                         c("6", "Unknown"),
+                         c("7", "Unknown"),
+                         c("8", "Unknown"),
+                         c("9", "pDCs"))
+colnames(obj_annotations) <- c("Cluster", "CellType")
+obj_annotations <- data.frame(obj_annotations)
+
+# prepare the annotation information
+annotations <- obj_annotations[["CellType"]] # you only need the cell type information
+names(annotations) <- levels(obj$seurat_clusters)
+
+# relabel the Seurat clusters
+# Idents(obj) <- "seurat_clusters"
+obj <- RenameIdents(obj, annotations)
+
+# alphabetize the cell types
+Idents(obj) <- factor(Idents(obj), levels = sort(levels(obj)))
+
+# useful metadata (e.g. if you want to have multiple annotation sets)
+obj[["annotated_clusters"]] <- Idents(obj)
+
+# info about the clusters
+obj_annotations %>%
+  group_by(CellType) %>%
+  transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
+  distinct() %>% arrange(CellType)
+```
+
+```{r}
+plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE)
+
+plot_seurat_clusters + plot_annotated_clusters
+```
+
 
 
 ## Match NCI60 structure
