@@ -26,128 +26,6 @@ library(ggplot2)
 ```{r child = "Load-Shared-Vars.Rmd", include = FALSE}
 ```
 
-### New functions to visualize loadings
-
-```{r}
-#' Ranked global loadings dataframe
-#'
-#' @description Creates a dataframe with ranked loadings for a given factor
-#' 
-#' @param mcia_out object returned from nipals_multiblock() function
-#' @param omic choose an omic to rank, or choose 'all' for all,
-#' ((omic = "all", omic = "miRNA", etc.))
-#' @param absolute whether to rank by absolute value 
-#' @param descending whether to rank in descending or ascending order
-#' @param factor choose a factor (numeric value from 1 to number of factors in mcia_out)
-#' @return ranked dataframe
-#' @examples
-#' all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
-#'                          absolute = FALSE, descending = TRUE, factor = 1)
-
-ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE, descending = TRUE, factor = 1) {
-   # list of omics plus 'all'
-   omics_names <- names(mcia_out$block_loadings)
-   omics_names <- c(omics_names, 'all')
-   
-   # Return error if omic not chosen from omics_names list
-   if (!(omic %in% omics_names)) {stop("Error: choose appropriate omic")}
-   
-   # Get global loadings and list of omics
-   gl <- mcia_out$global_loadings
-   omic_type <- gsub("^.*_", "", rownames(gl))
-   
-   # Filter on factor, and add omic type
-   gl_f <- data.frame(gl[,factor])
-   gl_f$omic <- omic_type
-   gl_f$omic <- as.factor(gl_f$omic)
-   colnames(gl_f) <- c("loading", "omic")
-   
-   # Rank features by parameter settings
-   if (absolute == FALSE) {
-      if (descending == TRUE) {gl_f_ord <- gl_f[order(gl_f$loading, decreasing = TRUE),]}
-      else {gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE),]}
-   }
-   else {
-      gl_f_abs <- gl_f
-      gl_f_abs$abs <- abs(gl_f_abs$loading)
-      gl_f_ord <- gl_f_abs[order(gl_f_abs$abs, decreasing = TRUE),]}
-   
-   if (omic != "all") {
-      gl_f_ord <- gl_f_ord[gl_f_ord$omic == omic,]
-   }
-   
-   gl_f_ord$omic_name <- rownames(gl_f_ord)
-   gl_f_ord$factor <- factor
-   
-   return(gl_f_ord)
-}
-```
-
-```{r}
-#' Visualize ranked loadings
-#'
-#' @description Visualize a scree plot of loadings recovered from 
-#' nipalsMCIA() output loadings matrix ranked using the 
-#' ord_loadings() functions
-#'
-#' @param gl_f_ord Ranked loading dataframe output from ord_loadings() function
-#' @param colors_omics named list of colors associated with omics,
-#' output of get_colors() function
-#' @param n_feat number of features to visualize
-#' @examples
-#' vis_load_ord(all_pos_1_df, colors_omics = colors_omics)
-#' @importFrom ggplot2 ggplot
-
-vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
-   n_plot <- min(nrow(gl_f_ord), n_feat)
-   omic_subset <- names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
-   color_vals <- colors_omics[omic_subset]
-   
-   p <- ggplot2::ggplot(data = gl_f_ord[1:n_plot,], 
-          aes(x = factor(omic_name, level = omic_name), 
-              y = loading, color = omic)) +
-         geom_point() +
-         theme_bw() +
-         xlab('Feature') +
-         theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-         scale_color_manual(values = color_vals)
-   
-   return(p)
-}
-```
-
-```{r}
-#' Visualize all loadings on two factor axies
-#'
-#' @description Visualize all loadings recovered from 
-#' nipalsMCIA() output loadings matrix ranked using across two factor axes
-#'
-#' @param mcia_out object returned from nipals_multiblock() function
-#' @param axes list of two numbers associated with two factors to visualize
-#' @param colors_omics named list of colors associated with omics,
-#' output of get_colors() function
-#' @examples
-#' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
-#' @importFrom ggplot2 ggplot
-vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
-   gl <- mcia_out$global_loadings
-   omic_name <- gsub("^.*_", "", rownames(gl))
-   gl_f <- data.frame(gl[,axes])
-   gl_f$omic <- omic_name
-   gl_f$omic <- as.factor(gl_f$omic)
-   
-   colnames(gl_f) <- c(paste0('Axis_', axes[1]), paste0('Axis_', axes[2]), "omic")
-   
-   p <- ggplot2::ggplot(data = gl_f, 
-               aes_string(x = colnames(gl_f)[1], 
-                          y = colnames(gl_f)[2], color = "omic")) +
-         geom_point(alpha = 0.3) +
-         theme_bw() +
-         scale_color_manual(values = colors_omics)
-   return(p)
-}
-```
-
 ### Visualize all feature loadings on two axes
 MCIA returns feature loadings for each factor that can be used to understand 
 important contributions of multi-omic features to a given factor.  
@@ -203,7 +81,7 @@ ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
 
 #### Factor 4
-We return and visualize a ranked list for Factor 4 with the top 60 features.  One can observe that while miRNA dominate the top features, all omics in the dataset are represented.
+We return and visualize a ranked list for Factor 4 with the top 60 features.  One can observe that while miRNA dominate the top features, all omics are represented.
 
 ```{r, fig.width = 10, fig.height = 4}
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE, 
