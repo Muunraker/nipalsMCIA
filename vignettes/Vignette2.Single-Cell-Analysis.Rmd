@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 You will need the [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) package from Bioconductor. It contains 9 different publicly available datasets from 10x Genomics.
 
 ```{r load-packages, echo = FALSE, include = FALSE}
+library(dplyr)
 library(ggplot2)
 library(nipalsMCIA)
 library(TENxPBMCData)
@@ -31,7 +32,9 @@ library(TENxPBMCData)
 
 We will be using the "pbmc5k-CITEseq" dataset, which was published in May 2019. It contains 5,247 detected cells from PBMCSs and was processed using Cell Ranger 3.0.2
 
-```{r load-data}
+### Bioconductor
+
+```{r load-data, eval = FALSE}
 tenx_pbmc5k_CITEseq <- TENxPBMCData(dataset = "pbmc5k-CITEseq")
 
 # RNA-Seq data
@@ -40,6 +43,194 @@ counts(tenx_pbmc5k_CITEseq)
 # CITE-Seq data
 counts(altExp(tenx_pbmc5k_CITEseq))
 ```
+
+```{r}
+# tenx_pbmc5k <- data(data_blocks_sc)
+load(file.path("..", "data", "data_blocks_sc.Rda"))
+```
+
+
+### From 10x Genomics
+
+*Or other sources...*
+
+
+### Seurat
+
+```{r, eval = FALSE}
+library(Seurat)
+tenx_pbmc5k <- as.Seurat(tenx_pbmc5k_CITEseq, counts = "counts", data = "logcounts")
+```
+
+## scRNA-Seq analysis
+
+### Read in the data
+
+```{r}
+# load the data
+data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature_bc_matrix"))
+
+# create the Seurat object
+obj <- CreateSeuratObject(counts = data$`Gene Expression`)
+adt_assay <- CreateAssayObject(counts = data$`Antibody Capture`)
+obj[["ADT"]] <- adt_assay
+
+# add useful metadata
+obj$"percent.mt" <- PercentageFeatureSet(obj, pattern = "^MT-")
+
+# reformat the barcodes
+# obj <- RenameCells(obj, new.names = substr(Cells(obj), 1, 16)) # remove the -1s
+
+# save the object
+saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_unprocessed.rds"))
+```
+
+
+### Quality control
+
+
+#### Metrics summary
+
+```{r}
+library(readr)
+
+# read in the summary table
+metrics_summary <- read_csv(file.path("..", "data", "tenx_pbmc5k_CITEseq", 
+                                      "5k_pbmc_protein_v3_metrics_summary.csv"),
+                            show_col_types = FALSE)
+```
+
+
+#### GEX QC metrics
+
+##### Before filtering
+
+```{r}
+VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
+        pt.size = 0.01, ncol = 3)
+```
+
+##### After filtering
+
+```{r}
+obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
+
+VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
+        pt.size = 0.01, ncol = 3)
+```
+### Standard Seurat pipeline
+
+```{r}
+# standard normalization
+obj <- NormalizeData(obj, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# highly variable features
+obj <- FindVariableFeatures(obj, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(obj), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(obj)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+
+# scaling
+obj <- ScaleData(obj, features = rownames(obj))
+
+# dimensionality reduction
+obj <- RunPCA(obj) # verbose = FALSE
+
+ElbowPlot(obj)
+
+# clustering
+obj <- FindNeighbors(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
+obj <- FindClusters(obj, resolution = 0.4) # verbose = FALSE
+obj <- RunUMAP(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
+
+# saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+
+# note that you can set `label = TRUE` or use the LabelClusters function to help label
+# individual clusters
+plot_seurat_clusters <- UMAPPlot(obj)
+plot_seurat_clusters
+```
+
+### Marker overlays
+
+#### Load marker genes
+
+```{r}
+# sort by Cell_Type and Marker if not already sorted
+markers_all <- read_csv(file.path("..", "data", "marker_genes.csv"),
+                        show_col_types = FALSE)
+markers_all
+```
+
+
+#### Dot plots
+
+```{r}
+p <- DotPlot(obj, features = unique(markers_all$Marker),
+             dot.scale = 3, cluster.idents = TRUE) + RotatedAxis()
+
+p$data <- suppressMessages(left_join(p$data, markers_all %>%
+                                             rename(features.plot = Marker)))
+
+p + facet_grid(cols = vars(Cell_Type), scales = 'free_x', space = "free") +
+      theme(strip.text.x = element_text(size = 8))
+```
+
+
+#### Feature plots
+
+```{r}
+FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE)
+```
+
+### Annotate cell clusters
+
+```{r}
+obj_annotations <- rbind(c("0", "Unknown"),
+                         c("1", "T cells"),
+                         c("2", "T cells"),
+                         c("3", "Unknown"),
+                         c("4", "Natural killers"),
+                         c("5", "B cells"),
+                         c("6", "Unknown"),
+                         c("7", "Unknown"),
+                         c("8", "Unknown"),
+                         c("9", "pDCs"))
+colnames(obj_annotations) <- c("Cluster", "CellType")
+obj_annotations <- data.frame(obj_annotations)
+
+# prepare the annotation information
+annotations <- obj_annotations[["CellType"]] # you only need the cell type information
+names(annotations) <- levels(obj$seurat_clusters)
+
+# relabel the Seurat clusters
+# Idents(obj) <- "seurat_clusters"
+obj <- RenameIdents(obj, annotations)
+
+# alphabetize the cell types
+Idents(obj) <- factor(Idents(obj), levels = sort(levels(obj)))
+
+# useful metadata (e.g. if you want to have multiple annotation sets)
+obj[["annotated_clusters"]] <- Idents(obj)
+
+# info about the clusters
+obj_annotations %>%
+  group_by(CellType) %>%
+  transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
+  distinct() %>% arrange(CellType)
+```
+
+```{r}
+plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE)
+
+plot_seurat_clusters + plot_annotated_clusters
+```
+
 
 
 ## Match NCI60 structure
@@ -56,6 +247,7 @@ metadata_NCI60
 
 # data_blocks$mrna
 ```
+
 ```{r match-structure}
 data_blocks_sc <- list()
 data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
@@ -65,7 +257,6 @@ summary(data_blocks_sc)
 
 save(data_blocks_sc, file = "data_blocks_sc.Rda")
 ```
-
 
 
 ## Results
@@ -81,5 +272,20 @@ mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile',
                                   # metadata = metadata_NCI60, coloring = "cancerType", 
                                   num_PCs = 5, tol = 1e-12)
+```
+
+
+## Tests
+
+From Anna
+
+```{r}
+data_blocks_sc_mod <- readRDS(file.path("..", "data", "data_blocks_sc_mod.RDS"))
+data_blocks_sc_mod$mrna <- t(data_blocks_sc_mod$mrna)
+data_blocks_sc_mod$adt <- t(data_blocks_sc_mod$adt)
+mcia_results <- nipals_multiblock(data_blocks_sc_mod, num_PCs = 2, tol = 1e-12,preprocMethod="none")
+
+saveRDS(mcia_results,"mcia_results_sc.RDS")
+MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomleft")
 ```
 
