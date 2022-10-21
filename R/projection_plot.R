@@ -10,12 +10,13 @@
 #' \item `projection_global` - scatter plot of two orders of global scores only (aka factors).
 #' }
 #' @param orders Option to select orders of factors to plot against each other (for projection plots)
-#' @param coloring Option to plot clusters/colors in projection plots, with two options:\itemize{
+#' @param color_col Option to plot clusters/colors in projection plots, with two options:\itemize{
 #' \item `none` (Default) - no clusters/colors plotted.
 #' \item A character string of the column name of the `mcia_result$metadata` dataframe 
 #' determining which color groupings to use (projection plots only) 
 #' }
-#' @param color_func Option to specific a color function
+#' @param color_func a function which returns color palettes (e.g. scales)
+#' @param color_params list of parameters for the corresponding function
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
 #' @examples
@@ -23,31 +24,32 @@
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
 #'                               num_PCs = 10, plots = "none", tol=1e-12)
 #' projection_plot(mcia_results, "projection", orders = c(1,2),
-#'   coloring = "cancerType", legend_loc = "bottomright")
+#'   color_col = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
 #' @export
 projection_plot <- function(mcia_result, plotType, orders=c(1,2),
-                           coloring = NULL, color_func=scales::viridis_pal, 
+                           color_col = NULL, color_func=scales::viridis_pal, 
+                           color_params=list(option="D"),
                            legend_loc = "bottomleft"){
     
     ### Identifying the membership of samples within
-    ### the clusters/categories of the coloring column
-    # case i) no coloring, clusters/categories were not specified 
-    if(is.null(coloring)){
+    ### the clusters/categories of the color_col column
+    # case i) no color_col, clusters/categories were not specified 
+    if(is.null(color_col)){
         clust_indexes = list(1:dim(mcia_result$global_score)[[1]])
         
-    # case ii) yes coloring, clusters/categories were specified 
-    } else if(is.character(coloring)){
+    # case ii) yes color_col, clusters/categories were specified 
+    } else if(is.character(color_col)){
         
-        # locating the coloring column within metadata
-        col_idx <- grep(coloring, names(mcia_result$metadata))
+        # locating the color_col column within metadata
+        col_idx <- grep(color_col, names(mcia_result$metadata))
         if(any(length(col_idx) < 1)){
-            stop("Column name for coloring not found in metadata.")
+            stop("Column name for color_col not found in metadata.")
         }
         
         # catching if two columns happen to have the same name.
         if (length(col_idx) > 1){
-            msg = paste0("Metadata has duplicate columns for ", coloring,
+            msg = paste0("Metadata has duplicate columns for ", color_col,
                          ". Selecting the first one for plotting.")
             warning(msg)
         }
@@ -61,16 +63,17 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
         }
         names(clust_indexes) <- uniq_clusts
         
-    # case iii) catch-all, coloring argument not recognized
+    # case iii) catch-all, color_col argument not recognized
     } else{
-        message("coloring option not recognized, defaulting to black/white plotting.")
+        message("color_col option not recognized, defaulting to black/white plotting.")
         clust_indexes = list(1:dim(mcia_result$global_score)[[1]])
     }
     
     ### Resolving the cluster colors
-    plot_colors = get_metadata_colors(mcia_result, coloring = coloring,
-                                      color_func = color_func)
-    if (is.null(coloring)){
+    plot_colors = get_metadata_colors(mcia_result, color_col = color_col,
+                                      color_func = color_func,
+                                      color_params = color_params)
+    if (is.null(color_col)){
       plot_colors = list("black")
     }
     
@@ -226,7 +229,7 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
         
         # Adding legend
         # plotting legend for clusters/categories
-        if(!is.null(coloring)){
+        if(!is.null(color_col)){
             leg_labels = c(names(plot_colors))
             leg_shapes = c(rep(16, length(plot_colors)))
             leg_colors = c(unname(unlist(plot_colors)))
