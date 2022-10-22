@@ -23,15 +23,15 @@ set.seed(42) # NIPALS starts with a random vector
 ```
 
 ```{r, echo=FALSE, include=FALSE}
-#library(ComplexHeatmap)
-library(stringr)
 library(nipalsMCIA)
 library(ggplot2)
 library(ggpubr)
 library(fgsea)
+library(stringr)
+library(dplyr)
+library(ComplexHeatmap)
 ```
 ```{r}
-library(ComplexHeatmap)
 ```
 
 ## Introduction 
@@ -178,10 +178,6 @@ mcia_results$metadata <- metadata_NCI60
 
 The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`:
 
-```{r}
-devtools::load_all()
-```
-
 ```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
                 color_col = "cancerType", legend_loc = "bottomleft")
@@ -197,10 +193,6 @@ global_scores_heatmap(mcia_results)
 ```
 In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some color_col which is availble
 throught the `color_col` parameter as shown below:
-
-```{r}
-devtools::load_all()
-```
 
 ```{r, fig.align='center'}
 global_scores_heatmap(mcia_results, color_col = "cancerType")
