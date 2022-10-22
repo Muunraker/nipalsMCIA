@@ -1,6 +1,6 @@
 ---
 title: "Predicting New MCIA scores"
-author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output: 
     rmdformats::readthedown

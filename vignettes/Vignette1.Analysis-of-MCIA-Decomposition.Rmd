@@ -1,6 +1,6 @@
 ---
 title: "Analysis of MCIA Decomposition"
-author: "Max Mattessich, Joaquin Reyna, Anna Konstorum, Edel Aron"
+author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
@@ -23,12 +23,15 @@ set.seed(42) # NIPALS starts with a random vector
 ```
 
 ```{r, echo=FALSE, include=FALSE}
+#library(ComplexHeatmap)
+library(stringr)
 library(nipalsMCIA)
 library(ggplot2)
-library(ComplexHeatmap)
 library(ggpubr)
 library(fgsea)
-library(tidyverse)
+```
+```{r}
+library(ComplexHeatmap)
 ```
 
 ## Introduction 
@@ -174,6 +177,11 @@ mcia_results$metadata <- metadata_NCI60
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`:
+
+```{r}
+devtools::load_all()
+```
+
 ```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
                 color_col = "cancerType", legend_loc = "bottomleft")
@@ -188,9 +196,19 @@ for this you can visualize a heatmap using `global_scores_heatmap()`:
 global_scores_heatmap(mcia_results)
 ```
 In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some color_col which is availble
-throught the `color_col` parameter as shown below:  
+throught the `color_col` parameter as shown below:
+
+```{r}
+devtools::load_all()
+```
+
 ```{r, fig.align='center'}
 global_scores_heatmap(mcia_results, color_col = "cancerType")
+```
+
+```{r, fig.align='center'}
+global_scores_heatmap(mcia_results, color_col = "cancerType",
+                      color_pal = c('red', 'blue', 'green'))
 ```
 This second heatmap allows us to see that global factor scores can successfully
 encode and find differences between cancer types. For theses results it is
