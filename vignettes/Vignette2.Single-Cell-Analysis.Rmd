@@ -272,15 +272,17 @@ save(data_blocks_sc, file = "data_blocks_sc.Rda")
 ## Results
 
 ```{r original}
+meta_colors = c('orange', 'purple', 'pink')
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
-                                  metadata = metadata_NCI60, coloring = "cancerType", 
+                                  metadata = metadata_NCI60, color_col = "cancerType", 
+                                  color_pal = meta_colors, 
                                   num_PCs = 10, tol = 1e-12)
 ```
 
 
 ```{r sc, eval = FALSE}
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile',
-                                  # metadata = metadata_NCI60, coloring = "cancerType", 
+                                  # metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 5, tol = 1e-12)
 ```
 

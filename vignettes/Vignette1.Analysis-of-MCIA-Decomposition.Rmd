@@ -176,11 +176,14 @@ mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
 mcia_results$metadata <- metadata_NCI60
 ```
 
-The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`:
+The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`. `color_pal` can then be used with a character vector or `scales::\<function\>` to
+select the colors which are applied alphabetically:
 
 ```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
+meta_colors = c('orange', 'purple', 'pink')
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
-                color_col = "cancerType", legend_loc = "bottomleft")
+                color_col = "cancerType", color_pal = meta_colors, 
+                legend_loc = "bottomleft")
 ```
 
 Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.
@@ -191,16 +194,12 @@ for this you can visualize a heatmap using `global_scores_heatmap()`:
 ```{r, fig.align='center'}
 global_scores_heatmap(mcia_results)
 ```
-In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some color_col which is availble
-throught the `color_col` parameter as shown below:
-
-```{r, fig.align='center'}
-global_scores_heatmap(mcia_results, color_col = "cancerType")
-```
+In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some color_col which is available
+throught the `color_col` + `color_pal` parameters as shown below:
 
 ```{r, fig.align='center'}
 global_scores_heatmap(mcia_results, color_col = "cancerType",
-                      color_pal = c('red', 'blue', 'green'))
+                   color_pal = meta_colors)
 ```
 This second heatmap allows us to see that global factor scores can successfully
 encode and find differences between cancer types. For theses results it is
@@ -226,7 +225,8 @@ each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.
 
 ```{r}
-colors_omics <- get_colors(mcia_results)
+colors_omics = c('red', 'blue', 'green')
+colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
 ```
 
@@ -284,6 +284,8 @@ all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
 all_4_plot
 ```
 
+<!-- Temporarily comment out pathway analysis -->
+<!--
 ### Pathway analysis for the top factors using data from gene-centric omics blocks 
 
 The NCI60 data set includes gene expression data and its corresponding global loading matrix is a gene by factor matrix. We can learn more about the pathways a given factor may be capturing by running each factor vector (column of the global loadings matrix) through a gene set enrichment analysis (GSEA). In the previous sections we saw how much each mRNA factor is contributing to the MCIA decomposition and so we will focus on factors X, Y, Z. We will run gsea_report() which reports on the p-value of the most significant pathway as well as the total number of significant pathways for each factor. Finally the report will summarize all factors using the selectivity score as described by Cantini et al., 2021 (more details below).
@@ -346,3 +348,4 @@ geneset_report[[2]]
 ```
 
 For the mRNA global loadings we can see that there is low selectivity which suggests that there is some overlap between the signals capture by each factor.
+-->
