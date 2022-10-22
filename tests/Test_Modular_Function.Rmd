@@ -4,6 +4,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+set.seed(42)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -33,14 +34,14 @@ plotType = 'projection_global'
 orders = c(1,2)
 projection_plot(mcia_results, plotType,
                 orders=c(1,2), color_col = NULL,
-                legend_loc = "bottomright")
+                legend_loc = "bottomleft")
 ```
 
-```{r fig.height=4, fig.width=4, fig.align='center'}
+```{r fig.height=6, fig.width=4, fig.align='center'}
 plotType = 'projection'
 projection_plot(mcia_results, plotType,
                 orders=c(1,2), color_col = NULL,
-                legend_loc = "bottomright")
+                legend_loc = "bottomleft")
 ```
 
 ```{r fig.height=4, fig.width=4, fig.align='center'}
@@ -48,14 +49,30 @@ plotType = 'projection_global'
 orders = c(1,2)
 projection_plot(mcia_results, plotType,
                 orders=c(1,2), color_col = 'cancerType',
-                legend_loc = "bottomright")
+                legend_loc = "bottomleft")
+```
+```{r fig.height=4, fig.width=4, fig.align='center'}
+plotType = 'projection_global'
+orders = c(1,2)
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), color_col = 'cancerType',
+                color_pal = c('red', 'green', 'blue'),
+                legend_loc = "bottomleft")
 ```
 
-```{r fig.height=4, fig.width=4, fig.align='center'}
+```{r fig.height=6, fig.width=4, fig.align='center'}
 plotType = 'projection'
 projection_plot(mcia_results, plotType,
                 orders=c(1,2), color_col = 'cancerType',
-                legend_loc = "bottomright")
+                legend_loc = "bottomleft")
+```
+
+```{r fig.height=6, fig.width=4, fig.align='center'}
+plotType = 'projection'
+projection_plot(mcia_results, plotType,
+                orders=c(1,2), color_col = 'cancerType',
+                color_pal = c('orange', 'purple', 'pink'),
+                legend_loc = "bottomleft")
 ```
 
 # Test global_scores_eigenvalues_plot(mcia_results)
