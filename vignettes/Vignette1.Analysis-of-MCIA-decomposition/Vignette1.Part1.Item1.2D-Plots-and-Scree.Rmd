@@ -99,10 +99,10 @@ mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
 mcia_results$metadata <- metadata_NCI60
 ```
 
-The `coloring` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for coloring the projection plots, in this case the column is `cancerType`:
-```{r Visualize Clusters Coloring, fig.height=4, fig.width=4, fig.align='center'}
+The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`:
+```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
-                coloring = "cancerType", legend_loc = "bottomleft")
+                color_col = "cancerType", legend_loc = "bottomleft")
 ```
 
 Clusters of samples can be computed from the global factor scores using any method, such as k-means clustering and visualized similarly.

@@ -30,10 +30,10 @@ for this you can visualize a heatmap using `global_scores_heatmap()`:
 ```{r, fig.align='center'}
 global_scores_heatmap(mcia_results)
 ```
-In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some coloring which is availble
-throught the `coloring` parameter as shown below:  
+In the heatmap above, the samples have been hierarchically clustered. To further understand these clusters it is useful to add some color_col which is availble
+throught the `color_col` parameter as shown below:  
 ```{r, fig.align='center'}
-global_scores_heatmap(mcia_results, coloring = "cancerType")
+global_scores_heatmap(mcia_results, color_col = "cancerType")
 ```
 This second heatmap allows us to see that global factor scores can successfully
 encode and find differences between cancer types. For theses results it is
