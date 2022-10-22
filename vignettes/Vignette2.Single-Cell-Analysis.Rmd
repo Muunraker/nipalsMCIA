@@ -26,6 +26,8 @@ library(dplyr)
 library(ggplot2)
 library(nipalsMCIA)
 library(TENxPBMCData)
+library(piggyback)
+library(Seurat)
 ```
 
 ## Loading the data
@@ -46,6 +48,14 @@ counts(altExp(tenx_pbmc5k_CITEseq))
 
 ```{r}
 # tenx_pbmc5k <- data(data_blocks_sc)
+# download the data
+pb_download("data_blocks_sc.Rda", 
+          repo = "Muunraker/nipalsMCIA", 
+          tag = "v0.0.1", 
+          dest = '../data/')
+```
+
+```{r}
 load(file.path("..", "data", "data_blocks_sc.Rda"))
 ```
 

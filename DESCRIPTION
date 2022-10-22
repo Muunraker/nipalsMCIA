@@ -23,7 +23,8 @@ Imports:
     fgsea,
     scales,
     RSpectra,
-    ggpubr
+    ggpubr,
+    piggyback
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8
