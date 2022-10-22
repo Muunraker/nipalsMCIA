@@ -5,12 +5,14 @@
 #'   contain metadata with columns corresponding to color_col
 #' @param color_col an integer or string specifying the column that will be
 #'   used for color_col
+#' @param color_pal a list of colors or function which returns a list of colors
+#' @param color_pal_params a list of parameters for the color function
 #' @return ComplexHeatmap object
 #' @export
 global_scores_heatmap <- function(mcia_result,
                            color_col=NULL,
-                           color_func=scales::viridis_pal, 
-                           color_params=list(option="D")){
+                           color_pal=scales::viridis_pal, 
+                           color_pal_params=list(option="D")){
     
     # extract the global scores
     global_scores = mcia_result$global_scores
@@ -36,18 +38,14 @@ global_scores_heatmap <- function(mcia_result,
         # extract color type and create a color palette list
         cat_values <- mcia_result$metadata[,color_col]
         
-        
-        
-        
-        cat_colors <- get_metadata_colors(mcia_result, color_col = color_col)
-        
-        
-        
+        cat_colors <- get_metadata_colors(mcia_result,
+                                            color_col = color_col,
+                                            color_pal = color_pal,
+                                            color_pal_params = color_pal_params)
         cat_colors_list <- list(ColorType = cat_colors)
         
-        
-        
-        
+        print(cat_colors_list)
+        print("# add the colors list to a HeatmapAnnotation obj")
         
         
         # add the colors list to a HeatmapAnnotation obj

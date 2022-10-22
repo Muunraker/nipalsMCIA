@@ -15,8 +15,10 @@
 #' \item A character string of the column name of the `mcia_result$metadata` dataframe 
 #' determining which color groupings to use (projection plots only) 
 #' }
-#' @param color_func a function which returns color palettes (e.g. scales)
-#' @param color_params list of parameters for the corresponding function
+#' @param color_col an integer or string specifying the column that will be
+#'   used for color_col
+#' @param color_pal a list of colors or function which returns a list of colors
+#' @param color_pal_params a list of parameters for the color function
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' 
 #' @examples
@@ -28,9 +30,10 @@
 #' @return Displays the desired plots
 #' @export
 projection_plot <- function(mcia_result, plotType, orders=c(1,2),
-                           color_col = NULL, color_func=scales::viridis_pal, 
-                           color_params=list(option="D"),
-                           legend_loc = "bottomleft"){
+                               color_col=NULL,
+                               color_pal=scales::viridis_pal, 
+                               color_pal_params=list(option="D"),
+                               legend_loc = "bottomleft"){
     
     ### Identifying the membership of samples within
     ### the clusters/categories of the color_col column
@@ -71,8 +74,8 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
     
     ### Resolving the cluster colors
     plot_colors = get_metadata_colors(mcia_result, color_col = color_col,
-                                      color_func = color_func,
-                                      color_params = color_params)
+                                      color_pal = color_pal,
+                                      color_pal_params = color_pal_params)
     if (is.null(color_col)){
       plot_colors = list("black")
     }

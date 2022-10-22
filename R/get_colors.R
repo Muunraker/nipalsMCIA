@@ -10,10 +10,16 @@
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
 #' @export
-get_colors <- function(mcia_result, color_func=scales::viridis_pal,
-                                color_params=list(option="D")) {
+get_colors <- function(mcia_result, color_pal=scales::viridis_pal,
+                                color_pal_params=list(option="D")) {
   omic_list <- names(mcia_result$block_loadings)
-  colors_omics <- do.call(color_func, color_params)(length(omic_list))
+  
+  if (class(color_pal) == "function"){
+      colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
+  } else if (class(color_pal) == "character") {
+      colors_omics = color_pal
+  }
+  
   names(colors_omics) <- omic_list
   return(colors_omics)
 }
@@ -34,10 +40,18 @@ get_colors <- function(mcia_result, color_func=scales::viridis_pal,
 #' @importFrom scales viridis_pal
 #' @export
 get_metadata_colors <- function(mcia_result, color_col,
-                                color_func=scales::viridis_pal,
-                                color_params=list(option="D")) {
+                                color_pal=scales::viridis_pal,
+                                color_pal_params=list(option="D")) {
+    
   meta_list <- unique(mcia_result$metadata[,color_col])
-  colors_meta <- do.call(color_func, color_params)(length(meta_list))
+  
+  if (class(color_pal) == "function"){
+      colors_meta <- do.call(color_pal, color_pal_params)(length(meta_list))
+  } else if (class(color_pal) == "character") {
+      colors_meta = color_pal
+  }
+  
   names(colors_meta) <- meta_list
   return(colors_meta)
+  
 }

@@ -9,8 +9,8 @@ projection_plot(
   plotType,
   orders = c(1, 2),
   color_col = NULL,
-  color_func = scales::viridis_pal,
-  color_params = list(option = "D"),
+  color_pal = scales::viridis_pal,
+  color_pal_params = list(option = "D"),
   legend_loc = "bottomleft"
 )
 }
@@ -22,15 +22,12 @@ projection_plot(
 
 \item{orders}{Option to select orders of factors to plot against each other (for projection plots)}
 
-\item{color_col}{Option to plot clusters/colors in projection plots, with two options:\itemize{
-\item `none` (Default) - no clusters/colors plotted.
-\item A character string of the column name of the `mcia_result$metadata` dataframe 
-determining which color groupings to use (projection plots only) 
-}}
+\item{color_col}{an integer or string specifying the column that will be
+used for color_col}
 
-\item{color_func}{a function which returns color palettes (e.g. scales)}
+\item{color_pal}{a list of colors or function which returns a list of colors}
 
-\item{color_params}{list of parameters for the corresponding function}
+\item{color_pal_params}{a list of parameters for the color function}
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
 

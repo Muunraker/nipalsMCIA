@@ -7,8 +7,8 @@
 global_scores_heatmap(
   mcia_result,
   color_col = NULL,
-  color_func = scales::viridis_pal,
-  color_params = list(option = "D")
+  color_pal = scales::viridis_pal,
+  color_pal_params = list(option = "D")
 )
 }
 \arguments{
@@ -17,6 +17,10 @@ contain metadata with columns corresponding to color_col}
 
 \item{color_col}{an integer or string specifying the column that will be
 used for color_col}
+
+\item{color_pal}{a list of colors or function which returns a list of colors}
+
+\item{color_pal_params}{a list of parameters for the color function}
 }
 \value{
 ComplexHeatmap object
