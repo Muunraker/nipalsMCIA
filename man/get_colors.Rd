@@ -4,10 +4,18 @@
 \alias{get_colors}
 \title{Assigning colors to different omics (default: color-blindness friendly)}
 \usage{
-get_colors(mcia_result, color_func = scales::viridis_pal)
+get_colors(
+  mcia_result,
+  color_func = scales::viridis_pal,
+  color_params = list(option = "D")
+)
 }
 \arguments{
 \item{mcia_result}{object returned from nipals_multiblock() function}
+
+\item{color_func}{a function which returns color palettes (e.g. scales)}
+
+\item{color_params}{list of parameters for the corresponding function}
 }
 \value{
 List of omics with assigned colors

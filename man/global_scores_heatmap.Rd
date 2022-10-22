@@ -4,14 +4,19 @@
 \alias{global_scores_heatmap}
 \title{Plotting a heatmap of global factors scores (sample v. factors)}
 \usage{
-global_scores_heatmap(mcia_result, coloring = NULL)
+global_scores_heatmap(
+  mcia_result,
+  color_col = NULL,
+  color_func = scales::viridis_pal,
+  color_params = list(option = "D")
+)
 }
 \arguments{
 \item{mcia_result}{the mcia object matrix after running MCIA, must also
-contain metadata with columns corresponding to coloring}
+contain metadata with columns corresponding to color_col}
 
-\item{coloring}{an integer or string specifying the column that will be
-used for coloring}
+\item{color_col}{an integer or string specifying the column that will be
+used for color_col}
 }
 \value{
 ComplexHeatmap object

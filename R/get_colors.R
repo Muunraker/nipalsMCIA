@@ -10,7 +10,7 @@
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
 #' @export
-get_colors <- function(mcia_result, color_func=scales::viridis_pal),
+get_colors <- function(mcia_result, color_func=scales::viridis_pal,
                                 color_params=list(option="D")) {
   omic_list <- names(mcia_result$block_loadings)
   colors_omics <- do.call(color_func, color_params)(length(omic_list))

@@ -11,7 +11,7 @@ nipals_multiblock(
   tol = 1e-12,
   max_iter = 1000,
   metadata = NULL,
-  coloring = NULL,
+  color_col = NULL,
   deflationMethod = "block",
   plots = "all"
 )
@@ -33,7 +33,7 @@ nipals_multiblock(
 \item{metadata}{a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
 May have multiple columns, but rows and row names must match the data frames in `data_blocks`.}
 
-\item{coloring}{Optional argument with the column name of the `metadata` data frame used to define plotting colors}
+\item{color_col}{Optional argument with the column name of the `metadata` data frame used to define plotting colors}
 
 \item{deflationMethod}{an option for the desired deflation method, either: \itemize{
 \item `block` deflation via block loadings (for MCIA, default)

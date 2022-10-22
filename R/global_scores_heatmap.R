@@ -8,6 +8,7 @@
 #' @return ComplexHeatmap object
 #' @export
 global_scores_heatmap <- function(mcia_result,
+                           color_col=NULL,
                            color_func=scales::viridis_pal, 
                            color_params=list(option="D")){
     

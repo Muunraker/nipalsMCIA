@@ -19,7 +19,7 @@
 #' @param max_iter a number for the maximum number of times NIPALS should iterate
 #' @param metadata a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
 #' May have multiple columns, but rows and row names must match the data frames in `data_blocks`.
-#' @param coloring Optional argument with the column name of the `metadata` data frame used to define plotting colors
+#' @param color_col Optional argument with the column name of the `metadata` data frame used to define plotting colors
 #' @param deflationMethod an option for the desired deflation method, either: \itemize{
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
@@ -48,7 +48,7 @@
 #' 
 #' @export
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
-                              metadata = NULL, coloring = NULL, deflationMethod = 'block',plots="all"){
+                              metadata = NULL, color_col = NULL, deflationMethod = 'block',plots="all"){
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
   
@@ -155,13 +155,13 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     par(mfrow = c(1,2))
     projection_plot(results_list,'projection',
                legend_loc = "bottomleft",
-               coloring = coloring) # first two orders of scores
+               color_col = color_col) # first two orders of scores
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1,1))
     
   }else if (tolower(plots) == 'global'){
     par(mfrow = c(1,2))
-    projection_plot(results_list,'projection_global', coloring = coloring) # first two global scores
+    projection_plot(results_list,'projection_global', color_col = color_col) # first two global scores
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1,1))
   }else if (tolower(plots) == 'none'){
