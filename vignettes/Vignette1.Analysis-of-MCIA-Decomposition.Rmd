@@ -31,9 +31,6 @@ library(stringr)
 library(dplyr)
 library(ComplexHeatmap)
 ```
-```{r}
-```
-
 ## Introduction 
 In the mini-lectures we covered in detail the math behind MCIA as well as a generic pipeline. In this vignette we will cover the most important functions within the nipalsMCIA package as well as downstream analyses that help can interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block data. For this vignette we are using a cancer data set from (Meng et al., 2016) that includes 21 subjects with three data blocks. The data blocks include mRNA levels (12895 features), microRNA levels (537 features) and protein levels (7016 features). Without a multi-block method, researchers may try to use feature reduction methods on each block individually but this strategy ignores relationships between different blocks or under-appreciates signals which are specific to one block. In the context of the NCI60 data set and this vignette, we will show you the power of MCIA to find important relationships between mRNA, microRNA and proteins. More specifically, we will show you how to interpret the global factor scores in Part 1 and global loadings in Part 2. 
 
@@ -99,7 +96,8 @@ $$
 $$
 This matrix encodes the contribution of each feature to the  low-dimensional representation.
 
-The remainder of this vignette will be broken down into two sections, **Part 1: Interpreting Global Factor Scores** and **Part 2: Interpreting Global
+The remainder of this vignette will be broken down into two sections,
+**Part 1: Interpreting Global Factor Scores** and **Part 2: Interpreting Global
 Loadings** where we show how to interpret $\mb F$ and $\mb A$, respectively. 
 
 ## Part 1: Interpreting Global Factor Scores  
@@ -162,10 +160,6 @@ In order to use this data it must be converted into a data frame and passed as
 part of the `metadata` argument of `nipals_multiblock()` or added directly to `mcia_results`:
 
 ```{r, warning=FALSE, message=FALSE}
-# Conversion of metadata to data frame 
-metadata_NCI60 <- data.frame(cancerType = unlist(metadata_NCI60))
-row.names(metadata_NCI60) <- rownames(data_blocks[[1]])
-
 # Adding metadata as part of the nipals_multiblock() function
 set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile", 
