@@ -180,7 +180,8 @@ The `color_col` argument of `projection_plot()` can then be used to determine wh
 select the colors which are applied alphabetically:
 
 ```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
-meta_colors = c('orange', 'purple', 'pink')
+#meta_colors = c('orange', 'purple', 'pink')
+meta_colors<-get_metadata_colors(mcia_results, 1)
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
                 color_col = "cancerType", color_pal = meta_colors, 
                 legend_loc = "bottomleft")
@@ -225,8 +226,9 @@ each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.
 
 ```{r}
-colors_omics = c('red', 'blue', 'green')
-colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
+#colors_omics = c('red', 'blue', 'green')
+#colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
+colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics)
 ```
 

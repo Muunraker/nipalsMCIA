@@ -41,7 +41,7 @@ get_colors <- function(mcia_result, color_pal=scales::viridis_pal,
 #' @export
 get_metadata_colors <- function(mcia_result, color_col,
                                 color_pal=scales::viridis_pal,
-                                color_pal_params=list(option="D")) {
+                                color_pal_params=list(option="E")) {
     
   meta_list <- unique(mcia_result$metadata[,color_col])
   
