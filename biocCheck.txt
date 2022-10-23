@@ -1,0 +1,29 @@
+$error
+[1] "Packages providing 12 object(s) used in this package should be imported in the NAMESPACE file, otherwise packages importing this package may fail."           
+[2] "Add a .R or .Rin file in tests/ directory or unit tests will not be run by R CMD check. See http://bioconductor.org/developers/how-to/unitTesting-guidelines/"
+
+$warning
+[1] "The following files are over 5MB in size: 'data/data_blocks_sc.Rda'"                                 
+[2] "Import reshape2, circlize, ggpubr, piggyback in NAMESPACE as well as DESCRIPTION."                   
+[3] " Avoid T/F variables; If logical, use TRUE/FALSE (found 6 times)"                                    
+[4] " Avoid class membership checks with class() / is() and == / !=; Use is(x, 'class') for S4 classes"   
+[5] "Add non-empty \\value sections to the following man pages: man/vis_load_ord.Rd, man/vis_load_plot.Rd"
+
+$note
+ [1] "Consider clarifying how 15 object(s) are initialized. Maybe they are part of a data set loaded with data(), or perhaps part of an object referenced in with() or within()."        
+ [2] "Update R version dependency from 3.5.0 to 4.1.0."                                                                                                                                  
+ [3] "The Description field in the DESCRIPTION is made up by less\nthan 3 sentences. Please consider expanding this field, and\nstructure it as a full paragraph"                        
+ [4] "License 'GPL (>= 3)' unknown; licenses cannot restrict use"                                                                                                                        
+ [5] "Potential intermediate files found:"                                                                                                                                               
+ [6] " 'sessionInfo' not found in vignette(s)"                                                                                                                                           
+ [7] " Avoid sapply(); use vapply()"                                                                                                                                                     
+ [8] " Avoid 1:...; use seq_len() or seq_along()"                                                                                                                                        
+ [9] " Avoid the use of 'paste' in condition signals"                                                                                                                                    
+[10] " Avoid redundant 'stop' and 'warn*' in signal conditions"                                                                                                                          
+[11] "Recommended function length <= 50 lines."                                                                                                                                          
+[12] "Consider adding runnable examples to the following man pages which document exported objects:"                                                                                     
+[13] "Consider shorter lines; 162 lines (7%) are > 80 characters long."                                                                                                                  
+[14] "Consider 4 spaces instead of tabs; 10 lines (0%) contain tabs."                                                                                                                    
+[15] "Consider multiples of 4 spaces for line indents, 437 lines(19%) are not."                                                                                                          
+[16] "Cannot determine whether maintainer is subscribed to the\nbioc-devel mailing list (requires admin credentials).\nSubscribe here:\nhttps://stat.ethz.ch/mailman/listinfo/bioc-devel"
+
