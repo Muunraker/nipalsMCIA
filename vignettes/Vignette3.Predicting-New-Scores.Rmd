@@ -93,3 +93,7 @@ ggplot(data = MCIA_out_full, aes(x=Factor_1, y=Factor_2, color=Cancer_type, shap
   ggtitle("MCIA for NCI60 training and test data")
 ```
 
+```{r}
+SessionInfo()
+```
+

@@ -301,3 +301,6 @@ saveRDS(mcia_results,"mcia_results_sc.RDS")
 MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomleft")
 ```
 
+```{r}
+SessionInfo()
+```

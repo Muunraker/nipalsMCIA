@@ -345,3 +345,7 @@ geneset_report[[2]]
 
 For the mRNA global loadings we can see that there is low selectivity which suggests that there is some overlap between the signals capture by each factor.
 -->
+
+```{r}
+SessionInfo()
+```
