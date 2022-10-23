@@ -302,5 +302,5 @@ MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bot
 ```
 
 ```{r}
-SessionInfo()
+sessionInfo()
 ```

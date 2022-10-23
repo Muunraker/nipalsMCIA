@@ -29,15 +29,15 @@ library(ggplot2)
 data(NCI60)
 
 set.seed(8)
-num_samples = dim(data_blocks[[1]])[1]
-num_train = round(num_samples*0.7,0)
-train_samples = sample.int(num_samples,num_train)
+num_samples <- dim(data_blocks[[1]])[1]
+num_train <- round(num_samples*0.7,0)
+train_samples <- sample.int(num_samples,num_train)
 
-data_blocks_train<-data_blocks
-data_blocks_test<-data_blocks
+data_blocks_train <- data_blocks
+data_blocks_test <- data_blocks
 for (i in 1:length(data_blocks)){
-  data_blocks_train[[i]]<-data_blocks_train[[i]][train_samples,]
-  data_blocks_test[[i]]<-data_blocks_test[[i]][-train_samples,]
+  data_blocks_train[[i]] <- data_blocks_train[[i]][train_samples,]
+  data_blocks_test[[i]] <- data_blocks_test[[i]][-train_samples,]
 }
 
 ```
@@ -56,9 +56,9 @@ e.g. 'ME.UACC_62' is type 'ME'
 
 ```{r visualize training model, fig.height=4, fig.align='center'}
 cancer_type <- substr(rownames(data_blocks_train$mrna), 1, 2)
-MCIA_out<-data.frame(MCIA_train$global_scores[,1:2])
-MCIA_out$Cancer_type<-cancer_type
-colnames(MCIA_out)<-c("Factor_1", "Factor_2", "Cancer_type")
+MCIA_out <- data.frame(MCIA_train$global_scores[,1:2])
+MCIA_out$Cancer_type <- cancer_type
+colnames(MCIA_out) <- c("Factor_1", "Factor_2", "Cancer_type")
 ggplot(data = MCIA_out, aes(x=Factor_1, y=Factor_2, color=Cancer_type))+
   geom_point(size=3) + 
   theme_bw() +
@@ -79,13 +79,13 @@ We once again plot the top two factor scores for both the training and test data
 
 ```{r visualize both models, fig.height=4, fig.align='center'}
 cancer_type <- substr(rownames(data_blocks_test$mrna), 1, 2)
-MCIA_out_test<-data.frame(MCIA_test_scores[,1:2])
-MCIA_out_test$Cancer_type<-cancer_type
-colnames(MCIA_out_test)<-c("Factor_1", "Factor_2", "Cancer_type")
-MCIA_out_test$set<-"test"
-MCIA_out$set<-"train"
-MCIA_out_full<-rbind(MCIA_out,MCIA_out_test)
-rownames(MCIA_out_full)<-NULL
+MCIA_out_test <- data.frame(MCIA_test_scores[,1:2])
+MCIA_out_test$Cancer_type <- cancer_type
+colnames(MCIA_out_test) <- c("Factor_1", "Factor_2", "Cancer_type")
+MCIA_out_test$set <- "test"
+MCIA_out$set <- "train"
+MCIA_out_full <- rbind(MCIA_out,MCIA_out_test)
+rownames(MCIA_out_full) <- NULL
 
 ggplot(data = MCIA_out_full, aes(x=Factor_1, y=Factor_2, color=Cancer_type, shape=set))+
   geom_point(size=3) + 
@@ -94,6 +94,6 @@ ggplot(data = MCIA_out_full, aes(x=Factor_1, y=Factor_2, color=Cancer_type, shap
 ```
 
 ```{r}
-SessionInfo()
+sessionInfo()
 ```
 

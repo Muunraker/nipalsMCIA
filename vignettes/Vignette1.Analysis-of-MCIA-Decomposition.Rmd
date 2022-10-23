@@ -175,7 +175,7 @@ select the colors which are applied alphabetically:
 
 ```{r Visualize Clusters color_col, fig.height=4, fig.width=4, fig.align='center'}
 #meta_colors = c('orange', 'purple', 'pink')
-meta_colors<-get_metadata_colors(mcia_results, 1)
+meta_colors <- get_metadata_colors(mcia_results, 1)
 projection_plot(mcia_results, "projection_global", orders = c(1,2),
                 color_col = "cancerType", color_pal = meta_colors, 
                 legend_loc = "bottomleft")
@@ -206,8 +206,8 @@ In addition to the global scores matrix, MCIA also calculates a global loadings 
 ### Pseudoeigenvalues representing the contribution of each omic to the global factor score
 ```{r, fig.width=4, fig.height=1.5, fig.align='center'}
 ## Should make into a function
-bs_weights<-as.matrix(data.frame(mcia_results$block_score_weights))
-colnames(bs_weights)<-c(1:10)
+bs_weights <- as.matrix(data.frame(mcia_results$block_score_weights))
+colnames(bs_weights) <- c(1:10)
 Heatmap(bs_weights, cluster_columns=FALSE, cluster_rows=FALSE, name = "weight",
                         column_title_side = "bottom", column_title = "Factor")
 ```
@@ -347,5 +347,5 @@ For the mRNA global loadings we can see that there is low selectivity which sugg
 -->
 
 ```{r}
-SessionInfo()
+sessionInfo()
 ```
