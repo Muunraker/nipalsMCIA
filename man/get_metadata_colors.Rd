@@ -9,7 +9,7 @@ get_metadata_colors(
   mcia_result,
   color_col,
   color_pal = scales::viridis_pal,
-  color_pal_params = list(option = "D")
+  color_pal_params = list(option = "E")
 )
 }
 \arguments{

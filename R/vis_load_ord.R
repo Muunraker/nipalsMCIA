@@ -8,9 +8,11 @@
 #' @param colors_omics named list of colors associated with omics,
 #' output of get_colors() function
 #' @param n_feat number of features to visualize
+#' @return Plot in features for a factor by rank
 #' @examples
 #' vis_load_ord(all_pos_1_df, colors_omics = colors_omics)
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot aes geom_point theme_bw xlab theme
+#' @importFrom ggplot2 scale_color_manual 
 #' @export
 
 vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
@@ -18,7 +20,7 @@ vis_load_ord <- function(gl_f_ord, colors_omics, n_feat = 15) {
   omic_subset <- names(table(droplevels(gl_f_ord[0:n_plot,])$omic))
   color_vals <- colors_omics[omic_subset]
   
-  p <- ggplot2::ggplot(data = gl_f_ord[1:n_plot,], 
+  p <- ggplot(data = gl_f_ord[1:n_plot,], 
                        aes(x = factor(omic_name, level = omic_name), 
                            y = loading, color = omic)) +
     geom_point() +
