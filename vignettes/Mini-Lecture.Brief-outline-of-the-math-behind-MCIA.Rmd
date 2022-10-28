@@ -23,7 +23,7 @@ vignette: >
 <!-- \DeclareMathOperator*{\argmax}{argmax } -->
 
 # Introduction
-Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method designed to work on data that can be organized into several blocks of variables measured on the same subjects. These blocks could indicate variables of different categories (e.g. genes vs. protiens) or different experiments conducted on the same subjects. MCIA creates a set of 'factors' or 'scores' vectors along with accompanying 'loadings' vectors that aim to highlight trends common across all datsets. 
+Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method designed to work on data that can be organized into several blocks of variables measured on the same subjects. These blocks could indicate variables of different categories (e.g. genes vs. proteins) or different experiments conducted on the same subjects. MCIA creates a set of 'factors' or 'scores' vectors along with accompanying 'loadings' vectors that aim to highlight trends common across all datsets. 
 
 # Notation for Initial Values, Dimensions and Parameters
 | Notation | Description |
@@ -64,5 +64,20 @@ The ultimate goal of MCIA is to provide a set of scores and loadings vectors of 
 	\text{argmax}_{\mb f_1,...,\mb f_N,\mb f} \hspace{0.5em} \sum_{b=1}^N\text{cov}^2(\mb f_b,\mb f ),
 \end{equation} 
 where $\mb f_b = \mb X_b \mb a_b$ for $b=1,..,N$ and $\mb f = \mb X \mb a$ are linear combinations of the variables in the block and global matrices respectively. One set of factor scores $\mb f_1,...,\mb f_N, \mb f$ and loadings $\mb a_1,...,\mb a_N, \mb a$ are generated for each order desired up to the target dimension $r$. We denote these orders with a superscript, e.g. $\mb f_b^{(j)}$ is the $j$-th order block factor score for block $b$. We organize all of these block... (TBC)
+
+## Computing the decomposition via the Non-Linear Iterative Partial Least Squares (NIPALS) algorithm
+
+*Max, feel free to change title*  
+Todo:  
+
+1. Motivate NIPALS - compare to original Omicade procedure  
+2. Brief outline of algorithm  
+3. Note that deflation process has a parameter that modifies MCIA to CPCA  
+
+# Resources
+*Add references*
+
+# Notes on data pre-processing and normalization
+*A.K. will add notes here*
 
 
