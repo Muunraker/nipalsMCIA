@@ -41,7 +41,7 @@ CCpreproc <- function(df){
   temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
   
   # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
-  block_var <- norm(temp_df,type = "F")/(max(1,nrow(data_blocks)-1))
+  block_var <- norm(temp_df,type = "F")/sqrt((max(1,nrow(df)-1)))
   temp_df <- temp_df*(1/block_var)
   
   resList <- list(temp_df,1) # note: blocks normalized to unit variance
