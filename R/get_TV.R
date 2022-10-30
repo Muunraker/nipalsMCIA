@@ -15,9 +15,9 @@ get_TV <- function(ds){
   get_bv <- function(X){
     X_cent = sweep(X, 2,colMeans(X), "-")
     n_samp = dim(X_cent)[1]
-    X_cent_norm = X_cent/sqrt(n_samp-1) #*** I THINK THIS LINE IS WRONG 
+    X_cent_norm = X_cent/sqrt(max(n_samp-1,1))
     
-    bv = norm(X_cent_norm, type="F")^2
+    bv = (norm(X_cent_norm, type="F")^2)
     return(bv)
   }
   
