@@ -90,6 +90,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
     block_vars <- lapply(preproc_results, `[[`, 2) # list of block variances
     message("Pre-processing completed.")
   }else{
+    # **PLACEHOLDER** == should be replaced with appropriate variance calc
     data_blocks <- lapply(data_blocks, as.matrix) # converting input data to matrix form
     block_vars <- NULL
     message("No Pre-processing performed.")
