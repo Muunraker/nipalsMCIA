@@ -14,12 +14,21 @@
 #' @return Displays the contribution plot using eigenvalues
 #' @export
 global_scores_eigenvalues_plot <- function(mcia_result){
+  
+  # Getting total variance if supplied
+  if(is.list(mcia_result$block_variances)){
+    ylabel = "Prop. Total Variance"
+    totvar <- sum(unlist(mcia_result$block_variances))
+  } else{
+    ylabel = "Eigenvalue"
+    totvar <- 1
+  }
     
   # extract eigenvalues
-  barploteigs <- unlist(mcia_result$eigvals)^2
+  barploteigs <- (unlist(mcia_result$eigvals)^2)/totvar
   names(barploteigs) <- 1:length(mcia_result$eigvals)
   
   # generate barplot 
-  barplot(barploteigs, xlab="Factors", cex.names = 1, 
-          main = "Global Factor Score Eigenvalues ")
+  barplot(barploteigs, xlab="Factors",ylab=ylabel, cex.names = 1, 
+          main = "Global Eigenvalues ")
 }

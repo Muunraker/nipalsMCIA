@@ -171,14 +171,14 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
             if(length(plot_colors) == 1){
               legend(legend_loc, 
                      legend = c(names(mcia_result$block_loadings)),
-                     pch = 1:length(mcia_result$block_loadings),
+                     pch = 0:length(mcia_result$block_loadings),
                      cex = 1)
             # plotting legend for clusters/categories
             } else{
               leg_labels = c(names(mcia_result$block_loadings),
                              names(plot_colors))
               leg_shapes = c(1:length(mcia_result$block_loadings),
-                             rep(16, length(plot_colors)))
+                             rep(16, length(plot_colors)))-1
               leg_colors = c(rep("black", length(mcia_result$block_loadings)),
                              unname(unlist(plot_colors)))
               legend(legend_loc,
