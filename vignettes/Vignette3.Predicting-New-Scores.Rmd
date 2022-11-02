@@ -51,17 +51,19 @@ MCIA_train <- nipals_multiblock(data_blocks_train, preprocMethod='colprofile',nu
 
 ### Visualize model on training data using metadata on cancer type
 
-The metadata for cancer type is contained in the sample name (before the period)  
-e.g. 'ME.UACC_62' is type 'ME'
-
 ```{r visualize training model, fig.height=4, fig.align='center'}
-cancer_type <- substr(rownames(data_blocks_train$mrna), 1, 2)
-MCIA_out <- data.frame(MCIA_train$global_scores[,1:2])
-MCIA_out$Cancer_type <- cancer_type
-colnames(MCIA_out) <- c("Factor_1", "Factor_2", "Cancer_type")
-ggplot(data = MCIA_out, aes(x=Factor_1, y=Factor_2, color=Cancer_type))+
+MCIA_train$metadata<-data.frame(metadata_NCI60[train_samples,],row.names=rownames(data_blocks_train$mrna))
+colnames(MCIA_train$metadata)<-c('cancerType')
+meta_colors<-get_metadata_colors(MCIA_train, 1)
+
+MCIA_out<-data.frame(MCIA_train$global_scores[,1:2])
+MCIA_out$cancerType<-MCIA_train$metadata[,1]
+colnames(MCIA_out)<-c("Factor.1", "Factor.2", "cancerType")
+
+ggplot(data = MCIA_out, aes(x=Factor.1, y=Factor.2, color=cancerType))+
   geom_point(size=3) + 
   theme_bw() +
+  scale_color_manual(values=meta_colors)+
   ggtitle("MCIA for NCI60 training data")
 ```
 
@@ -78,18 +80,19 @@ MCIA_test_scores <- predict_gs(MCIA_train,data_blocks_test)
 We once again plot the top two factor scores for both the training and test datasets
 
 ```{r visualize both models, fig.height=4, fig.align='center'}
-cancer_type <- substr(rownames(data_blocks_test$mrna), 1, 2)
-MCIA_out_test <- data.frame(MCIA_test_scores[,1:2])
-MCIA_out_test$Cancer_type <- cancer_type
-colnames(MCIA_out_test) <- c("Factor_1", "Factor_2", "Cancer_type")
-MCIA_out_test$set <- "test"
-MCIA_out$set <- "train"
-MCIA_out_full <- rbind(MCIA_out,MCIA_out_test)
-rownames(MCIA_out_full) <- NULL
+MCIA_out_test<-data.frame(MCIA_test_scores[,1:2])
+MCIA_out_test$cancerType<-metadata_NCI60[-train_samples,]
 
-ggplot(data = MCIA_out_full, aes(x=Factor_1, y=Factor_2, color=Cancer_type, shape=set))+
+colnames(MCIA_out_test)<-c("Factor.1", "Factor.2", "cancerType")
+MCIA_out_test$set<-"test"
+MCIA_out$set<-"train"
+MCIA_out_full<-rbind(MCIA_out,MCIA_out_test)
+rownames(MCIA_out_full)<-NULL
+
+ggplot(data = MCIA_out_full, aes(x=Factor.1, y=Factor.2, color=cancerType, shape=set))+
   geom_point(size=3) + 
   theme_bw() +
+  scale_color_manual(values=meta_colors)+
   ggtitle("MCIA for NCI60 training and test data")
 ```
 

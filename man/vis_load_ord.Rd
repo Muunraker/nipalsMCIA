@@ -14,6 +14,9 @@ output of get_colors() function}
 
 \item{n_feat}{number of features to visualize}
 }
+\value{
+Plot in features for a factor by rank
+}
 \description{
 Visualize a scree plot of loadings recovered from 
 nipalsMCIA() output loadings matrix ranked using the 

@@ -40,6 +40,8 @@
 #' \item `global` displays only global score projections and eigenvalue scree plot
 #' \item `none` does not display plots
 #' }
+#' \item `block_variances` a list of variances of each block AFTER NORMALIZATION OPTION APPLIED
+#' \item `metadata` the metadata dataframe supplied wuith the `metadata` argument.
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
 #'                                    preprocMethod='colprofile', deflationMethod = 'block')
@@ -83,10 +85,14 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   # Pre-processing data
   if(tolower(preprocMethod) == 'colprofile'){
     message("Performing centered column profile pre-processing...")
-    data_blocks <- lapply(data_blocks,CCpreproc)
+    preproc_results <- lapply(data_blocks,CCpreproc)
+    data_blocks <- lapply(preproc_results, `[[`, 1) # normalized data matrices
+    block_vars <- lapply(preproc_results, `[[`, 2) # list of block variances
     message("Pre-processing completed.")
   }else{
+    # **PLACEHOLDER** == should be replaced with appropriate variance calc
     data_blocks <- lapply(data_blocks, as.matrix) # converting input data to matrix form
+    block_vars <- NULL
     message("No Pre-processing performed.")
   }
   
@@ -107,7 +113,7 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   }
   
   # Computing block eigenvalue
-  eigvals <- list(nipals_result$eigval);
+  eigvals <- list(nipals_result$eigval)
   
   if(num_PCs>1){
     # generate scores/loadings up to number of PCs
@@ -144,9 +150,11 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   names(block_loadings) <- names(data_blocks)
   names(eigvals) <- paste("gs",1:num_PCs,sep = '')
   results_list <-list(global_scores, global_loadings, block_score_weights, 
-                      block_scores, block_loadings, eigvals, tolower(preprocMethod))
+                      block_scores, block_loadings, eigvals, tolower(preprocMethod),
+                      block_vars)
   names(results_list) <- c('global_scores','global_loadings','block_score_weights',
-                           'block_scores','block_loadings', 'eigvals','preprocMethod')
+                           'block_scores','block_loadings', 'eigvals','preprocMethod'
+                           , "block_variances")
   results_list$metadata <- metadata
   
   

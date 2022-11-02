@@ -2,7 +2,7 @@
 % Please edit documentation in R/vis_load_plot.R
 \name{vis_load_plot}
 \alias{vis_load_plot}
-\title{Visualize all loadings on two factor axies}
+\title{Visualize all loadings on two factor axes}
 \usage{
 vis_load_plot(mcia_out, axes = c(1, 2), colors_omics)
 }
@@ -13,6 +13,9 @@ vis_load_plot(mcia_out, axes = c(1, 2), colors_omics)
 
 \item{colors_omics}{named list of colors associated with omics,
 output of get_colors() function}
+}
+\value{
+Plot of MCIA feature loadings for chosen axes
 }
 \description{
 Visualize all loadings recovered from 

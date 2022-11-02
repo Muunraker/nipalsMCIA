@@ -44,7 +44,9 @@ May have multiple columns, but rows and row names must match the data frames in 
 \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 \item `global` displays only global score projections and eigenvalue scree plot
 \item `none` does not display plots
-}}
+}
+\item `block_variances` a list of variances of each block AFTER NORMALIZATION OPTION APPLIED
+\item `metadata` the metadata dataframe supplied wuith the `metadata` argument.}
 }
 \value{
 a list containing the following: \itemize{
