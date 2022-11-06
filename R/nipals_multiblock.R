@@ -35,18 +35,17 @@
 #' \item `block score weights` a matrix containing weights for each block score of each order used to construct the global scores.  
 #' \item `preprocMethod` the preprocessing method used on the data.
 #' }
-#' @param plots an option to display varios plots of results: \itemize{
+#' @param plots an option to display various plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 #' \item `global` displays only global score projections and eigenvalue scree plot
 #' \item `none` does not display plots
-#' }
 #' \item `block_variances` a list of variances of each block AFTER NORMALIZATION OPTION APPLIED
-#' \item `metadata` the metadata dataframe supplied wuith the `metadata` argument.
+#' \item `metadata` the metadata dataframe supplied wuith the `metadata` argument.}
 #' @examples 
 #'  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
 #'                                    preprocMethod='colprofile', deflationMethod = 'block')
-#'  MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
-#'  CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
+#'  MCIA_results <- nipals_multiblock(df_list, num_PCs = 2)
+#'  CPCA_results <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
 nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,

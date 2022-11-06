@@ -6,21 +6,21 @@
 (default: color-blindness friendly)}
 \usage{
 get_metadata_colors(
-  mcia_result,
+  mcia_results,
   color_col,
   color_pal = scales::viridis_pal,
   color_pal_params = list(option = "E")
 )
 }
 \arguments{
-\item{mcia_result}{object returned from nipals_multiblock() function}
+\item{mcia_results}{object returned from nipals_multiblock() function}
 
 \item{color_col}{an integer or string specifying the column that will be
 used for color_col}
 
-\item{color_func}{a function which returns color palettes (e.g. scales)}
+\item{color_pal}{a function which returns color palettes (e.g. scales)}
 
-\item{color_params}{list of parameters for the corresponding function}
+\item{color_pal_params}{list of parameters for the corresponding function}
 }
 \value{
 List of metadata columns with assigned colors

@@ -40,13 +40,12 @@ May have multiple columns, but rows and row names must match the data frames in 
 \item `global` deflation via global scores (for CPCA)
 }}
 
-\item{plots}{an option to display varios plots of results: \itemize{
+\item{plots}{an option to display various plots of results: \itemize{
 \item `all` displays plots of block scores, global scores, and eigenvalue scree plot
 \item `global` displays only global score projections and eigenvalue scree plot
 \item `none` does not display plots
-}
 \item `block_variances` a list of variances of each block AFTER NORMALIZATION OPTION APPLIED
-\item `metadata` the metadata dataframe supplied wuith the `metadata` argument.}
+\item `metadata` the metadata dataframe supplied wuith the `metadata` argument.}}
 }
 \value{
 a list containing the following: \itemize{
@@ -74,7 +73,7 @@ This process is repeated up to the desired maximum order of scores/loadings.
 \examples{
  NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
                                    preprocMethod='colprofile', deflationMethod = 'block')
- MCIA_result <- nipals_multiblock(df_list, num_PCs = 2)
- CPCA_result <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
+ MCIA_results <- nipals_multiblock(df_list, num_PCs = 2)
+ CPCA_results <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 
 }

@@ -2,17 +2,17 @@
 #'
 #' @description Creates a list of omics and associated colors for plotting
 #' 
-#' @param mcia_result object returned from nipals_multiblock() function
-#' @param color_func a function which returns color palettes (e.g. scales)
-#' @param color_params list of parameters for the corresponding function
+#' @param mcia_results object returned from nipals_multiblock() function
+#' @param color_pal a function which returns color palettes (e.g. scales)
+#' @param color_pal_params list of parameters for the corresponding function
 #' @return List of omics with assigned colors
 #' @examples
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
 #' @export
-get_colors <- function(mcia_result, color_pal=scales::viridis_pal,
+get_colors <- function(mcia_results, color_pal=scales::viridis_pal,
                                 color_pal_params=list(option="D")) {
-  omic_list <- names(mcia_result$block_loadings)
+  omic_list <- names(mcia_results$block_loadings)
   
   if (class(color_pal) == "function"){
       colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
@@ -29,21 +29,21 @@ get_colors <- function(mcia_result, color_pal=scales::viridis_pal,
 #'
 #' @description Creates a list of metadata columns and associated colors
 #'   for plotting
-#' @param mcia_result object returned from nipals_multiblock() function
+#' @param mcia_results object returned from nipals_multiblock() function
 #' @param color_col an integer or string specifying the column that will be
 #'   used for color_col
-#' @param color_func a function which returns color palettes (e.g. scales)
-#' @param color_params list of parameters for the corresponding function
+#' @param color_pal a function which returns color palettes (e.g. scales)
+#' @param color_pal_params list of parameters for the corresponding function
 #' @return List of metadata columns with assigned colors
 #' @examples
 #' colors_omics <- get_metadata_colors(mcia_results, "cancerType")
 #' @importFrom scales viridis_pal
 #' @export
-get_metadata_colors <- function(mcia_result, color_col,
+get_metadata_colors <- function(mcia_results, color_col,
                                 color_pal=scales::viridis_pal,
                                 color_pal_params=list(option="E")) {
     
-  meta_list <- unique(mcia_result$metadata[,color_col])
+  meta_list <- unique(mcia_results$metadata[,color_col])
   
   if (class(color_pal) == "function"){
       colors_meta <- do.call(color_pal, color_pal_params)(length(meta_list))

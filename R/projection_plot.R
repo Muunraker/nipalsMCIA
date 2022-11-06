@@ -12,7 +12,7 @@
 #' @param orders Option to select orders of factors to plot against each other (for projection plots)
 #' @param color_col Option to plot clusters/colors in projection plots, with two options:\itemize{
 #' \item `none` (Default) - no clusters/colors plotted.
-#' \item A character string of the column name of the `mcia_result$metadata` dataframe 
+#' \item A character string of the column name of the `mcia_results$metadata` dataframe 
 #' determining which color groupings to use (projection plots only) 
 #' }
 #' @param color_col an integer or string specifying the column that will be
@@ -29,7 +29,7 @@
 #'   color_col = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
 #' @export
-projection_plot <- function(mcia_result, plotType, orders=c(1,2),
+projection_plot <- function(mcia_results, plotType, orders=c(1,2),
                                color_col=NULL,
                                color_pal=scales::viridis_pal, 
                                color_pal_params=list(option="D"),
@@ -39,13 +39,13 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
     ### the clusters/categories of the color_col column
     # case i) no color_col, clusters/categories were not specified 
     if(is.null(color_col)){
-        clust_indexes = list(1:dim(mcia_result$global_score)[[1]])
+        clust_indexes = list(1:dim(mcia_results$global_score)[[1]])
         
     # case ii) yes color_col, clusters/categories were specified 
     } else if(is.character(color_col)){
         
         # locating the color_col column within metadata
-        col_idx <- grep(color_col, names(mcia_result$metadata))
+        col_idx <- grep(color_col, names(mcia_results$metadata))
         if(any(length(col_idx) < 1)){
             stop("Column name for color_col not found in metadata.")
         }
@@ -60,20 +60,20 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
         
         # creating a list of samples indexes to color each cluster/category
         clust_indexes <- list()
-        uniq_clusts <- unique(unlist(mcia_result$metadata[col_idx]))
+        uniq_clusts <- unique(unlist(mcia_results$metadata[col_idx]))
         for(clust in uniq_clusts){
-            clust_indexes <- c(clust_indexes, list(grep(clust, mcia_result$metadata[[col_idx]])))
+            clust_indexes <- c(clust_indexes, list(grep(clust, mcia_results$metadata[[col_idx]])))
         }
         names(clust_indexes) <- uniq_clusts
         
     # case iii) catch-all, color_col argument not recognized
     } else{
         message("color_col option not recognized, defaulting to black/white plotting.")
-        clust_indexes = list(1:dim(mcia_result$global_score)[[1]])
+        clust_indexes = list(1:dim(mcia_results$global_score)[[1]])
     }
     
     ### Resolving the cluster colors
-    plot_colors = get_metadata_colors(mcia_result, color_col = color_col,
+    plot_colors = get_metadata_colors(mcia_results, color_col = color_col,
                                       color_pal = color_pal,
                                       color_pal_params = color_pal_params)
     if (is.null(color_col)){
@@ -84,18 +84,18 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
     if(tolower(plotType) == "projection"){
     
         # Normalize global scores to unit variance
-        gs_norms <- apply(mcia_result$global_scores, 2, function(x){sqrt(var(x))})
-        gs_normed <- t(t(mcia_result$global_scores) / gs_norms)
-        gl_normed <- t(t(mcia_result$global_loadings) / gs_norms)
-        gw_normed <- t(t(mcia_result$block_score_weights) / gs_norms)
+        gs_norms <- apply(mcia_results$global_scores, 2, function(x){sqrt(var(x))})
+        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        gl_normed <- t(t(mcia_results$global_loadings) / gs_norms)
+        gw_normed <- t(t(mcia_results$block_score_weights) / gs_norms)
         
         # Normalize block scores to unit variance
         bs_normed <- list()
         bl_normed <- list() 
-        for(i in 1:length(mcia_result$block_scores)){
-          bs_norms <-apply(mcia_result$block_scores[[i]], 2, function(x){sqrt(var(x))})
-          bs_normed[[i]] <- t(t(mcia_result$block_scores[[i]]) / bs_norms)
-          bl_normed[[i]] <- t(t(mcia_result$block_loadings[[i]]) / bs_norms)
+        for(i in 1:length(mcia_results$block_scores)){
+          bs_norms <-apply(mcia_results$block_scores[[i]], 2, function(x){sqrt(var(x))})
+          bs_normed[[i]] <- t(t(mcia_results$block_scores[[i]]) / bs_norms)
+          bl_normed[[i]] <- t(t(mcia_results$block_loadings[[i]]) / bs_norms)
         }
         
         # Getting bounds for projection plot
@@ -170,16 +170,16 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
             # plotting legend without clusters/categories
             if(length(plot_colors) == 1){
               legend(legend_loc, 
-                     legend = c(names(mcia_result$block_loadings)),
-                     pch = 0:length(mcia_result$block_loadings),
+                     legend = c(names(mcia_results$block_loadings)),
+                     pch = 0:length(mcia_results$block_loadings),
                      cex = 1)
             # plotting legend for clusters/categories
             } else{
-              leg_labels = c(names(mcia_result$block_loadings),
+              leg_labels = c(names(mcia_results$block_loadings),
                              names(plot_colors))
-              leg_shapes = c(1:length(mcia_result$block_loadings),
+              leg_shapes = c(1:length(mcia_results$block_loadings),
                              rep(16, length(plot_colors)))-1
-              leg_colors = c(rep("black", length(mcia_result$block_loadings)),
+              leg_colors = c(rep("black", length(mcia_results$block_loadings)),
                              unname(unlist(plot_colors)))
               legend(legend_loc,
                      legend = leg_labels,
@@ -193,10 +193,10 @@ projection_plot <- function(mcia_result, plotType, orders=c(1,2),
     
         ### Plot 2 - projection plot global score only      
         # Normalize global scores to unit variance
-        gs_norms <- apply(mcia_result$global_scores,2,function(x){sqrt(var(x))})
-        gs_normed <- t(t(mcia_result$global_scores) / gs_norms)
-        gl_normed <- t(t(mcia_result$global_loadings) / gs_norms)
-        gw_normed <- t(t(mcia_result$block_score_weights) / gs_norms)
+        gs_norms <- apply(mcia_results$global_scores,2,function(x){sqrt(var(x))})
+        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        gl_normed <- t(t(mcia_results$global_loadings) / gs_norms)
+        gw_normed <- t(t(mcia_results$block_score_weights) / gs_norms)
         
         
         # Getting bounds for projection plot

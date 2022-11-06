@@ -4,7 +4,7 @@
 \alias{global_scores_eigenvalues_plot}
 \title{global_scores_eigenvalues_plot}
 \usage{
-global_scores_eigenvalues_plot(mcia_result)
+global_scores_eigenvalues_plot(mcia_results)
 }
 \arguments{
 \item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
