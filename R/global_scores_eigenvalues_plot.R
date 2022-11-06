@@ -25,8 +25,8 @@ global_scores_eigenvalues_plot <- function(mcia_results){
   }
     
   # extract eigenvalues
-  barploteigs <- (unlist(mcia_result$eigvals))/totvar
-  names(barploteigs) <- 1:length(mcia_result$eigvals)
+  barploteigs <- (unlist(mcia_results$eigvals))/totvar
+  names(barploteigs) <- 1:length(mcia_results$eigvals)
 
   # generate barplot 
   barplot(barploteigs, xlab="Factors",ylab=ylabel, cex.names = 1, 
