@@ -14,8 +14,8 @@
 
 #' @return Displays the heatmap of block weights
 #' @export
-block_weights_heatmap <- function(mcia_result){
-    heatmap(mcia_result$block_score_weights,
+block_weights_heatmap <- function(mcia_results){
+    heatmap(mcia_results$block_score_weights,
             Rowv = NA, Colv = NA,
             cexRow= 1.5, xlab="Factors")
 }
