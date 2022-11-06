@@ -67,7 +67,7 @@ NIPALS_iter <- function(ds, tol=1e-12, maxIter=1000){
   # Computing eigenvalue associated with the global score
   global_matrix <- do.call(cbind,ds)
   svdres <- RSpectra::svds(global_matrix,1)
-  eigval <- svdres$d
+  eigval <- (svdres$d)^2/(max(dim(global_matrix)[1]-1,1))
   
   # Computing global loadings at final iteration
   gl <- bl_list[[1]]*gw[1]

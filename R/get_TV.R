@@ -15,14 +15,14 @@ get_TV <- function(ds){
   get_bv <- function(X){
     X_cent = sweep(X, 2,colMeans(X), "-")
     n_samp = dim(X_cent)[1]
-    X_cent_norm = X_cent/sqrt(max(n_samp-1,1))
+    X_cent_norm = X_cent
     
-    bv = (norm(X_cent_norm, type="F")^2)
+    bv = (norm(X_cent_norm, type="F")^2)/max(n_samp-1,1)
     return(bv)
   }
   
   bv_list <- lapply(ds,get_bv)
-  tv = sum(unlist(bv_list))
+  tv <- sum(unlist(bv_list))
   
   return(tv)
 }
