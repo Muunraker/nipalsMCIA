@@ -42,7 +42,13 @@ CCpreproc <- function(df){
   
   # Weighting block to unit variance (block variance computed via Fro norm)
   block_var <- norm(temp_df,type = "F")^2/(max(1,nrow(df)-1))
-  temp_df <- temp_df*(1/sqrt(block_var))
+  
+  if(block_var != 0){
+    temp_df <- temp_df*(1/sqrt(block_var))
+  }else{
+    warning("New data has zero variance.")
+  }
+  
   
   # resList <- list(temp_df,1) # note: blocks normalized to unit variance
   # names(resList) <- c("data","block_var")
