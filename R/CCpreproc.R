@@ -40,12 +40,12 @@ CCpreproc <- function(df){
   # Applying feature weighting ("multiplication by feature metrics")
   temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
   
-  # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
+  # Weighting block to unit variance (block variance computed via Fro norm)
   block_var <- norm(temp_df,type = "F")^2/(max(1,nrow(df)-1))
   temp_df <- temp_df*(1/sqrt(block_var))
   
-  resList <- list(temp_df,1) # note: blocks normalized to unit variance
-  names(resList) <- c("data","block_var")
+  # resList <- list(temp_df,1) # note: blocks normalized to unit variance
+  # names(resList) <- c("data","block_var")
   
-  return(resList)
+  return(temp_df)
 }

@@ -84,9 +84,11 @@ nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10
   # Pre-processing data
   if(tolower(preprocMethod) == 'colprofile'){
     message("Performing centered column profile pre-processing...")
-    preproc_results <- lapply(data_blocks,CCpreproc)
-    data_blocks <- lapply(preproc_results, `[[`, 1) # normalized data matrices
-    block_vars <- lapply(preproc_results, `[[`, 2) # list of block variances
+    data_blocks <- lapply(data_blocks,CCpreproc)
+    block_vars <- list(1,1,1) # know that blocks have unit variance after cc_preproc
+    names(block_vars) <- names(data_blocks)
+    # data_blocks <- lapply(preproc_results, `[[`, 1) # normalized data matrices
+    # block_vars <- lapply(preproc_results, `[[`, 2) # list of block variances
     message("Pre-processing completed.")
   }else{
     # **PLACEHOLDER** == should be replaced with appropriate variance calc
