@@ -15,7 +15,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 set.seed(42) # NIPALS starts with a random vector
 ```
 
@@ -23,7 +23,7 @@ set.seed(42) # NIPALS starts with a random vector
 
 Note that the `TENxPBMCData` package is not included in this list as you may decide to pull data from another source.
 
-```{r load-packages, echo = FALSE, include = FALSE}
+```{r load-packages, echo = FALSE, include = FALSE, eval = TRUE}
 library(dplyr)
 library(ggplot2)
 library(nipalsMCIA)
@@ -41,7 +41,7 @@ The following detail several ways in which to load in this dataset. You may pref
 
 There are several Bioconductor packages which provide single-cell data for users as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics, including the one that we will be analyzing.
 
-```{r, eval = FALSE}
+```{r}
 # if needed
 # install.packages(TENxPBMCData)
 
@@ -52,9 +52,10 @@ data_blocks_sc <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
 counts(data_blocks_sc) # RNA-Seq data ("mainExpName: Gene Expression")
 counts(altExp(data_blocks_sc)) # CITE-Seq data ("altExpNames(1): Antibody Capture")
 ```
+
 In order to run...
 
-```{r, include = FALSE, eval = FALSE}
+```{r, include = FALSE}
 # testing methods
 tenx_pbmc3k <- TENxPBMCData(dataset = "pbmc3k")
 data_blocks_sc_test <- data_blocks_sc
@@ -78,7 +79,7 @@ pbmc <- as.Seurat(data_blocks_sc_test, data = NULL)
 
 The original dataset can be found on the [10x Genomics Datasets website](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.2/5k_pbmc_protein_v3) and an explanation of the file types for this version can be found [here](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/3.0/output/overview). You can download them all to a directory of your choosing with their suggested commands:
 
-```{bash, eval = FALSE}
+```{bash}
 # Input Files
 curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_pbmc_protein_v3_fastqs.tar
 curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_pbmc_protein_v3_feature_ref.csv
@@ -99,22 +100,22 @@ curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_
 
 You will need the *filtered_feature_bc_matrix* directory for the following analysis; it can be extracted with `tar -xvzf 5k_pbmc_protein_v3_filtered_feature_bc_matrix.tar.gz` from within the relevant data directory.
 
-```{r, include = TRUE, eval = FALSE}
+```{r}
 # load the data (change the file path as needed)
 data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature_bc_matrix"))
 ```
 
 ### nipalsMCIA
 
-```{r, include = TRUE, eval = FALSE}
+```{r}
 # download the data from the repository if needed
 pb_download(file = "data_blocks_sc.Rda", repo = "Muunraker/nipalsMCIA", 
             tag = "v0.0.1", dest = file.path("..", "data"))
 
-# data(data_blocks_sc)
+# data(data_blocks_sc) # won't work - it's not part of the package
 ```
 
-```{r, include = TRUE, eval = FALSE}
+```{r}
 # load the data
 # data_blocks_sc <- load(file = file.path("..", "data", "data_blocks_sc.Rda"))
 data_blocks_sc <- load(file = "../data/data_blocks_sc.Rda")
@@ -136,7 +137,7 @@ summary(data_blocks_sc)
 
 ### Read in the data
 
-```{r, include = TRUE, message = FALSE}
+```{r, message = FALSE}
 # load the data
 data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature_bc_matrix"))
 
@@ -161,7 +162,7 @@ obj$"percent.mt" <- PercentageFeatureSet(obj, pattern = "^MT-")
 
 #### Metrics summary
 
-```{r, include = TRUE}
+```{r}
 library(readr)
 
 # read in the summary table
@@ -175,14 +176,14 @@ metrics_summary <- read_csv(file.path("..", "data", "tenx_pbmc5k_CITEseq",
 
 ##### Before filtering
 
-```{r, include = TRUE}
+```{r}
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
         pt.size = 0.01, ncol = 3)
 ```
 
 ##### After filtering
 
-```{r, include = TRUE}
+```{r}
 obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
 
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
@@ -191,7 +192,7 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 ### Standard Seurat pipeline
 
-```{r, include = TRUE, eval = FALSE}
+```{r}
 # standard normalization
 obj <- NormalizeData(obj, normalization.method = "LogNormalize", scale.factor = 10000)
 
@@ -222,9 +223,13 @@ obj <- RunUMAP(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
 # saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
 ```
 
-```{r, include = TRUE}
-obj <- readRDS(file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+### Dimensionality reduction
 
+```{r}
+obj <- readRDS(file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+```
+
+```{r, fig.dim = c(4, 4)}
 # note that you can set `label = TRUE` or use the LabelClusters function to help label
 # individual clusters
 plot_seurat_clusters <- UMAPPlot(obj)
@@ -235,17 +240,16 @@ plot_seurat_clusters
 
 #### Load marker genes
 
-```{r, include = TRUE}
+```{r}
 # sort by Cell_Type and Marker if not already sorted
 markers_all <- read_csv(file.path("..", "data", "marker_genes.csv"),
                         show_col_types = FALSE)
 markers_all
 ```
 
+#### Dot Plot
 
-#### Dot plots
-
-```{r, include = TRUE}
+```{r, fig.dim = c(16, 6)}
 p <- DotPlot(obj, features = unique(markers_all$Marker),
              dot.scale = 3, cluster.idents = TRUE) + RotatedAxis()
 
@@ -256,16 +260,15 @@ p + facet_grid(cols = vars(Cell_Type), scales = 'free_x', space = "free") +
       theme(strip.text.x = element_text(size = 8))
 ```
 
+#### Feature Plots
 
-#### Feature plots
-
-```{r, include = TRUE}
+```{r, fig.dim = c(20, 4)}
 FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE)
 ```
 
 ### Annotate cell clusters
 
-```{r, include = TRUE}
+```{r}
 obj_annotations <- rbind(c("0", "Unknown"),
                          c("1", "T cells"),
                          c("2", "T cells"),
@@ -300,16 +303,15 @@ obj_annotations %>%
   distinct() %>% arrange(CellType)
 ```
 
-```{r, include = TRUE}
+```{r, fig.dim = c(8, 4)}
 plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE)
 
 plot_seurat_clusters + plot_annotated_clusters
 ```
 
-
 ## Save the data
 
-```{r match-structure, include = TRUE, eval = FALSE}
+```{r match-structure}
 data_blocks_sc <- list()
 data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
 data_blocks_sc$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k_CITEseq))))
@@ -321,15 +323,15 @@ save(data_blocks_sc, file = "data_blocks_sc.Rda")
 
 ## MCIA
 
-```{r original, include = TRUE, eval = FALSE}
+```{r original}
 meta_colors = c('orange', 'purple', 'pink')
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
-                                  metadata = metadata_NCI60, color_col = "cancerType", 
-                                  color_pal = meta_colors, 
+                                  metadata = metadata_NCI60, 
+                                  color_col = "cancerType", color_pal = meta_colors,
                                   num_PCs = 10, tol = 1e-12)
 ```
 
-```{r sc, include = TRUE, eval = FALSE}
+```{r sc}
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile',
                                      # metadata = metadata_NCI60, color_col = "cancerType", 
                                      num_PCs = 5, tol = 1e-12)
@@ -339,7 +341,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile
 
 From Anna
 
-```{r, eval = FALSE}
+```{r}
 data_blocks_sc_mod <- readRDS(file.path("..", "data", "data_blocks_sc_mod.RDS"))
 data_blocks_sc_mod$mrna <- t(data_blocks_sc_mod$mrna)
 data_blocks_sc_mod$adt <- t(data_blocks_sc_mod$adt)
@@ -351,6 +353,6 @@ MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bot
 
 ## Session Info
 
-```{r}
+```{r, eval = TRUE}
 sessionInfo()
 ```

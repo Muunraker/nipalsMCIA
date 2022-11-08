@@ -120,7 +120,7 @@ plots which help establish an initial intuition for the MCIA decomposition.
 Here we will re-run `nipals_multiblock()` and omit the `plots` parameter
 (default=all):
 
-```{r, warning = FALSE, message = FALSE, fig.height = 4, fig.width = 8, fig.align = 'center'}
+```{r, warning = FALSE, message = FALSE, fig.dim = c(4, 8), fig.align = 'center'}
 set.seed(42)
 
 mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
@@ -153,7 +153,7 @@ For clustering, it is useful to look at global factor scores without block
 factor scores. The `projection_plot()` function can be used to generate such a plot
 using `plotType = "projection_global"` as show below:
 
-```{r visualize-clusters, fig.height = 4, fig.width = 4, fig.align = 'center'}
+```{r visualize-clusters, fig.dim = c(4, 4), fig.align = 'center'}
 projection_plot(mcia_results, "projection_global", orders = c(1,2))
 ```
 
@@ -187,7 +187,7 @@ mcia_results$metadata <- metadata_NCI60
 
 The `color_col` argument of `projection_plot()` can then be used to determine which column of `metadata` is used for color_col the projection plots, in this case the column is `cancerType`. `color_pal` can then be used with a character vector or `scales::\<function\>` to select the colors which are applied alphabetically:
 
-```{r visualize-clusters-color-col, fig.height = 4, fig.width = 4, fig.align = 'center'}
+```{r visualize-clusters-color-col, fig.dim = c(4, 4), fig.align = 'center'}
 # meta_colors = c('orange', 'purple', 'pink')
 meta_colors <- get_metadata_colors(mcia_results, 1)
 
@@ -224,7 +224,7 @@ In addition to the global scores matrix, MCIA also calculates a global loadings 
 
 ### Pseudoeigenvalues representing the contribution of each omic to the global factor score
 
-```{r, fig.width = 4, fig.height = 1.5, fig.align = 'center'}
+```{r, fig.dim = c(4, 1.5), fig.align = 'center'}
 ## Should make into a function
 bs_weights <- as.matrix(data.frame(mcia_results$block_score_weights))
 colnames(bs_weights) <- c(1:10)
@@ -261,7 +261,7 @@ visualize the features loadings as a scree plot.
 
 Here, we return and visualize two ranked lists for Factor 1: using all omics, or just mrna.
 
-```{r, fig.width = 10, fig.height = 5}
+```{r, fig.dim = c(10, 5)}
 # define the loadings
 all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
                           absolute = FALSE, descending = TRUE, factor = 1)
@@ -280,7 +280,7 @@ ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 Here, we return and visualize two ranked lists for Factor 2: using all omics, or just protein,
 this time ranking features by magnitude (absolute value).
 
-```{r, fig.width = 10, fig.height = 5}
+```{r, fig.dim = c(10, 5)}
 # define the loadings
 all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
                           absolute = TRUE, descending = TRUE, factor = 2)
@@ -298,7 +298,7 @@ ggarrange(all_abs_2_vis, prot_abs_2_vis)
 
 We return and visualize a ranked list for Factor 4 with the top 60 features.  One can observe that while miRNA dominate the top features, all omics are represented.
 
-```{r, fig.width = 10, fig.height = 4}
+```{r, fig.dim = c(10, 4)}
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE, 
                       descending = TRUE, factor = 4)
 all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics, 
