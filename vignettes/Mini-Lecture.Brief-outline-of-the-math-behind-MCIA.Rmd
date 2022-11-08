@@ -6,14 +6,15 @@ header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
 output: 
-    rmdformats::readthedown
+    rmdformats::readthedown:
+      toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Mini-Lecture.Brief-outline-of-the-math-behind-MCIA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
  knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -22,10 +23,12 @@ vignette: >
 \newcommand{\cov}{\text{cov}}
 <!-- \DeclareMathOperator*{\argmax}{argmax } -->
 
-# Introduction
-Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method designed to work on data that can be organized into several blocks of variables measured on the same subjects. These blocks could indicate variables of different categories (e.g. genes vs. proteins) or different experiments conducted on the same subjects. MCIA creates a set of 'factors' or 'scores' vectors along with accompanying 'loadings' vectors that aim to highlight trends common across all datsets. 
+## Introduction
 
-# Notation for Initial Values, Dimensions and Parameters
+Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method designed to work on data that can be organized into several blocks of variables measured on the same subjects. These blocks could indicate variables of different categories (e.g. genes vs. proteins) or different experiments conducted on the same subjects. MCIA creates a set of 'factors' or 'scores' vectors along with accompanying 'loadings' vectors that aim to highlight trends common across all datasets. 
+
+## Notation for Initial Values, Dimensions and Parameters
+
 | Notation | Description |
 |--:|:------|
 | $\mb X_b \in \mathbb{R}^{n \times p_b}$ | The matrix representing data block $b$, in samples-by-features format |
@@ -36,7 +39,8 @@ Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method d
 | $N$ | The number of blocks in the data |
 | $r$ | The target dimension of the low-dimensional representation of the data|
 
-# Notation for Output and Intermediate Vector and Matrices 
+## Notation for Output and Intermediate Vector and Matrices
+
 | Notation | Description |
 |--:|:------|
 | $\mb A \in \mathbb{R}^{p \times r}$ | The global loadings matrix |
@@ -50,34 +54,42 @@ Multiple Co-Inertia Analysis (MCIA) is a joint dimensionality reduction method d
 | $\mb G \in \mathbb{R}^{N \times r}$  | The block score weights matrix |
 | $\mb e \in \mathbb{R}^{r \times 1}$  | The psuedo-eigenvalues calculated for each factor |
 
-# Mathematical Theory
+## Mathematical Theory
+
 MCIA works on datasets that are made up of multiple blocks of variables measured on the same set of samples. Since each data block has the same number of rows, we define the global data matrix as
+
 $$
 \mb X = \Big[ \mb X_1 | \mb X_2 | ... | \mb X_N \Big] \in \mathbb{R}^{n \times p}, \hspace{2em} p = \sum\limits_{b=1}^N p_b.
 $$
 It is sometimes helpful to compare MCIA to the better-known Principal Component Analysis (PCA). The global scores/factors and loadings are broadly similar to the principal component scores and loadings respectively of matrix $\mb X$, although they are **not** identical.
 
-## The Objective Function
+### The Objective Function
+
 The ultimate goal of MCIA is to provide a set of scores and loadings vectors of decreasing optimality up to a user-chosen target dimension $r$. These vectors then can be used as a low-dimensional representation of the data or to find associations between variables or blocks. MCIA defines optimality as maximizing the sum of squared covariance between a set of block scores $\mb f_b$ and a global score $\mb f$, i.e.
+
 \begin{equation}
 	\label{eq:mcia_optimCrit}
 	\text{argmax}_{\mb f_1,...,\mb f_N,\mb f} \hspace{0.5em} \sum_{b=1}^N\text{cov}^2(\mb f_b,\mb f ),
 \end{equation} 
+
 where $\mb f_b = \mb X_b \mb a_b$ for $b=1,..,N$ and $\mb f = \mb X \mb a$ are linear combinations of the variables in the block and global matrices respectively. One set of factor scores $\mb f_1,...,\mb f_N, \mb f$ and loadings $\mb a_1,...,\mb a_N, \mb a$ are generated for each order desired up to the target dimension $r$. We denote these orders with a superscript, e.g. $\mb f_b^{(j)}$ is the $j$-th order block factor score for block $b$. We organize all of these block... (TBC)
 
-## Computing the decomposition via the Non-Linear Iterative Partial Least Squares (NIPALS) algorithm
+### Computing the decomposition via the Non-Linear Iterative Partial Least Squares (NIPALS) algorithm
 
 *Max, feel free to change title*  
+
 Todo:  
 
 1. Motivate NIPALS - compare to original Omicade procedure  
 2. Brief outline of algorithm  
 3. Note that deflation process has a parameter that modifies MCIA to CPCA  
 
-# Resources
+## Resources
+
 *Add references*
 
-# Notes on data pre-processing and normalization
+## Notes on data pre-processing and normalization
+
 *A.K. will add notes here*
 
 

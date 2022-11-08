@@ -5,7 +5,7 @@
 \title{projection_plot}
 \usage{
 projection_plot(
-  mcia_result,
+  mcia_results,
   plotType,
   orders = c(1, 2),
   color_col = NULL,
@@ -15,6 +15,8 @@ projection_plot(
 )
 }
 \arguments{
+\item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
+
 \item{plotType}{Type of plot, with the following options \itemize{
 \item `projection` - scatter plot of two orders of global and block scores (aka factors).
 \item `projection_global` - scatter plot of two orders of global scores only (aka factors).
@@ -30,8 +32,6 @@ used for color_col}
 \item{color_pal_params}{a list of parameters for the color function}
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
-
-\item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
 }
 \value{
 Displays the desired plots

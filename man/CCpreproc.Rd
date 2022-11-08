@@ -26,5 +26,5 @@ Performs the following steps on a given data frame: \itemize{
 }
 }
 \examples{
-preproced_df <- CCpreproc(df)
+preprocessed_dataframe <- CCpreproc(dataframe)
 }

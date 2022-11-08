@@ -13,7 +13,7 @@
 #' @param df the data frame to apply pre-processing to, in "sample" x "variable" format 
 #' @return the processed data frame
 #' @examples 
-#' preproced_df <- CCpreproc(df)
+#' preprocessed_dataframe <- CCpreproc(dataframe)
 #' @export
 CCpreproc <- function(df){
   temp_df <- as.matrix(df)
@@ -40,12 +40,18 @@ CCpreproc <- function(df){
   # Applying feature weighting ("multiplication by feature metrics")
   temp_df <- t( t(temp_df)*sqrt(colsums/totsum))
   
-  # Applying block weights (blocks have unit variance via division by sum of eigenvalues)
-  block_var <- norm(temp_df,type = "F")/sqrt((max(1,nrow(df)-1)))
-  temp_df <- temp_df*(1/block_var)
+  # Weighting block to unit variance (block variance computed via Fro norm)
+  block_var <- norm(temp_df,type = "F")^2/(max(1,nrow(df)-1))
   
-  resList <- list(temp_df,1) # note: blocks normalized to unit variance
-  names(resList) <- c("data","block_var")
+  if(block_var != 0){
+    temp_df <- temp_df*(1/sqrt(block_var))
+  }else{
+    warning("New data has zero variance.")
+  }
   
-  return(resList)
+  
+  # resList <- list(temp_df,1) # note: blocks normalized to unit variance
+  # names(resList) <- c("data","block_var")
+  
+  return(temp_df)
 }
