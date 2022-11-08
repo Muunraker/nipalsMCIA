@@ -20,11 +20,11 @@ Imports:
     ggplot2,
     ggpubr,
     grid,
-    piggyback
+    piggyback,
     pracma,
     reshape2,
     RSpectra,
-    scales,
+    scales
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8

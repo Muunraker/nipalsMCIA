@@ -107,9 +107,7 @@ $$
 
 This matrix encodes the contribution of each feature to the  low-dimensional representation.
 
-The remainder of this vignette will be broken down into two sections,
-**Part 1: Interpreting Global Factor Scores** and **Part 2: Interpreting Global
-Loadings** where we show how to interpret $\mb F$ and $\mb A$, respectively. 
+The remainder of this vignette will be broken down into two sections, **Part 1: Interpreting Global Factor Scores** and **Part 2: Interpreting Global Loadings** where we show how to interpret $\mb F$ and $\mb A$, respectively. 
 
 ## Part 1: Interpreting Global Factor Scores  
 
