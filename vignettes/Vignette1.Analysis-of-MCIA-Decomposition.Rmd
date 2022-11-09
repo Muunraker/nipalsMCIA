@@ -324,7 +324,7 @@ mrna_gfscores <- mrna_gfscores[mrna_rows, ]
 row.names(mrna_gfscores) <- str_remove(rownames(mrna_gfscores), "_[0-9]*_.*")
 
 # load pathway data
-path.database <- '../data/c2.cp.reactome.v6.2.symbols.gmt'
+path.database <- "https://data.broadinstitute.org/gsea-msigdb/msigdb/release/6.2/c2.cp.reactome.v6.2.symbols.gmt"
 pathways <- fgsea::gmtPathways(path.database)
 
 # generate the GSEA report 
