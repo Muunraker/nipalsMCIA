@@ -53,8 +53,8 @@ global_loadings_heatmap <- function(global_loadings, data_blocks,
                 column_title = coltitle,
                 row_title = "Latent Factors",
                 row_names_gp = grid::gpar(fontsize = 7),
-                show_column_names = T,
-                show_row_names = T,
+                show_column_names = TRUE,
+                show_row_names = TRUE,
                 row_names_side = "right"
         )    
       return(p)
