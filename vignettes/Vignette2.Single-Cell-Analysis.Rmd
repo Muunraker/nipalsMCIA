@@ -110,15 +110,13 @@ data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature
 ```{r}
 # download the data from the repository if needed
 pb_download(file = "data_blocks_sc.Rda", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "data"))
-
-# data(data_blocks_sc) # won't work - it's not part of the package
+            tag = "v0.0.1", dest = file.path("../inst/extdata"))
 ```
 
 ```{r}
 # load the data
 # data_blocks_sc <- load(file = file.path("..", "data", "data_blocks_sc.Rda"))
-data_blocks_sc <- load(file = "../data/data_blocks_sc.Rda")
+data_blocks_sc <- load(file = "../inst/extdata/data_blocks_sc.Rda")
 
 # examine the data
 summary(data_blocks_sc)
