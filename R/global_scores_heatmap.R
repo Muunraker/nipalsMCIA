@@ -60,8 +60,8 @@ global_scores_heatmap <- function(mcia_result,
                                     column_title = "Factors",
                                     row_title = "Samples",
                                     row_names_gp = grid::gpar(fontsize = 7),
-                                    show_column_names = T,
-                                    show_row_names = T,
+                                    show_column_names = TRUE,
+                                    show_row_names = TRUE,
                                     row_names_side = "right",
                                     right_annotation = row_ha
         )    
@@ -71,8 +71,8 @@ global_scores_heatmap <- function(mcia_result,
                                     column_title = "Factors",
                                     row_title = "Samples",
                                     row_names_gp = grid::gpar(fontsize = 7),
-                                    show_column_names = T,
-                                    show_row_names = T,
+                                    show_column_names = TRUE,
+                                    show_row_names = TRUE,
                                     row_names_side = "right"
         )    
     }
