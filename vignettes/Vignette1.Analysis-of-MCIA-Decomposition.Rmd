@@ -269,8 +269,8 @@ mrna_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "mrna",
                            absolute = FALSE, descending = TRUE, factor = 1)
 
 # visualization
-all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, colors_omics = colors_omics)
-mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, colors_omics = colors_omics)
+all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = 'all', colors_omics = colors_omics)
+mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = 'mrna', colors_omics = colors_omics)
 
 ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
@@ -288,8 +288,8 @@ prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot",
                            absolute = TRUE, descending = TRUE, factor = 2)
 
 # visualization
-all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, colors_omics = colors_omics)
-prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, colors_omics = colors_omics)
+all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_name="all", colors_omics = colors_omics)
+prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name="prot", colors_omics = colors_omics)
 
 ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
