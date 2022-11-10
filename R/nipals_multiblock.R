@@ -48,8 +48,8 @@
 #'  CPCA_results <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
 #' 
 #' @export
-nipals_multiblock <- function(data_blocks,preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
-                              metadata = NULL, color_col = NULL, deflationMethod = 'block',plots="all"){
+nipals_multiblock <- function(data_blocks, preprocMethod='colprofile', num_PCs=10, tol=1e-12, max_iter = 1000,
+                              metadata = NULL, color_col = NULL, deflationMethod = 'block', plots="all"){
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
   
