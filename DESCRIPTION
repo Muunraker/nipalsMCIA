@@ -24,7 +24,7 @@ Imports:
     pracma,
     reshape2,
     RSpectra,
-    scales
+    scales,
     stringr
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
