@@ -23,6 +23,7 @@ Imports:
     piggyback,
     pracma,
     reshape2,
+    rlang,
     RSpectra,
     scales,
     stringr
