@@ -15,7 +15,8 @@
 #' "variable" format
 #' @return the processed data frame
 #' @examples
-#' preprocessed_dataframe <- CCpreproc(dataframe)
+#' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+#' preprocessed_dataframe <- CCpreproc(df)
 #' @export
 CCpreproc <- function(df) {
   temp_df <- as.matrix(df)
