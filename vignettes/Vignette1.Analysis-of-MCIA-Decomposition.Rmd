@@ -266,12 +266,7 @@ matrix $A$ that is $p\times r$.
 ### Pseudoeigenvalues representing the contribution of each omic to the global factor score
 
 ```{r, fig.dim = c(4, 1.5), fig.align = 'center'}
-## Should make into a function
-bs_weights <- as.matrix(data.frame(mcia_results$block_score_weights))
-colnames(bs_weights) <- c(1:10)
-
-Heatmap(bs_weights, cluster_columns = FALSE, cluster_rows = FALSE,
-        name = "weight", column_title_side = "bottom", column_title = "Factor")
+block_weights_heatmap(mcia_results)
 ```
 
 ### Visualize all feature loadings on two axes
@@ -381,7 +376,7 @@ mrna_gfscores <- mrna_gfscores[mrna_rows, ]
 row.names(mrna_gfscores) <- str_remove(rownames(mrna_gfscores), "_[0-9]*_.*")
 
 # load pathway data
-path.database <- "https://data.broadinstitute.org/gsea-msigdb/msigdb/release/6.2s/c2.cp.reactome.v6.2.symbols.gmt"
+path.database <- "https://data.broadinstitute.org/gsea-msigdb/msigdb/release/6.2/c2.cp.reactome.v6.2.symbols.gmt"
 pathways <- fgsea::gmtPathways(path.database)
 
 # generate the GSEA report

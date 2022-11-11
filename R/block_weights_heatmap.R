@@ -9,13 +9,13 @@
 #' @examples
 #' data(NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#' num_PCs = 10, plots = "none", tol=1e-12)
+#' num_PCs = 10, plots = "none", tol = 1e-12)
 #' block_weights_heatmap(mcia_results)
-
 #' @return Displays the heatmap of block weights
 #' @export
 block_weights_heatmap <- function(mcia_results) {
-    heatmap(mcia_results$block_score_weights,
-            Rowv = NA, Colv = NA,
-            cexRow = 1.5, xlab = "Factors")
+    bs_weights <- as.matrix(data.frame(mcia_results$block_score_weights))
+    colnames(bs_weights) <- c(1:10)
+    ComplexHeatmap::Heatmap(bs_weights, cluster_columns = FALSE, cluster_rows = FALSE, 
+            name = "weight", column_title_side = "bottom", column_title = "Factor")
 }
