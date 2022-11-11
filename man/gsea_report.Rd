@@ -17,9 +17,11 @@ gsea_report(
 
 \item{path.database}{path to a GMT annotation file}
 
-\item{pval.thr}{= p-value threshold (default to 0.05)}
+\item{factors}{vector of factors which should be analyzed}
 
-\item{factor}{vector of factors which should be analyzed}
+\item{pval.thr}{p-value threshold (default to 0.05)}
+
+\item{nproc}{number of processors to utilize}
 }
 \value{
 data frame with the most significant p-value number of significant
