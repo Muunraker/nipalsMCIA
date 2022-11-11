@@ -66,7 +66,7 @@ library(Matrix)
 pbmc.data <- as(counts(data_blocks_sc), "Matrix")
 pbmc.data <- as(pbmc.data, "dgTMatrix")
 colnames(pbmc.data) <- paste0("Cell", seq_len(ncol(pbmc.data)))
-rownames(pbmc.data) <- make.unique(rowData(data_blocks_sc)[, "Symbol_TENx", drop=TRUE])
+rownames(pbmc.data) <- make.unique(rowData(data_blocks_sc)[, "Symbol_TENx", drop = TRUE])
 pbmc <- CreateSeuratObject(raw.data = pbmc.data, min.cells = 3, min.genes = 200, project = "10X_PBMC")
 
 rownames(data_blocks_sc_test) <- scater::uniquifyFeatureNames(rowData(data_blocks_sc_test)$ENSEMBL_ID,
@@ -254,7 +254,7 @@ p <- DotPlot(obj, features = unique(markers_all$Marker),
 p$data <- suppressMessages(left_join(p$data, markers_all %>%
                                              rename(features.plot = Marker)))
 
-p + facet_grid(cols = vars(Cell_Type), scales = 'free_x', space = "free") +
+p + facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
       theme(strip.text.x = element_text(size = 8))
 ```
 
@@ -322,16 +322,16 @@ save(data_blocks_sc, file = "data_blocks_sc.Rda")
 ## MCIA
 
 ```{r original}
-meta_colors = c('orange', 'purple', 'pink')
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
-                                  metadata = metadata_NCI60, 
+meta_colors <- c("orange", "purple", "pink")
+mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
+                                  metadata = metadata_NCI60,
                                   color_col = "cancerType", color_pal = meta_colors,
                                   num_PCs = 10, tol = 1e-12)
 ```
 
 ```{r sc}
-mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = 'colprofile',
-                                     # metadata = metadata_NCI60, color_col = "cancerType", 
+mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = "colprofile",
+                                     # metadata = metadata_NCI60, color_col = "cancerType",
                                      num_PCs = 5, tol = 1e-12)
 ```
 
@@ -343,10 +343,10 @@ From Anna
 data_blocks_sc_mod <- readRDS(file.path("..", "data", "data_blocks_sc_mod.RDS"))
 data_blocks_sc_mod$mrna <- t(data_blocks_sc_mod$mrna)
 data_blocks_sc_mod$adt <- t(data_blocks_sc_mod$adt)
-mcia_results <- nipals_multiblock(data_blocks_sc_mod, num_PCs = 2, tol = 1e-12,preprocMethod="none")
+mcia_results <- nipals_multiblock(data_blocks_sc_mod, num_PCs = 2, tol = 1e-12, preprocMethod = "none")
 
-saveRDS(mcia_results,"mcia_results_sc.RDS")
-MCIA_plots(mcia_results, "projection_global", orders = c(1,2), legend_loc = "bottomleft")
+saveRDS(mcia_results, "mcia_results_sc.RDS")
+MCIA_plots(mcia_results, "projection_global", orders = c(1, 2), legend_loc = "bottomleft")
 ```
 
 ## Session Info
