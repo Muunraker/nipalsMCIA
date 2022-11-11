@@ -10,5 +10,5 @@ citEntry(entry = "article",
   year = "2023",
   doi = "TBD",
   url = "TBD",
-  textVersion = "Mattessich et al. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. TBD (2023) [nipalsMCIA V2]"
+  textVersion = "Mattessich et al. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. TBD (2023) [nipalsMCIA V1]"
 )
