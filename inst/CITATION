@@ -1,2 +1,14 @@
-nipalsMCIA
-Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum
+citHeader("To cite nipalsMCIA in publications, please use:")
+
+citEntry(entry = "article",
+  author = personList(as.person("Max Mattessich"),
+                      as.person("Joaquin Reyna"),
+                      as.person("Edel Aron"),
+                      as.person("Anna Konstorum")),
+  title = "nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction",
+  journal = "TBD",
+  year = "2023",
+  doi = "TBD",
+  url = "TBD",
+  textVersion = "Mattessich et al. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. TBD (2023) [nipalsMCIA V2]"
+)
