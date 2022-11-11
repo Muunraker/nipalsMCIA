@@ -34,6 +34,7 @@
 #' projection_plot(mcia_results, "projection", orders = c(1,2),
 #'   color_col = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
+#' @importFrom graphics grid legend points segments 
 #' @export
 projection_plot <- function(mcia_results, plot_type, orders = c(1, 2),
                                color_col = NULL,
