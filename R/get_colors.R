@@ -1,7 +1,7 @@
 #' Assigning colors to different omics (default: color-blindness friendly)
 #'
 #' @description Creates a list of omics and associated colors for plotting
-#' 
+#'
 #' @param mcia_results object returned from nipals_multiblock() function
 #' @param color_pal a function which returns color palettes (e.g. scales)
 #' @param color_pal_params list of parameters for the corresponding function
@@ -10,21 +10,21 @@
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
 #' @export
-get_colors <- function(mcia_results, color_pal=scales::viridis_pal,
-                                color_pal_params=list(option="D")) {
+get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
+                                color_pal_params = list(option = "D")) {
   omic_list <- names(mcia_results$block_loadings)
-  
-  if (is(color_pal, "function")){
+
+  if (is(color_pal, "function")) {
       colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
   } else if (is(color_pal, "character")) {
-      colors_omics = color_pal
+      colors_omics <- color_pal
   }
-  
+
   names(colors_omics) <- omic_list
   return(colors_omics)
 }
 
-#' Assigning colors to different values of a metadata column 
+#' Assigning colors to different values of a metadata column
 #' (default: color-blindness friendly)
 #'
 #' @description Creates a list of metadata columns and associated colors
@@ -40,18 +40,17 @@ get_colors <- function(mcia_results, color_pal=scales::viridis_pal,
 #' @importFrom scales viridis_pal
 #' @export
 get_metadata_colors <- function(mcia_results, color_col,
-                                color_pal=scales::viridis_pal,
-                                color_pal_params=list(option="E")) {
-    
-  meta_list <- unique(mcia_results$metadata[,color_col])
-  
-  if (is(color_pal, "function")){
+                                color_pal = scales::viridis_pal,
+                                color_pal_params = list(option = "E")) {
+
+  meta_list <- unique(mcia_results$metadata[, color_col])
+
+  if (is(color_pal, "function")) {
       colors_meta <- do.call(color_pal, color_pal_params)(length(meta_list))
-  } else if (is(color_pal, "character")){
-      colors_meta = color_pal
+  } else if (is(color_pal, "character")) {
+      colors_meta <- color_pal
   }
-  
+
   names(colors_meta) <- meta_list
   return(colors_meta)
-  
 }
