@@ -62,7 +62,7 @@ One important detail is the use of a suffix at the end of each variable name; th
 We can compute the MCIA decomposition for any number of global factors with the specific constraint that $r$ is (much) less than the number of features in the omics with the fewest features (i.e $r << min(p_b)$). Here we are calculating the first 10 global factors by using:
 
 ```{r, warning = FALSE, message = FALSE}
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
@@ -72,7 +72,7 @@ The results is a list of various decomposition matrices for MCIA and few other v
 names(mcia_results)
 ```
 
-`global_scores` refers to $f^{(j)}$'s, `global_loadings` to $a^{(j)}$'s, `block_score_weights` to $G$, `block_scores` to $f_k^{(j)}$'s, `block_loadings` $a_k^{(j)}$'s, `eigvals` to $e$, `preprocMethod` to the pre-processing method
+`global_scores` refers to $f^{(j)}$'s, `global_loadings` to $a^{(j)}$'s, `block_score_weights` to $G$, `block_scores` to $f_k^{(j)}$'s, `block_loadings` $a_k^{(j)}$'s, `eigvals` to $e$, `preproc_method` to the pre-processing method
 used and `metadata` to any sample meta-data that has been passed. More details
 on each of the matrices are covered as part of the math mini-lecture, however we
 will briefly review the `global_scores` and `global_loadings`.
@@ -120,10 +120,10 @@ plots which help establish an initial intuition for the MCIA decomposition.
 Here we will re-run `nipals_multiblock()` and omit the `plots` parameter
 (default=all):
 
-```{r, warning = FALSE, message = FALSE, fig.dim = c(4, 8), fig.align = 'center'}
+```{r, warning = FALSE, message = FALSE, fig.dim = c(8, 4), fig.align = 'center'}
 set.seed(42)
 
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12)
 ```
 
@@ -177,7 +177,7 @@ part of the `metadata` argument of `nipals_multiblock()` or added directly to `m
 set.seed(42)
 
 # Adding metadata as part of the nipals_multiblock() function
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile", 
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile", 
                                   metadata = metadata_NCI60, plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 
