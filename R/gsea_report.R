@@ -3,8 +3,9 @@
 #' @description Runs fgsea for the input gene vector
 #' @param metagenes Vector of gene scores where the row names are HUGO symbols
 #' @param path.database path to a GMT annotation file
-#' @param factor vector of factors which should be analyzed
-#' @param pval.thr = p-value threshold (default to 0.05)
+#' @param factors vector of factors which should be analyzed
+#' @param pval.thr p-value threshold (default to 0.05)
+#' @param nproc number of processors to utilize
 #' @return data frame with the most significant p-value number of significant
 #' pathways
 #' @return the selectivity scores across the given factors
