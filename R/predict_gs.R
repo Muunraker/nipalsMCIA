@@ -15,7 +15,10 @@
 #'     match the data used to generate `bl` and `bw`.
 #' @return a matrix of predicted global scores, in form
 #' @examples
-#' deflated_data <- deflate_block_bl(data_frame,block_loading)
+#'  data(NCI60)
+#'  mcia_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+#'  new_data <- data_blocks # should update with a truly new dataset
+#'  preds <- predict_gs(mcia_results, new_data)
 #'
 #' @export
 #'
@@ -23,7 +26,7 @@ predict_gs <- function(mcia_results, df) {
 
   bl <- mcia_results$block_loadings
   bw <- mcia_results$block_score_weights
-  preproc_method <- mcia_results$preprocMethod
+  preproc_method <- mcia_results$preproc_method
 
   num_omics <- length(bl)
   if (length(df) != length(bl) || length(df) != dim(bw)[[1]]) {
