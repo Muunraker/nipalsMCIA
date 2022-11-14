@@ -6,6 +6,7 @@
 #' format
 #' @return the total variance of the dataset (i.e. sum of block variances)
 #' @examples
+#' data(NCI60)
 #' tot_var <- get_TV(data_blocks)
 #' @export
 get_TV <- function(ds) {

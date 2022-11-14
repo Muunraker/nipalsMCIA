@@ -7,8 +7,12 @@
 #' @param color_pal_params list of parameters for the corresponding function
 #' @return List of omics with assigned colors
 #' @examples
+#' data(NCI60)
+#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+#' num_PCs = 10, plots = "none", tol = 1e-12)
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
+#' @importFrom methods is
 #' @export
 get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
                                 color_pal_params = list(option = "D")) {
@@ -36,6 +40,9 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
 #' @param color_pal_params list of parameters for the corresponding function
 #' @return List of metadata columns with assigned colors
 #' @examples
+#' data(NCI60)
+#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+#' num_PCs = 10, plots = "none", tol = 1e-12)
 #' colors_omics <- get_metadata_colors(mcia_results, "cancerType")
 #' @importFrom scales viridis_pal
 #' @export

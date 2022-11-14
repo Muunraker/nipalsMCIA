@@ -7,15 +7,17 @@
 get_TV(ds)
 }
 \arguments{
-\item{ds}{a list of multi-omics dataframes/matrices in "sample x variable" format}
+\item{ds}{a list of multi-omics dataframes/matrices in "sample x variable"
+format}
 }
 \value{
 the total variance of the dataset (i.e. sum of block variances)
 }
 \description{
-Computes the total variances of all data blocks in a multi-omics dataset, 
-intended for datasets that do not use `CCpreproc`
+Computes the total variances of all data blocks in a
+multi-omics dataset, intended for datasets that do not use `CCpreproc`
 }
 \examples{
+data(NCI60)
 tot_var <- get_TV(data_blocks)
 }

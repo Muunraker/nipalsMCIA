@@ -20,6 +20,7 @@ Imports:
     ggplot2,
     ggpubr,
     grid,
+    methods,
     piggyback,
     pracma,
     reshape2,

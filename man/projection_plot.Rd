@@ -6,7 +6,7 @@
 \usage{
 projection_plot(
   mcia_results,
-  plotType,
+  plot_type,
   orders = c(1, 2),
   color_col = NULL,
   color_pal = scales::viridis_pal,
@@ -17,12 +17,16 @@ projection_plot(
 \arguments{
 \item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
 
-\item{plotType}{Type of plot, with the following options \itemize{
-\item `projection` - scatter plot of two orders of global and block scores (aka factors).
-\item `projection_global` - scatter plot of two orders of global scores only (aka factors).
+\item{plot_type}{of plot, with the following options
+\itemize{
+\item `projection` - scatter plot of two orders of global and block
+    scores (aka factors).
+\item `projection_global` - scatter plot of two orders of global scores
+    only (aka factors).
 }}
 
-\item{orders}{Option to select orders of factors to plot against each other (for projection plots)}
+\item{orders}{Option to select orders of factors to plot against each other
+(for projection plots)}
 
 \item{color_col}{an integer or string specifying the column that will be
 used for color_col}

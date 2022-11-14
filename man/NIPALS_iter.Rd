@@ -14,7 +14,8 @@ NIPALS_iter(ds, tol = 1e-12, maxIter = 1000)
 \item{maxIter}{a number for the maximum number of times NIPALS should iterate}
 }
 \value{
-a list containing the global/block scores, loadings and weights for a given order
+a list containing the global/block scores, loadings and weights for
+a given order
 }
 \description{
 Applies one iteration stage/loop of the NIPALS algorithm.
@@ -22,11 +23,13 @@ Applies one iteration stage/loop of the NIPALS algorithm.
 \details{
 Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
 Starts with a random vector in sample space and repeatedly projects it onto
-the variable vectors and block scores to generate block and global 
-loadings/scores/weights. The loop stops when either the stopping criterion is 
-low enough, or the maximum number of iterations is reached. Intended as a 
+the variable vectors and block scores to generate block and global
+loadings/scores/weights. The loop stops when either the stopping criterion
+is low enough, or the maximum number of iterations is reached. Intended as a
 utility function for `nipals_multiblock` to be used between deflation steps.
 }
 \examples{
-nipals_results <- NIPALS_iter(data_list, tol = 1e-7, maxIter = 1000)
+data(NCI60)
+data_blocks <- lapply(data_blocks, as.matrix)
+nipals_results <- NIPALS_iter(data_blocks, tol = 1e-7, maxIter = 1000)
 }

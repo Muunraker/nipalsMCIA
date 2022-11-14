@@ -3,7 +3,8 @@ title: "Predicting New MCIA scores"
 author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output: 
-    rmdformats::readthedown
+    rmdformats::readthedown:
+      toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
   %\VignetteEngine{knitr::rmarkdown}
@@ -49,8 +50,8 @@ for (i in seq(1, length(data_blocks))) {
 
 ```{r computing MCIA on training data, message=FALSE, fig.show="hide"}
 MCIA_train <- nipals_multiblock(data_blocks_train,
-                                preprocMethod = "colprofile", num_PCs = 10,
-                                plots = "all", tol = 1e-12)
+                                preproc_method = "colprofile", num_PCs = 10,
+                                plots = "none", tol = 1e-12)
 ```
 
 ### Visualize model on training data using metadata on cancer type

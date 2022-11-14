@@ -6,7 +6,7 @@
 \usage{
 nipals_multiblock(
   data_blocks,
-  preprocMethod = "colprofile",
+  preproc_method = "colprofile",
   num_PCs = 10,
   tol = 1e-12,
   max_iter = 1000,
@@ -17,10 +17,13 @@ nipals_multiblock(
 )
 }
 \arguments{
-\item{data_blocks}{a list of data frames, each in "sample" x "variable" format}
+\item{data_blocks}{a list of data frames, each in "sample" x "variable"
+format}
 
-\item{preprocMethod}{an option for the desired data pre-processing, either:\itemize{
-\item `colprofile` (default) to transform the data into centered column profiles (see Meng et. al. 2014)
+\item{preproc_method}{an option for the desired data pre-processing,
+either:\itemize{
+\item `colprofile` (default) to transform the data into centered column
+profiles (see Meng et. al. 2014)
 \item `none` for no pre-processing performed (NOT RECCOMENDED)
 }}
 
@@ -28,52 +31,69 @@ nipals_multiblock(
 
 \item{tol}{a number for the tolerance on the stopping criterion for NIPALS}
 
-\item{max_iter}{a number for the maximum number of times NIPALS should iterate}
+\item{max_iter}{a number for the maximum number of times NIPALS should
+iterate}
 
-\item{metadata}{a data frame containing metadata (i.e. sample labels) for each sample in the dataframe.
-May have multiple columns, but rows and row names must match the data frames in `data_blocks`.}
+\item{metadata}{a data frame containing metadata (i.e. sample labels) for
+each sample in the dataframe.
+May have multiple columns, but rows and row names must match the data frames
+in `data_blocks`.}
 
-\item{color_col}{Optional argument with the column name of the `metadata` data frame used to define plotting colors}
+\item{color_col}{Optional argument with the column name of the `metadata`
+data frame used to define plotting colors}
 
-\item{deflationMethod}{an option for the desired deflation method, either: \itemize{
+\item{deflationMethod}{an option for the desired deflation method, either:
+\itemize{
 \item `block` deflation via block loadings (for MCIA, default)
 \item `global` deflation via global scores (for CPCA)
 }}
 
 \item{plots}{an option to display various plots of results: \itemize{
-\item `all` displays plots of block scores, global scores, and eigenvalue scree plot
-\item `global` displays only global score projections and eigenvalue scree plot
+\item `all` displays plots of block scores, global scores, and eigenvalue
+scree plot
+\item `global` displays only global score projections and eigenvalue scree
+plot
 \item `none` does not display plots
-\item `block_variances` a list of variances of each block AFTER NORMALIZATION OPTION APPLIED
-\item `metadata` the metadata dataframe supplied wuith the `metadata` argument.}}
+\item `block_variances` a list of variances of each block AFTER
+NORMALIZATION OPTION APPLIED
+\item `metadata` the metadata dataframe supplied wuith the `metadata`
+argument.}}
 }
 \value{
 a list containing the following: \itemize{
-\item `global_scores` a matrix containing global scores as columns (NOT normalized to unit variance)
+\item `global_scores` a matrix containing global scores as columns
+(NOT normalized to unit variance)
 \item `global_loadings` a matrix containing global loadings as columns
 \item `global_score_weights` a matrix of weights to express global scores as
 a combination of block scores. Has dimensions "num_Blocks" by "num_PCs"
-\item `eigvals` a matrix containing the eigenvalue for each computed global score. 
-\item `block scores` a list of matrices, each contains the scores for one block
-\item `block loadings` a list of matrices, each contains the loadings for one block (w/ unit length)
-\item `block score weights` a matrix containing weights for each block score of each order used to construct the global scores.  
-\item `preprocMethod` the preprocessing method used on the data.
+\item `eigvals` a matrix containing the eigenvalue for each computed global
+score.
+\item `block scores` a list of matrices, each contains the scores for one
+block
+\item `block loadings` a list of matrices, each contains the loadings for
+one block (w/ unit length)
+\item `block score weights` a matrix containing weights for each block score
+of each order used to construct the global scores.
+\item `preproc_method` the preprocessing method used on the data.
 }
 }
 \description{
-Applies the full adjusted NIPALS algorithm to generate block and 
-global scores/loadings with the desired deflation method.
+Applies the full adjusted NIPALS algorithm to generate block
+and global scores/loadings with the desired deflation method.
 }
 \details{
 Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
-For each order of scores/loadings, the vectors are computed via the `NIPALS_iter` 
-function, then used to deflate the data matrix according to the desired deflation method. 
+For each order of scores/loadings, the vectors are computed via the
+`NIPALS_iter` function, then used to deflate the data matrix according to
+the desired deflation method.
 This process is repeated up to the desired maximum order of scores/loadings.
 }
 \examples{
- NIPALS_results <- nipals_multiblock(df_list, num_PCs = 10, tol = 1e-12, maxIter = 1000, 
-                                   preprocMethod='colprofile', deflationMethod = 'block')
- MCIA_results <- nipals_multiblock(df_list, num_PCs = 2)
- CPCA_results <- nipals_multiblock(df_list, num_PCs = 4,deflationMethod = 'global')
+ data(NCI60)
+ NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
+ max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
+ MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+ CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
+ deflationMethod = 'global')
 
 }

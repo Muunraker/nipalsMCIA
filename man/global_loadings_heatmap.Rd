@@ -16,7 +16,8 @@ global_loadings_heatmap(
 
 \item{data_blocks}{the list of matrices used to calculate the MCIA factors}
 
-\item{omic_name}{the name of the omic that should be plot, should be in data_blocks}
+\item{omic_name}{the name of the omic that should be plot, should be
+in data_blocks}
 
 \item{select_features}{a vector of numbers to filter features}
 }
