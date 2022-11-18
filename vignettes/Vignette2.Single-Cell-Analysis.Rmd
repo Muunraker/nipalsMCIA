@@ -76,8 +76,6 @@ rownames(data_blocks_sc_test) <- scater::uniquifyFeatureNames(rowData(data_block
                                                               rowData(data_blocks_sc_test)$Symbol_TENx)
 
 pbmc <- as.Seurat(data_blocks_sc_test, data = NULL)
-
-
 ```
 
 ### 10x Genomics
@@ -122,6 +120,17 @@ data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature
 ### nipalsMCIA
 
 The file has to be structured in the form of a (large) list, with each omic saved as an element within it.
+
+```{r match-structure, include = FALSE, eval = FALSE}
+# TO DO: Check and fix this
+data_blocks_sc <- list()
+data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
+data_blocks_sc$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k_CITEseq))))
+
+summary(data_blocks_sc)
+
+save(data_blocks_sc, file = "data_blocks_sc.Rda")
+```
 
 ```{r, include = FALSE, eval = FALSE}
 # for comparison
@@ -290,7 +299,7 @@ p + facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
 
 #### Feature Plots
 
-```{r, fig.dim = c(20, 4)}
+```{r, fig.dim = c(4, 20)}
 FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE)
 ```
 
@@ -337,17 +346,12 @@ plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE)
 plot_seurat_clusters + plot_annotated_clusters
 ```
 
-## Save the data
+### Save for MCIA
 
-```{r match-structure, include = FALSE, eval = FALSE}
-data_blocks_sc <- list()
-data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
-data_blocks_sc$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k_CITEseq))))
+```{r}
 
-summary(data_blocks_sc)
-
-save(data_blocks_sc, file = "data_blocks_sc.Rda")
 ```
+
 
 ## MCIA
 
@@ -358,27 +362,22 @@ save(data_blocks_sc, file = "data_blocks_sc.Rda")
 data_blocks_sc$mrna <- t(data_blocks_sc$mrna)
 data_blocks_sc$adt <- t(data_blocks_sc$adt)
 
-mcia_results_sc <- nipals_multiblock(data_blocks_sc, preproc_method = "colprofile",
+mcia_results_sc <- nipals_multiblock(data_blocks_sc, 
+                                     preproc_method = "colprofile",
                                      num_PCs = 10, tol = 1e-12, plots = "none")
-mcia_results_sc_none <- nipals_multiblock(data_blocks_sc, preproc_method = "none",
-                                          num_PCs = 10, tol = 1e-12)
 
 saveRDS(mcia_results_sc, file = file.path("..", "data", "mcia_results_sc.Rds"))
-saveRDS(mcia_results_sc_none, file = file.path("..", "data", "mcia_results_sc_none.Rds"))
 ``` 
 
 ```{r}
 mcia_results_sc <- readRDS(file = file.path("..", "data", "mcia_results_sc.Rds"))
-mcia_results_sc_none <- readRDS(file = file.path("..", "data", "mcia_results_sc_none.Rds"))
 
 names(mcia_results_sc)
 ```
-### Visualizations
+### Visualization
 
-This data comes from only one subject, so we will use the previously defined cell types 
-for the metadata.
-
-### With Preprocessing
+This data comes from only one subject, so we will use the previously defined 
+cell types for the metadata.
 
 ```{r, fig.dim = c(4, 4), fig.align = 'center'}
 projection_plot(mcia_results_sc, "projection_global", orders = c(1, 2))
@@ -395,25 +394,6 @@ block_weights_heatmap(mcia_results_sc)
 ```{r, fig.dim = c(6, 4), fig.align = 'center'}
 colors_omics <- get_colors(mcia_results_sc)
 vis_load_plot(mcia_results_sc, axes = c(1, 4), colors_omics = colors_omics)
-```
-
-### Without Preprocessing
-
-```{r, fig.dim = c(4, 4), fig.align = 'center'}
-projection_plot(mcia_results_sc_none, "projection_global", orders = c(1, 2))
-```
-
-```{r, fig.dim = c(6, 4), fig.align = 'center'}
-global_scores_heatmap(mcia_results_sc_none)
-```
-
-```{r, fig.dim = c(6, 4), fig.align = 'center'}
-block_weights_heatmap(mcia_results_sc_none)
-```
-
-```{r, fig.dim = c(6, 4), fig.align = 'center'}
-colors_omics <- get_colors(mcia_results_sc_none)
-vis_load_plot(mcia_results_sc_none, axes = c(1, 4), colors_omics = colors_omics)
 ```
  
 ## Session Info 
