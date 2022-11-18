@@ -15,7 +15,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 set.seed(42) # NIPALS starts with a random vector
 ```
 
@@ -23,25 +23,28 @@ set.seed(42) # NIPALS starts with a random vector
 
 Note that the `TENxPBMCData` package is not included in this list as you may decide to pull data from another source.
 
-```{r load-packages, echo = FALSE, include = FALSE, eval = TRUE}
+```{r load-packages, echo = FALSE, include = FALSE}
 library(dplyr)
 library(ggplot2)
 library(nipalsMCIA)
 library(piggyback)
 library(Seurat)
+
+library(tidyverse)
 ```
 
 ## Loading the data
 
 We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes. We chose it due to it containing both GEX and ADT data as well as being relatively recent and from a widely used company.
 
-The following detail several ways in which to load in this dataset. You may prefer to use data from other sources outside of 10x Genomics, in which case you will have to format it to work with nipalsMCIA.
+The following code details several ways in which to load in this dataset. You may prefer to use data from other sources outside of 10x Genomics, in which case you will have to format it to work with nipalsMCIA.
 
 ### Bioconductor
 
 There are several Bioconductor packages which provide single-cell data for users as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics, including the one that we will be analyzing.
 
-```{r}
+```{r, eval = FALSE}
+
 # if needed
 # install.packages(TENxPBMCData)
 
@@ -55,8 +58,8 @@ counts(altExp(data_blocks_sc)) # CITE-Seq data ("altExpNames(1): Antibody Captur
 
 In order to run...
 
-```{r, include = FALSE}
-# testing methods
+```{r, include = FALSE, eval = FALSE}
+# testing different methods
 tenx_pbmc3k <- TENxPBMCData(dataset = "pbmc3k")
 data_blocks_sc_test <- data_blocks_sc
 
@@ -70,16 +73,20 @@ rownames(pbmc.data) <- make.unique(rowData(data_blocks_sc)[, "Symbol_TENx", drop
 pbmc <- CreateSeuratObject(raw.data = pbmc.data, min.cells = 3, min.genes = 200, project = "10X_PBMC")
 
 rownames(data_blocks_sc_test) <- scater::uniquifyFeatureNames(rowData(data_blocks_sc_test)$ENSEMBL_ID,
-                                                      rowData(data_blocks_sc_test)$Symbol_TENx)
+                                                              rowData(data_blocks_sc_test)$Symbol_TENx)
 
 pbmc <- as.Seurat(data_blocks_sc_test, data = NULL)
+
+
 ```
 
 ### 10x Genomics
 
+#### Load in the data
+
 The original dataset can be found on the [10x Genomics Datasets website](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.2/5k_pbmc_protein_v3) and an explanation of the file types for this version can be found [here](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/3.0/output/overview). You can download them all to a directory of your choosing with their suggested commands:
 
-```{bash}
+```{bash, eval = FALSE}
 # Input Files
 curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_pbmc_protein_v3_fastqs.tar
 curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_pbmc_protein_v3_feature_ref.csv
@@ -100,38 +107,61 @@ curl -O https://cf.10xgenomics.com/samples/cell-exp/3.0.2/5k_pbmc_protein_v3/5k_
 
 You will need the *filtered_feature_bc_matrix* directory for the following analysis; it can be extracted with `tar -xvzf 5k_pbmc_protein_v3_filtered_feature_bc_matrix.tar.gz` from within the relevant data directory.
 
-```{r}
+```{r, eval = FALSE}
 # load the data (change the file path as needed)
 data <- Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", "filtered_feature_bc_matrix"))
 ```
 
+#### Save the object
+
+```{r, eval = FALSE}
+
+```
+
+
 ### nipalsMCIA
 
-```{r}
+The file has to be structured in the form of a (large) list, with each omic saved as an element within it.
+
+```{r, include = FALSE, eval = FALSE}
+# for comparison
+load(file = file.path("..", "data", "nci60_original.rda"))
+nci60_original <- nci60
+```
+
+
+```{r, eval = FALSE}
 # download the data from the repository if needed
 pb_download(file = "data_blocks_sc.Rda", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("../inst/extdata"))
+            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
 ```
 
 ```{r}
-# load the data
-# data_blocks_sc <- load(file = file.path("..", "data", "data_blocks_sc.Rda"))
-data_blocks_sc <- load(file = "../inst/extdata/data_blocks_sc.Rda")
+# load the data (as data_blocks_sc)
+load(file = file.path("..", "inst", "extdata", "data_blocks_sc.Rda"))
 
 # examine the data
 summary(data_blocks_sc)
 
-# metadata_NCI60
+# add suffixes
+colnames(data_blocks_sc$mrna) <- paste(colnames(data_blocks_sc$mrna), 
+                                       "mrna", sep = "_")
+colnames(data_blocks_sc$adt) <- paste(colnames(data_blocks_sc$adt), 
+                                      "adt", sep = "_")
+
+# examine the contents
+data_blocks_sc$mrna[1:5, 1:3]
+data_blocks_sc$adt[1:5, 1:3]
 ```
 
 ### Seurat
 
-```{r}
+```{r, eval = FALSE}
 
 ```
 
 
-## scRNA-Seq analysis
+## scRNA-Seq Seurat analysis
 
 ### Read in the data
 
@@ -160,7 +190,7 @@ obj$"percent.mt" <- PercentageFeatureSet(obj, pattern = "^MT-")
 
 #### Metrics summary
 
-```{r}
+```{r, eval = FALSE}
 library(readr)
 
 # read in the summary table
@@ -174,14 +204,14 @@ metrics_summary <- read_csv(file.path("..", "data", "tenx_pbmc5k_CITEseq",
 
 ##### Before filtering
 
-```{r}
+```{r, eval = FALSE}
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
         pt.size = 0.01, ncol = 3)
 ```
 
 ##### After filtering
 
-```{r}
+```{r, eval = FALSE}
 obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
 
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
@@ -190,7 +220,7 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 ### Standard Seurat pipeline
 
-```{r}
+```{r, eval = FALSE}
 # standard normalization
 obj <- NormalizeData(obj, normalization.method = "LogNormalize", scale.factor = 10000)
 
@@ -309,7 +339,7 @@ plot_seurat_clusters + plot_annotated_clusters
 
 ## Save the data
 
-```{r match-structure}
+```{r match-structure, include = FALSE, eval = FALSE}
 data_blocks_sc <- list()
 data_blocks_sc$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k_CITEseq)))
 data_blocks_sc$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k_CITEseq))))
@@ -321,36 +351,73 @@ save(data_blocks_sc, file = "data_blocks_sc.Rda")
 
 ## MCIA
 
-```{r original}
-meta_colors <- c("orange", "purple", "pink")
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = "colprofile",
-                                  metadata = metadata_NCI60,
-                                  color_col = "cancerType", color_pal = meta_colors,
-                                  num_PCs = 10, tol = 1e-12)
-```
+### Running the decomposition
 
-```{r sc}
-mcia_results_sc <- nipals_multiblock(data_blocks_sc, preprocMethod = "colprofile",
-                                     # metadata = metadata_NCI60, color_col = "cancerType",
-                                     num_PCs = 5, tol = 1e-12)
-```
+```{r mcia, eval = FALSE}
+# transpose
+data_blocks_sc$mrna <- t(data_blocks_sc$mrna)
+data_blocks_sc$adt <- t(data_blocks_sc$adt)
 
-## Tests
+mcia_results_sc <- nipals_multiblock(data_blocks_sc, preproc_method = "colprofile",
+                                     num_PCs = 10, tol = 1e-12, plots = "none")
+mcia_results_sc_none <- nipals_multiblock(data_blocks_sc, preproc_method = "none",
+                                          num_PCs = 10, tol = 1e-12)
 
-From Anna
+saveRDS(mcia_results_sc, file = file.path("..", "data", "mcia_results_sc.Rds"))
+saveRDS(mcia_results_sc_none, file = file.path("..", "data", "mcia_results_sc_none.Rds"))
+``` 
 
 ```{r}
-data_blocks_sc_mod <- readRDS(file.path("..", "data", "data_blocks_sc_mod.RDS"))
-data_blocks_sc_mod$mrna <- t(data_blocks_sc_mod$mrna)
-data_blocks_sc_mod$adt <- t(data_blocks_sc_mod$adt)
-mcia_results <- nipals_multiblock(data_blocks_sc_mod, num_PCs = 2, tol = 1e-12, preprocMethod = "none")
+mcia_results_sc <- readRDS(file = file.path("..", "data", "mcia_results_sc.Rds"))
+mcia_results_sc_none <- readRDS(file = file.path("..", "data", "mcia_results_sc_none.Rds"))
 
-saveRDS(mcia_results, "mcia_results_sc.RDS")
-MCIA_plots(mcia_results, "projection_global", orders = c(1, 2), legend_loc = "bottomleft")
+names(mcia_results_sc)
+```
+### Visualizations
+
+This data comes from only one subject, so we will use the previously defined cell types 
+for the metadata.
+
+### With Preprocessing
+
+```{r, fig.dim = c(4, 4), fig.align = 'center'}
+projection_plot(mcia_results_sc, "projection_global", orders = c(1, 2))
 ```
 
-## Session Info
-
-```{r, eval = TRUE}
-sessionInfo()
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+global_scores_heatmap(mcia_results_sc)
 ```
+
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+block_weights_heatmap(mcia_results_sc)
+```
+
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+colors_omics <- get_colors(mcia_results_sc)
+vis_load_plot(mcia_results_sc, axes = c(1, 4), colors_omics = colors_omics)
+```
+
+### Without Preprocessing
+
+```{r, fig.dim = c(4, 4), fig.align = 'center'}
+projection_plot(mcia_results_sc_none, "projection_global", orders = c(1, 2))
+```
+
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+global_scores_heatmap(mcia_results_sc_none)
+```
+
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+block_weights_heatmap(mcia_results_sc_none)
+```
+
+```{r, fig.dim = c(6, 4), fig.align = 'center'}
+colors_omics <- get_colors(mcia_results_sc_none)
+vis_load_plot(mcia_results_sc_none, axes = c(1, 4), colors_omics = colors_omics)
+```
+ 
+## Session Info 
+ 
+```{r} 
+sessionInfo() 
+``` 
