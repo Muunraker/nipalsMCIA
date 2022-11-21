@@ -35,7 +35,7 @@ library(tidyverse)
 
 ## Loading the data
 
-We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes. We chose it due to it containing both GEX and ADT data as well as being relatively recent and from a widely used company.
+We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes, along with 32 cell surface markers. We chose it due to it containing both GEX and ADT data as well as being relatively recent and from a widely used company.
 
 The following code details several ways in which to load in this dataset. You may prefer to use data from other sources outside of 10x Genomics, in which case you will have to format it to work with nipalsMCIA.
 
@@ -158,9 +158,13 @@ colnames(data_blocks_sc$mrna) <- paste(colnames(data_blocks_sc$mrna),
 colnames(data_blocks_sc$adt) <- paste(colnames(data_blocks_sc$adt), 
                                       "adt", sep = "_")
 
+# transpose the data
+data_blocks_sc$mrna <- t(data_blocks_sc$mrna)
+data_blocks_sc$adt <- t(data_blocks_sc$adt)
+
 # examine the contents
-data_blocks_sc$mrna[1:5, 1:3]
-data_blocks_sc$adt[1:5, 1:3]
+data_blocks_sc$mrna[1:5, 1:5]
+data_blocks_sc$adt[1:5, 1:5]
 ```
 
 ### Seurat
@@ -193,9 +197,7 @@ obj$"percent.mt" <- PercentageFeatureSet(obj, pattern = "^MT-")
 # saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_unprocessed.rds"))
 ```
 
-
 ### Quality control
-
 
 #### Metrics summary
 
@@ -257,7 +259,7 @@ obj <- FindNeighbors(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
 obj <- FindClusters(obj, resolution = 0.4) # verbose = FALSE
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:20) # verbose = FALSE
 
-# saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
 ```
 
 ### Dimensionality reduction
@@ -267,8 +269,7 @@ obj <- readRDS(file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
 ```
 
 ```{r, fig.dim = c(4, 4)}
-# note that you can set `label = TRUE` or use the LabelClusters function to help label
-# individual clusters
+# note that you can set `label = TRUE` or use the LabelClusters function to help label individual clusters
 plot_seurat_clusters <- UMAPPlot(obj)
 plot_seurat_clusters
 ```
@@ -300,20 +301,20 @@ p + facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
 #### Feature Plots
 
 ```{r, fig.dim = c(4, 20)}
-FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE)
+FeaturePlot(obj, features = unique(markers_all$Marker), label = TRUE, ncol = 4)
 ```
 
 ### Annotate cell clusters
 
 ```{r}
-obj_annotations <- rbind(c("0", "Unknown"),
+obj_annotations <- rbind(c("0", "Macrophages"), # or mDC
                          c("1", "T cells"),
                          c("2", "T cells"),
-                         c("3", "Unknown"),
+                         c("3", "T cells"), # or NK
                          c("4", "Natural killers"),
                          c("5", "B cells"),
-                         c("6", "Unknown"),
-                         c("7", "Unknown"),
+                         c("6", "mDCs"), # or B cells or macrophages
+                         c("7", "Macrophages"), # or mDC
                          c("8", "Unknown"),
                          c("9", "pDCs"))
 colnames(obj_annotations) <- c("Cluster", "CellType")
@@ -355,16 +356,28 @@ plot_seurat_clusters + plot_annotated_clusters
 
 ## MCIA
 
+### Metadata
+
+```{r}
+# metadata_sc <- tibble::column_to_rownames(obj_annotations, var = "Cluster")
+
+metadata_sc <- data.frame(obj$annotated_clusters) %>%
+                rename("CellType" = "obj.annotated_clusters") %>%
+                arrange(CellType)
+metadata_sc$CellType <- as.character(metadata_sc$CellType)
+```
+
+
 ### Running the decomposition
 
 ```{r mcia, eval = FALSE}
-# transpose
-data_blocks_sc$mrna <- t(data_blocks_sc$mrna)
-data_blocks_sc$adt <- t(data_blocks_sc$adt)
-
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, 
                                      preproc_method = "colprofile",
-                                     num_PCs = 10, tol = 1e-12, plots = "none")
+                                     num_PCs = 10, tol = 1e-9,
+                                     metadata = metadata_sc, plots = "none")
+
+# TO DO: Alphabetize these
+mcia_results_sc$metadata <- metadata_sc
 
 saveRDS(mcia_results_sc, file = file.path("..", "data", "mcia_results_sc.Rds"))
 ``` 
@@ -380,7 +393,14 @@ This data comes from only one subject, so we will use the previously defined
 cell types for the metadata.
 
 ```{r, fig.dim = c(4, 4), fig.align = 'center'}
-projection_plot(mcia_results_sc, "projection_global", orders = c(1, 2))
+meta_colors <- get_metadata_colors(mcia_results = mcia_results_sc, 
+                                   color_col = "CellType",
+                                   color_pal = scales::viridis_pal,
+                                   color_pal_params = list(option = "D"))
+
+projection_plot(mcia_results = mcia_results_sc, plot_type = "projection_global", 
+                orders = c(1, 2), 
+                color_col = "CellType", color_pal = meta_colors)
 ```
 
 ```{r, fig.dim = c(6, 4), fig.align = 'center'}
