@@ -2,7 +2,9 @@
 
 export(CCpreproc)
 export(NIPALS_iter)
+export(block_preproc)
 export(block_weights_heatmap)
+export(col_preproc)
 export(deflate_block_bl)
 export(deflate_block_gs)
 export(get_TV)

@@ -12,11 +12,19 @@
 #'
 #' @param data_blocks a list of data frames, each in "sample" x "variable"
 #' format
-#' @param preproc_method an option for the desired data pre-processing,
+#' @param preproc_method an option for the desired column-level data pre-processing, 
+#' either:
+#' \itemize{
+#' \item `colprofile` applies column-centering, row and column weighting by 
+#' contribution to variance. 
+#' \item `none` NOT RECCOMENDED - skips column level preprocessing
+#' }
+#' @param block_preproc_method an option for the desired block-level data pre-processing,
 #' either:\itemize{
-#' \item `colprofile` (default) to transform the data into centered column
-#' profiles (see Meng et. al. 2014)
-#' \item `none` for no pre-processing performed (NOT RECCOMENDED)
+#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance 
+#' \item `num_cols` divides each block by the number of variables in the block.
+#' \item `largest_sv` divides each block by its largest singular value.
+#' \item `none` performs no preprocessing
 #' }
 #' @param num_PCs the maximum order of scores/loadings
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
@@ -69,7 +77,8 @@
 #'
 #' @export
 nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
-                              num_PCs = 10, tol = 1e-12, max_iter = 1000,
+                              block_preproc_method = "unit_var", 
+                              num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
                               deflationMethod = "block", plots = "all") {
   num_blocks <- length(data_blocks)
@@ -106,10 +115,9 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   # Pre-processing data
   if (tolower(preproc_method) == "colprofile") {
     message("Performing centered column profile pre-processing...")
-    data_blocks <- lapply(data_blocks, CCpreproc)
+    data_blocks <- lapply(data_blocks, col_preproc)
+
     # know that blocks have unit variance after cc_preproc
-    block_vars <- list(1, 1, 1)
-    names(block_vars) <- names(data_blocks)
     message("Pre-processing completed.")
   } else {
     # **PLACEHOLDER** == should be replaced with appropriate variance calc
@@ -118,7 +126,19 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     block_vars <- NULL
     message("No Pre-processing performed.")
   }
-
+  
+  # Block-level pre-processing
+  message("Starting block-level preprocessing...")
+  data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
+  if(tolower(block_preproc_method) == "unit_var"){
+    block_vars <- list(1, 1, 1)
+    names(block_vars) <- names(data_blocks)
+  }else{
+    block_vars <- get_TV(data_blocks)
+  }
+  
+  
+  
   # First NIPALS run
   message(paste("Computing order", 1, "scores"))
   nipals_result <- NIPALS_iter(data_blocks, tol)

@@ -7,8 +7,9 @@
 nipals_multiblock(
   data_blocks,
   preproc_method = "colprofile",
+  block_preproc_method = "unit_var",
   num_PCs = 10,
-  tol = 1e-12,
+  tol = 1e-09,
   max_iter = 1000,
   metadata = NULL,
   color_col = NULL,
@@ -20,11 +21,20 @@ nipals_multiblock(
 \item{data_blocks}{a list of data frames, each in "sample" x "variable"
 format}
 
-\item{preproc_method}{an option for the desired data pre-processing,
+\item{preproc_method}{an option for the desired column-level data pre-processing, 
+either:
+\itemize{
+\item `colprofile` applies column-centering, row and column weighting by 
+contribution to variance. 
+\item `none` NOT RECCOMENDED - skips column level preprocessing
+}}
+
+\item{block_preproc_method}{an option for the desired block-level data pre-processing,
 either:\itemize{
-\item `colprofile` (default) to transform the data into centered column
-profiles (see Meng et. al. 2014)
-\item `none` for no pre-processing performed (NOT RECCOMENDED)
+\item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance 
+\item `num_cols` divides each block by the number of variables in the block.
+\item `largest_sv` divides each block by its largest singular value.
+\item `none` performs no preprocessing
 }}
 
 \item{num_PCs}{the maximum order of scores/loadings}
