@@ -15,7 +15,7 @@
 #' @export
 block_weights_heatmap <- function(mcia_results) {
     bs_weights <- as.matrix(data.frame(mcia_results$block_score_weights))
-    colnames(bs_weights) <- c(1:10)
+    colnames(bs_weights) <- seq_len(ncol(bs_weights))
     ComplexHeatmap::Heatmap(bs_weights, cluster_columns = FALSE, cluster_rows = FALSE, 
             name = "weight", column_title_side = "bottom", column_title = "Factor")
 }
