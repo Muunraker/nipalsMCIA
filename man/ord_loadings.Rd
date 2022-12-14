@@ -22,7 +22,8 @@ ord_loadings(
 
 \item{descending}{whether to rank in descending or ascending order}
 
-\item{factor}{choose a factor (numeric value from 1 to number of factors in mcia_out)}
+\item{factor}{choose a factor (numeric value from 1 to number of factors
+in mcia_out)}
 }
 \value{
 ranked dataframe
@@ -31,6 +32,9 @@ ranked dataframe
 Creates a dataframe with ranked loadings for a given factor
 }
 \examples{
-all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all", 
-                         absolute = FALSE, descending = TRUE, factor = 1)
+data(NCI60)
+mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+num_PCs = 10, plots = "none", tol = 1e-12)
+all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
+  absolute = FALSE, descending = TRUE, factor = 1)
 }

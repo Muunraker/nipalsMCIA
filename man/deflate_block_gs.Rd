@@ -15,14 +15,16 @@ deflate_block_gs(df, gs)
 the deflated data frame
 }
 \description{
-Removes data from a data frame in the direction of a given global 
-scores vector.
+Removes data from a data frame in the direction of a given
+global scores vector.
 }
 \details{
 Subtracts the component of each column in the direction of a given
 global scores vector to yield a `deflated' data matrix.
 }
 \examples{
-deflated_data <- deflate_block_gs(data_frame,global_score)
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+global_score <- rbinom(5, 1, prob = 0.3)
+deflated_data <- deflate_block_gs(df, global_score)
 
 }

@@ -7,26 +7,29 @@
 predict_gs(mcia_results, df)
 }
 \arguments{
-\item{mcia_results}{an mcia object output by nipals_multiblock() containing block
-scores, weights, and pre-processing identifier.}
+\item{mcia_results}{an mcia object output by nipals_multiblock()
+containing block scores, weights, and pre-processing identifier.}
 
-\item{df}{a list of data matrices to make predictions from, where each entry 
+\item{df}{a list of data matrices to make predictions from, where each entry
 corresponds to one omics type in "sample" x " features" format.
-Feature and omic order must match `bl`. Pre-processing should also match the data
-used to generate `bl` and `bw`.}
+Feature and omic order must match `bl`. Pre-processing should also
+match the data used to generate `bl` and `bw`.}
 }
 \value{
 a matrix of predicted global scores, in form
 }
 \description{
-Uses previously-computed block scores and weights to compute 
+Uses previously-computed block scores and weights to compute
 a global score for new data.
 }
 \details{
-Projects the new observations onto each block loadings vector, then 
+Projects the new observations onto each block loadings vector, then
 weights the projection according to the corresponding block weights.
 }
 \examples{
-deflated_data <- deflate_block_bl(data_frame,block_loading)
+ data(NCI60)
+ mcia_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+ new_data <- data_blocks # should update with a truly new dataset
+ preds <- predict_gs(mcia_results, new_data)
 
 }

@@ -34,7 +34,7 @@ vis_load_ord <- function(gl_f_ord, omic_name, colors_omics, n_feat = 15) {
   omic_subset <- names(table(droplevels(gl_f_ord[seq(0, n_plot), ])$omic))
   color_vals <- colors_omics[omic_subset]
   p <- ggplot(data = gl_f_ord[seq_len(n_plot), ],
-              aes(x = factor(omic_name, level = omic_name),
+              aes(x = factor(omic_name, levels = omic_name),
                   y = !!loading, color = !!omic)) +
        geom_point() +
        theme_bw() +

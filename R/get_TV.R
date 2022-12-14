@@ -6,6 +6,7 @@
 #' format
 #' @return the total variance of the dataset (i.e. sum of block variances)
 #' @examples
+#' data(NCI60)
 #' tot_var <- get_TV(data_blocks)
 #' @export
 get_TV <- function(ds) {
@@ -13,7 +14,7 @@ get_TV <- function(ds) {
 
   # function to calculate variances of each block
   get_bv <- function(X) {
-    X_cent <- sweep(X, 2, colMeans(X), "-")
+    X_cent <- sweep(X, 2, colMeans(X), "-") # comment out for centered matrices
     n_samp <- dim(X_cent)[1]
     X_cent_norm <- X_cent
 

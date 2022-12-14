@@ -4,10 +4,12 @@
 \alias{vis_load_ord}
 \title{Visualize ranked loadings}
 \usage{
-vis_load_ord(gl_f_ord, colors_omics, n_feat = 15)
+vis_load_ord(gl_f_ord, omic_name, colors_omics, n_feat = 15)
 }
 \arguments{
 \item{gl_f_ord}{Ranked loading dataframe output from ord_loadings() function}
+
+\item{omic_name}{name of the given omic dataset}
 
 \item{colors_omics}{named list of colors associated with omics,
 output of get_colors() function}
@@ -18,10 +20,16 @@ output of get_colors() function}
 Plot in features for a factor by rank
 }
 \description{
-Visualize a scree plot of loadings recovered from 
-nipalsMCIA() output loadings matrix ranked using the 
+Visualize a scree plot of loadings recovered from
+nipalsMCIA() output loadings matrix ranked using the
 ord_loadings() functions
 }
 \examples{
-vis_load_ord(all_pos_1_df, colors_omics = colors_omics)
+data(NCI60)
+mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+num_PCs = 10, plots = "none", tol = 1e-12)
+all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
+  absolute = FALSE, descending = TRUE, factor = 1)
+colors_omics <- get_colors(mcia_results)
+vis_load_ord(all_pos_1, colors_omics = colors_omics)
 }

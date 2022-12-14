@@ -8,48 +8,38 @@
 #' \item Divides each column by its sum
 #' \item Subtracts (row sum/total sum) from each row
 #' \item Multiplies each column by sqrt(column sum/total sum)
-#' \item Divides the whole data frame by its total variance (the sqrt of the
-#' sum of singular values)
 #' }
 #' @param df the data frame to apply pre-processing to, in "sample" x
 #' "variable" format
 #' @return the processed data frame
 #' @examples
 #' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
-#' preprocessed_dataframe <- CCpreproc(df)
+#' preprocessed_dataframe <- col_preproc(df)
 #' @export
-CCpreproc <- function(df) {
+col_preproc <- function(df) {
   temp_df <- as.matrix(df)
-
+  
   # Making data non-negative
   minVal <- min(temp_df)
   if (minVal < 0) {
     offset <- floor(minVal)
     temp_df <- temp_df + abs(offset)
   }
-
+  
   # Generating centered column profiles:
   totsum <- sum(temp_df)
   colsums <- colSums(temp_df)
   row_contribs <- rowSums(temp_df) / totsum
-
-  ## Dividing by column sums
+  
+  # Dividing by column sums
   nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
   temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
-
-  ## Subtracting row contributions
+  
+  # Subtracting row contributions
   temp_df <- temp_df - row_contribs
-
-  # Applying feature weighting ("multiplication by feature metrics")
+  
+  # Applying feature weighting by proportion of variance
   temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
-
-  # Weighting block to unit variance (block variance computed via Fro norm)
-  block_var <- norm(temp_df, type = "F")^2 / (max(1, nrow(df) - 1))
-
-  if (block_var != 0) {
-    temp_df <- temp_df * (1 / sqrt(block_var))
-  } else {
-    warning("New data has zero variance.")
-  }
+  
   return(temp_df)
 }

@@ -5,14 +5,14 @@
 \title{Plotting a heatmap of global factors scores (sample v. factors)}
 \usage{
 global_scores_heatmap(
-  mcia_result,
+  mcia_results,
   color_col = NULL,
   color_pal = scales::viridis_pal,
   color_pal_params = list(option = "D")
 )
 }
 \arguments{
-\item{mcia_result}{the mcia object matrix after running MCIA, must also
+\item{mcia_results}{the mcia object matrix after running MCIA, must also
 contain metadata with columns corresponding to color_col}
 
 \item{color_col}{an integer or string specifying the column that will be
