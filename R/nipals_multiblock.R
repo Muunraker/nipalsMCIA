@@ -213,7 +213,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   # Plotting results
   if (tolower(plots) == "all") {
     par(mfrow = c(1, 2))
-    projection_plot(results_list, "projection",
+    projection_plot(results_list, "all",
                legend_loc = "bottomleft",
                color_col = color_col) # first two orders of scores
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
@@ -222,11 +222,12 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   } else if (tolower(plots) == "global") {
     par(mfrow = c(1, 2))
     # first two global scores
-    projection_plot(results_list, "projection_global", color_col = color_col)
+    projection_plot(results_list, "global", color_col = color_col)
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1, 1))
   } else if (tolower(plots) == "none") {
-
+    # Are we mising sosmething here? Need to check previous 
+    # versions.
   } else {
     message("No known plotting options specified - skipping plots.")
   }
