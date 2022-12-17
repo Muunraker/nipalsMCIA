@@ -23,7 +23,7 @@ get_TV <- function(ds) {
   }
 
   bv_list <- lapply(ds, get_bv)
-  tv <- sum(unlist(bv_list))
+  # tv <- sum(unlist(bv_list))
 
-  return(tv)
+  return(bv_list)
 }

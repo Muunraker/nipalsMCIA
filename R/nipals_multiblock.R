@@ -17,7 +17,9 @@
 #' \itemize{
 #' \item `colprofile` applies column-centering, row and column weighting by 
 #' contribution to variance. 
-#' \item `none` NOT RECCOMENDED - skips column level preprocessing
+#' \item `standardized` centers each column and divides by its standard 
+#' deviation. 
+#' \item `centered_only` ONLY centers data
 #' }
 #' @param block_preproc_method an option for the desired block-level data pre-processing,
 #' either:\itemize{
@@ -113,30 +115,20 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
 
   # Pre-processing data
-  if (tolower(preproc_method) == "colprofile") {
-    message("Performing centered column profile pre-processing...")
-    data_blocks <- lapply(data_blocks, col_preproc)
-
-    # know that blocks have unit variance after cc_preproc
-    message("Pre-processing completed.")
-  } else {
-    # **PLACEHOLDER** == should be replaced with appropriate variance calc
-    # converting input data to matrix form
-    data_blocks <- lapply(data_blocks, as.matrix)
-    block_vars <- NULL
-    message("No Pre-processing performed.")
-  }
+  message("Performing column-level pre-processing...")
+  data_blocks <- lapply(data_blocks, col_preproc, preproc_method)
+  message("Column pre-processing completed.")
   
   # Block-level pre-processing
-  message("Starting block-level preprocessing...")
+  message("Performing block-level preprocessing...")
   data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
   if(tolower(block_preproc_method) == "unit_var"){
-    block_vars <- list(1, 1, 1)
+    block_vars <- rep(list(1),length(data_blocks))
     names(block_vars) <- names(data_blocks)
   }else{
     block_vars <- get_TV(data_blocks)
   }
-  
+  message("Block pre-processing completed.")
   
   
   # First NIPALS run
@@ -203,11 +195,12 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
   results_list <- list(global_scores, global_loadings, block_score_weights,
                       block_scores, block_loadings, eigvals,
-                      tolower(preproc_method), block_vars)
+                      tolower(preproc_method),tolower(block_preproc_method), 
+                      block_vars)
   names(results_list) <- c("global_scores", "global_loadings",
                            "block_score_weights", "block_scores",
-                           "block_loadings", "eigvals", "preproc_method",
-                           "block_variances")
+                           "block_loadings", "eigvals","column_preproc_method",
+                           "block_preproc_method", "block_variances")
   results_list$metadata <- metadata
 
   # Plotting results

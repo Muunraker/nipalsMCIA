@@ -53,6 +53,6 @@ block_preproc <- function(df,block_preproc_method) {
     return(temp_df)
     
   }else{
-    stop("block preprocessing method not recognized - please fix!")
+    stop("block preprocessing method not recognized - pick from available options")
   }
 }
