@@ -1,0 +1,62 @@
+---
+title: "Analysis of MCIA Decomposition"
+author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
+date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{amsfonts}
+output: 
+    rmdformats::readthedown:
+      toc_depth: 4
+vignette: >
+  %\VignetteIndexEntry{Analysis-of-MCIA-Decomposition}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\var}{\text{var}}
+\newcommand{\cov}{\text{cov}}
+
+```{r setup-merger, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42) # NIPALS starts with a random vector
+```
+
+```{r, echo = FALSE, include = FALSE}
+library(ComplexHeatmap)
+library(dplyr)
+library(fgsea)
+library(ggplot2)
+library(ggpubr)
+library(nipalsMCIA)
+library(stringr)
+```
+
+```{r, warning = FALSE, message = FALSE}
+# load the dataset which uses the name data_blocks
+data(NCI60)
+
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+                                  num_PCs = 10, tol = 1e-12, plots = "none")
+```
+
+```{r, warning = FALSE, message = FALSE, fig.dim = c(8, 4), fig.align = 'center'}
+set.seed(42)
+
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+                                  num_PCs = 10, tol = 1e-12)
+```
+```{r, fig.dim = c(4, 4), fig.align = 'center'}
+projection_plot(mcia_results, "block", block_name = 'mrna', orders = c(1, 2))
+```
+```{r, fig.dim = c(4, 4), fig.align = 'center'}
+projection_plot(mcia_results, "block", block_name = 'miRNA', orders = c(1, 2))
+```
+```{r, fig.dim = c(4, 4), fig.align = 'center'}
+projection_plot(mcia_results, "block", block_name = 'prot', orders = c(1, 2))
+```
+
+```{r error=TRUE}
+projection_plot(mcia_results, "block", block_name = 'fail', orders = c(1, 2))
+```

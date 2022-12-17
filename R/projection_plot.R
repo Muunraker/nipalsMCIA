@@ -108,7 +108,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         bl_normed <- list()
         for (i in seq(1, length(mcia_results$block_scores))){
           bs_norms <- apply(mcia_results$block_scores[[i]], 2,
-                            function(x) (sqrt(var(x))))
+                        function(x) (sqrt(var(x))))
           bs_normed[[i]] <- t(t(mcia_results$block_scores[[i]]) / bs_norms)
           bl_normed[[i]] <- t(t(mcia_results$block_loadings[[i]]) / bs_norms)
         }
@@ -214,59 +214,72 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         
     } else if (tolower(projection) == "block") {
         
+        # Normalize global scores to unit variance
+        # Still included to make comparable plots
+        gs_norms <- apply(mcia_results$global_scores, 2,
+                          function(x) (sqrt(var(x))))
+        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        
         # Check for the presence of the block name
         block_check = any(block_name == names(mcia_results[["block_scores"]]))
         if (block_check == FALSE){
-            print(paste0("block_name: ", block_name, "is not part of the dataset/decomposition" ))
+            block_names = paste(names(mcia_results$block_scores),
+                                collapse = ", ")
+            msg = paste0("block_name: '", block_name,
+                        "' is not part of the data blocks list: ", 
+                        "'", block_names, "'.")
+            stop(msg)
         }
         block_idx = as.numeric(which(block_name == names(mcia_results[["block_scores"]])))
         
         # Normalize block scores to unit variance
-        bs_normed <- list()
-        bl_normed <- list()
-        
-        for (i in c(block_idx)){
-            bs_norms <- apply(mcia_results$block_scores[[i]], 2,
-                              function(x) (sqrt(var(x))))
-            bs_normed[[i]] <- t(t(mcia_results$block_scores[[i]]) / bs_norms)
-            bl_normed[[i]] <- t(t(mcia_results$block_loadings[[i]]) / bs_norms)
-        }
+        #print(mcia_results$block_scores[[block_idx]])
+        bs_norms <- apply(mcia_results$block_scores[[block_idx]], 2,
+                          function(x) (sqrt(var(x))))
+        bs_normed <- t(t(mcia_results$block_scores[[block_idx]]) / bs_norms)
         
         # Getting bounds for projection plot
         # minimum 1st block score
-        print("# minimum 1st block score")
-        min_bs1 <- min(sapply(lapply(bs_normed, `[`, , orders[[1]]), min))
+        min_bs1 <- min(bs_normed[,orders[[1]]])
         # minimum 2nd block score
-        min_bs2 <- min(sapply(lapply(bs_normed, `[`, , orders[[2]]), min))
+        min_bs2 <- min(bs_normed[,orders[[2]]])
         # maximum 1st block score
-        max_bs1 <- max(sapply(lapply(bs_normed, `[`, , orders[[1]]), max))
+        max_bs1 <- max(bs_normed[,orders[[1]]])
         # maximum 2nd block score
-        max_bs2 <- max(sapply(lapply(bs_normed, `[`, , orders[[2]]), max))
+        max_bs2 <- max(bs_normed[,orders[[2]]])
+        
+        # minimum x coordinate in plot
+        min_x <- min(c(min_bs1, min(gs_normed[, orders[[1]]])))
+        # minimum y coordinate in plot
+        min_y <- min(c(min_bs2, min(gs_normed[, orders[[2]]])))
+        # maximum x coordinate in plot
+        max_x <- max(c(max_bs1, max(gs_normed[, orders[[1]]])))
+        # maximum y coordinate in plot
+        max_y <- max(c(max_bs2, max(gs_normed[, orders[[2]]])))
         
         # Cluster 1
         sample_indexes <- clust_indexes[[1]]
-
-        # Plotting block scores (shapes correspond to different blocks)
-        for (j in seq(1, length(bs_normed))) {
-            bs_j <- bs_normed[[j]]
-            points(bs_j[sample_indexes, orders[[1]]],
-                   bs_j[sample_indexes, orders[[2]]],
-                   col = plot_colors[[1]],
-                   cex = 1, pch = j - 1)
-        }
+        
+        # Plotting block scores
+        plot(bs_normed[sample_indexes, orders[[1]]],
+             bs_normed[sample_indexes, orders[[2]]],
+             main = "Factor Plot",
+             xlab = paste("Factor ", orders[[1]]),
+             ylab = paste("Factor ", orders[[2]]),
+             col = plot_colors[[1]],
+             xlim = c(min_x, max_x),
+             ylim = c(min_y, max_y),
+             cex = .5, pch = 16)
+        grid()
         
         # Cluster 2+
         if (length(clust_indexes) > 1) {
             for (i in seq(2, length(clust_indexes))) {
                 sample_indexes <- clust_indexes[[i]]
-                
-                for (j in seq(1, length(bs_normed))){
-                    bs_j <- bs_normed[[j]]
-                    points(bs_j[sample_indexes, orders[[1]]],
-                           bs_j[sample_indexes, orders[[2]]],
-                           col = plot_colors[[i]],
-                           cex = 1, pch = j - 1)
-                }
+                points(bs_normed[sample_indexes, orders[[1]]],
+                       bs_normed[sample_indexes, orders[[2]]],
+                       col = plot_colors[[i]],
+                       cex = 1, pch = j - 1)
             }
         }
         
@@ -274,11 +287,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         if (! tolower(legend_loc) == "none") {
             # plotting legend without clusters/categories
             if (length(plot_colors) == 1) {
-                legend(legend_loc,
-                       legend = c(names(mcia_results$block_loadings)),
-                       pch = 0:length(mcia_results$block_loadings),
-                       cex = 1)
-                # plotting legend for clusters/categories
+                # do not plot legend when only one block is used
+                invisible()
+            # plotting legend for clusters/categories
             } else {
                 leg_labels <- c(names(mcia_results$block_loadings),
                                 names(plot_colors))
