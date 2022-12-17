@@ -11,7 +11,6 @@
 #'         scores (aka factors).
 #'     \item `global` - scatter plot of two orders of global scores
 #'         only (aka factors).
-#'     }
 #'     \item `block` - scatter plot of two orders of block scores
 #'         only (aka factors) for  given block.
 #'     }

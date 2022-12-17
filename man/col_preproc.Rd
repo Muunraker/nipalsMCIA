@@ -4,11 +4,25 @@
 \alias{col_preproc}
 \title{Centered Column Profile Pre-processing}
 \usage{
-col_preproc(df)
+col_preproc(df, col_preproc_method)
 }
 \arguments{
 \item{df}{the data frame to apply pre-processing to, in "sample" x
 "variable" format}
+
+\item{col_preproc_method}{denotes the type of column-centered preprocessing.
+Options are: \itemize{
+\item `colprofile` Performs the following steps on a given data frame: 
+\itemize{
+\item Offsets data to make whole matrix non-negative
+\item Divides each column by its sum
+\item Subtracts (row sum/total sum) from each row
+\item Multiplies each column by sqrt(column sum/total sum)
+}
+\item `standardized` centers each column and divides by its standard 
+deviation. 
+\item `centered_only` ONLY centers data
+}}
 }
 \value{
 the processed data frame
@@ -19,14 +33,10 @@ block has unit variance. Mimics the pre-processing in the Omicade4 package
 (Meng et al. 2014)
 }
 \details{
-Performs the following steps on a given data frame: \itemize{
-\item Offsets data to make whole matrix non-negative
-\item Divides each column by its sum
-\item Subtracts (row sum/total sum) from each row
-\item Multiplies each column by sqrt(column sum/total sum)
-}
+Performs preprocessing on a sample/variable (row/column) level
+according to the parameter given.
 }
 \examples{
 df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
-preprocessed_dataframe <- col_preproc(df)
+preprocessed_dataframe <- col_preproc(df, col_preproc_method = 'colprofile')
 }

@@ -26,7 +26,9 @@ either:
 \itemize{
 \item `colprofile` applies column-centering, row and column weighting by 
 contribution to variance. 
-\item `none` NOT RECCOMENDED - skips column level preprocessing
+\item `standardized` centers each column and divides by its standard 
+deviation. 
+\item `centered_only` ONLY centers data
 }}
 
 \item{block_preproc_method}{an option for the desired block-level data pre-processing,
