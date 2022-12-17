@@ -183,10 +183,10 @@ exactly the same as an eigenvalue scree plot in principal component analysis.
 
 For clustering, it is useful to look at global factor scores without block
 factor scores. The `projection_plot()` function can be used to generate such a
-plot using `plotType = "projection_global"` as show below:
+plot using `projection = "global"` as show below:
 
 ```{r visualize-clusters, fig.dim = c(4, 4), fig.align = 'center'}
-projection_plot(mcia_results, "projection_global", orders = c(1, 2))
+projection_plot(mcia_results, "global", orders = c(1, 2))
 ```
 
 In addition, factor plots are most helpful when points are colored by a
@@ -228,7 +228,7 @@ alphabetically:
 # meta_colors = c('orange', 'purple', 'pink')
 meta_colors <- get_metadata_colors(mcia_results, 1)
 
-projection_plot(mcia_results, "projection_global", orders = c(1, 2),
+projection_plot(mcia_results, "global", orders = c(1, 2),
                 color_col = "cancerType", color_pal = meta_colors,
                 legend_loc = "bottomleft")
 ```

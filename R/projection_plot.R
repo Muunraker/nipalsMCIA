@@ -5,13 +5,18 @@
 #' @details Plotting function for a projection plot.
 #'
 #' @param mcia_results MCIA results object returned from `nipals_multiblock`
-#' @param plot_type of plot, with the following options
+#' @param projection of plot, with the following options
 #'     \itemize{
-#'     \item `projection` - scatter plot of two orders of global and block
+#'     \item `all` - scatter plot of two orders of global and block
 #'         scores (aka factors).
-#'     \item `projection_global` - scatter plot of two orders of global scores
+#'     \item `global` - scatter plot of two orders of global scores
 #'         only (aka factors).
 #'     }
+#'     \item `block` - scatter plot of two orders of block scores
+#'         only (aka factors) for  given block.
+#'     }
+#' @param block_name of the block if projection = "block"
+#'  
 #' @param orders Option to select orders of factors to plot against each other
 #'     (for projection plots)
 #' @param color_col Option to plot clusters/colors in projection plots,
@@ -36,11 +41,13 @@
 #' @return Displays the desired plots
 #' @importFrom graphics grid legend points segments 
 #' @export
-projection_plot <- function(mcia_results, plot_type, orders = c(1, 2),
+projection_plot <- function(mcia_results, projection, orders = c(1, 2),
+                               block_name = NULL,
                                color_col = NULL,
                                color_pal = scales::viridis_pal,
                                color_pal_params = list(option = "D"),
                                legend_loc = "bottomleft") {
+    
     ### Identifying the membership of samples within
     ### the clusters/categories of the color_col column
     # case i) no color_col, clusters/categories were not specified
@@ -88,8 +95,8 @@ projection_plot <- function(mcia_results, plot_type, orders = c(1, 2),
       plot_colors <- list("black")
     }
 
-    ### Plot 1 - projection plot
-    if (tolower(plot_type) == "projection") {
+    ### Plot 1 - projection == all
+    if (tolower(projection) == "all") {
 
         # Normalize global scores to unit variance
         gs_norms <- apply(mcia_results$global_scores, 2,
@@ -101,7 +108,7 @@ projection_plot <- function(mcia_results, plot_type, orders = c(1, 2),
         bl_normed <- list()
         for (i in seq(1, length(mcia_results$block_scores))){
           bs_norms <- apply(mcia_results$block_scores[[i]], 2,
-                            function(x) (sqrt(var(x))))
+                        function(x) (sqrt(var(x))))
           bs_normed[[i]] <- t(t(mcia_results$block_scores[[i]]) / bs_norms)
           bl_normed[[i]] <- t(t(mcia_results$block_loadings[[i]]) / bs_norms)
         }
@@ -204,8 +211,101 @@ projection_plot <- function(mcia_results, plot_type, orders = c(1, 2),
                      cex = 1)
             }
         }
-
-    } else if (tolower(plot_type) == "projection_global") {
+        
+    } else if (tolower(projection) == "block") {
+        
+        # Normalize global scores to unit variance
+        # Still included to make comparable plots
+        gs_norms <- apply(mcia_results$global_scores, 2,
+                          function(x) (sqrt(var(x))))
+        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        
+        # Check for the presence of the block name
+        block_check = any(block_name == names(mcia_results[["block_scores"]]))
+        if (block_check == FALSE){
+            block_names = paste(names(mcia_results$block_scores),
+                                collapse = ", ")
+            msg = paste0("block_name: '", block_name,
+                        "' is not part of the data blocks list: ", 
+                        "'", block_names, "'.")
+            stop(msg)
+        }
+        block_idx = as.numeric(which(block_name == names(mcia_results[["block_scores"]])))
+        
+        # Normalize block scores to unit variance
+        #print(mcia_results$block_scores[[block_idx]])
+        bs_norms <- apply(mcia_results$block_scores[[block_idx]], 2,
+                          function(x) (sqrt(var(x))))
+        bs_normed <- t(t(mcia_results$block_scores[[block_idx]]) / bs_norms)
+        
+        # Getting bounds for projection plot
+        # minimum 1st block score
+        min_bs1 <- min(bs_normed[,orders[[1]]])
+        # minimum 2nd block score
+        min_bs2 <- min(bs_normed[,orders[[2]]])
+        # maximum 1st block score
+        max_bs1 <- max(bs_normed[,orders[[1]]])
+        # maximum 2nd block score
+        max_bs2 <- max(bs_normed[,orders[[2]]])
+        
+        # minimum x coordinate in plot
+        min_x <- min(c(min_bs1, min(gs_normed[, orders[[1]]])))
+        # minimum y coordinate in plot
+        min_y <- min(c(min_bs2, min(gs_normed[, orders[[2]]])))
+        # maximum x coordinate in plot
+        max_x <- max(c(max_bs1, max(gs_normed[, orders[[1]]])))
+        # maximum y coordinate in plot
+        max_y <- max(c(max_bs2, max(gs_normed[, orders[[2]]])))
+        
+        # Cluster 1
+        sample_indexes <- clust_indexes[[1]]
+        
+        # Plotting block scores
+        plot(bs_normed[sample_indexes, orders[[1]]],
+             bs_normed[sample_indexes, orders[[2]]],
+             main = "Factor Plot",
+             xlab = paste("Factor ", orders[[1]]),
+             ylab = paste("Factor ", orders[[2]]),
+             col = plot_colors[[1]],
+             xlim = c(min_x, max_x),
+             ylim = c(min_y, max_y),
+             cex = .5, pch = 16)
+        grid()
+        
+        # Cluster 2+
+        if (length(clust_indexes) > 1) {
+            for (i in seq(2, length(clust_indexes))) {
+                sample_indexes <- clust_indexes[[i]]
+                points(bs_normed[sample_indexes, orders[[1]]],
+                       bs_normed[sample_indexes, orders[[2]]],
+                       col = plot_colors[[i]],
+                       cex = 1, pch = j - 1)
+            }
+        }
+        
+        # Adding legend
+        if (! tolower(legend_loc) == "none") {
+            # plotting legend without clusters/categories
+            if (length(plot_colors) == 1) {
+                # do not plot legend when only one block is used
+                invisible()
+            # plotting legend for clusters/categories
+            } else {
+                leg_labels <- c(names(mcia_results$block_loadings),
+                                names(plot_colors))
+                leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
+                                rep(16, length(plot_colors))) - 1
+                leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
+                                unname(unlist(plot_colors)))
+                legend(legend_loc,
+                       legend = leg_labels,
+                       pch = leg_shapes,
+                       col = leg_colors,
+                       cex = 1)
+            }
+        }
+        
+    } else if (tolower(projection) == "global") {
 
         ### Plot 2 - projection plot global score only
         # Normalize global scores to unit variance
