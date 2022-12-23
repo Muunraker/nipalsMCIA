@@ -47,6 +47,15 @@ library(Seurat)
 library(tidyverse)
 ```
 
+```{r set-paths}
+# recommended location for local data
+path_data <- file.path("..", "data")
+
+# recommended location for external data
+path_inst <- file.path("..", "inst", "extdata")
+```
+
+
 ## Data
 
 We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes along with 32 cell surface markers. We chose this dataset due to it containing both gene expression (GEX) and cell surface protein (ADT) data as well as being relatively recent, publicly available and from a widely used platform.
@@ -63,36 +72,51 @@ pb_list(repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ```{r data-all-download, echo = FALSE}
+# markers for Seurat
+pb_download(file = "marker_genes.csv", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+
 # download the sc data
-pb_download(file = "data_blocks_sc.Rda", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
-pb_download(file = "data_blocks_sc_seurat.Rds", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
-pb_download(file = "data_sc_sce.Rdata", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
+pb_download(file = "data_blocks_sc.Rda", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "data_sc_sce.Rda", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "metadata_sc.csv", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+
+# downloads the MCIA results
+pb_download(file = "mcia_results_sc.Rds", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
 
 # Seurat files
-pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
-pb_download(file = "tenx_pbmc5k_CITEseq_processed.rds", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
-pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
+pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "tenx_pbmc5k_CITEseq_processed.rds", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+
+
+# clean out old files as needed
+# pb_delete(file = "", repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 *TO DO: Test this all*
 
 ```{r data-all-load}
+# doesn't load everything (e.g. the metadata csv file)
+
 # load the MCIA data
-load(file = file.path("..", "inst", "extdata", "data_blocks_sc.Rda"))
+load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 
 # load the Bioconductor data (both MCIA formatted and the Seurat object)
-# load(file = file.path("..", "inst", "extdata", "data_sc_sce.Rdata"))
+# load(file = file.path(path_inst, "data_sc_sce.Rdata"))
 
 # load the Seurat object formatted for MCIA
 # compare with the previous file!
-data_blocks_sc_seurat <- readRDS(file = file.path("..", "inst", "extdata", 
-                                                  "data_blocks_sc_seurat.Rds"))
+# data_blocks_sc_seurat <- readRDS(file = file.path(path_inst, 
+#                                                   "data_blocks_sc_seurat.Rds"))
+# obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 ```
 
 ### Bioconductor
@@ -175,16 +199,20 @@ summary(data_blocks_sc_sce)
 # adt  5247   data.frame list
 
 # convert to Seurat
-obj <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna, 
-                          row.names = rownames(data_blocks_sc_sce$mrna)) # default assay (RNA)
-obj[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
+data_blocks_sc_sce_seurat <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna, 
+                                                row.names = rownames(data_blocks_sc_sce$mrna)) # default assay (RNA)
+data_blocks_sc_sce_seurat[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # add metadata
 # rownames(obj[[]]) <- rownames(obj@assays$RNA@counts)
-obj <- AddMetaData(obj, as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k), 
-                                      row.names = rownames(obj)))
+data_blocks_sc_sce_seurat <- AddMetaData(data_blocks_sc_sce_seurat,
+                                         as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k), 
+                                                       row.names = rownames(obj)))
 
-head(obj[[]])
+# the metadata will be different than from the Seurat processing
+# e.g. 5297 rows vs. 4193 rows
+
+head(data_blocks_sc_sce_seurat[[]])
 #       orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT ENSEMBL_ID
 # X1 SeuratProject       7375         2363       5178           31       <NA>
 # X2 SeuratProject       3772         1259       2893           29       <NA>
@@ -203,11 +231,13 @@ head(obj[[]])
 
 ```{r data-bioconductor-save, eval = FALSE}
 # save the data locally if desired
-data_blocks_sc_sce_seurat <- obj
 save(data_blocks_sc_sce, data_blocks_sc_sce_seurat, 
-     file = file.path("..", "data", "data_sc_sce.Rda"))
+     file = file.path(path_data, "data_sc_sce.Rda"))
 
-# these two files can be found as "data_sc_sce.Rdata" on piggyback
+# these two files can be found as "data_sc_sce.Rda" on piggyback
+
+# pb_upload(file = file.path(path_data, "data_sc_sce.Rda"),
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ### 10x Genomics and Seurat
@@ -239,7 +269,7 @@ You will need the *filtered_feature_bc_matrix* directory for the following analy
 
 ```{r data-10x-object, eval = FALSE}
 # load the data (change the file path as needed)
-data <- Seurat::Read10X(file.path("..", "data", "tenx_pbmc5k_CITEseq", 
+data <- Seurat::Read10X(file.path(path_data, "tenx_pbmc5k_CITEseq", 
                                   "filtered_feature_bc_matrix"),
                         strip.suffix = TRUE) # remove the "-1"s from barcodes
 # 10X data contains more than one type and is being returned as a list containing matrices of each type.
@@ -271,7 +301,7 @@ rownames(obj[["ADT"]])
 
 ```{r data-10x-save, eval = FALSE}
 # save the data locally if desired
-saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_raw.rds"))
+saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 ```
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
@@ -282,20 +312,12 @@ You can also load the Seurat object directly, such as in the [Read in and proces
 
 Note that the "-1"s have been removed from the cell barcodes.
 
-```{r}
-# metadata_sc <- tibble::column_to_rownames(obj_annotations, var = "Cluster")
+```{r mcia-metadata}
+# TO DO: Alphabetize the cell types
 
-# TO DO: Change the metadata to be independent of loading in a processed Seurat object
-# TO DO: Change this to pull from piggyback instead
-
-obj <- readRDS(file = file.path("..", "inst", "extdata", "tenx_pbmc5k_CITEseq_annotated.rds"))
-metadata_sc <- data.frame(obj$annotated_clusters) %>%
-                dplyr::rename(CellType = "obj.annotated_clusters") %>%
-                arrange(CellType)
-metadata_sc$CellType <- as.character(metadata_sc$CellType)
-
-md <- read.csv(file.path("..", "data", "metadata_sc.csv"))
-md2 <- read.csv(file.path("..", "data", "metadata_sc_edel.csv"))
+# read in the annotated cells
+metadata_sc <- read.csv(file.path(path_inst, "metadata_sc.csv"),
+                         header = TRUE, row.names = "Barcode")
 
 # example
 metadata_sc %>% sample_n(10)
@@ -303,29 +325,18 @@ metadata_sc %>% sample_n(10)
 
 ### Running the decomposition
 
-```{r, eval = FALSE}
-# old
+```{r mcia-decomp-run, eval = FALSE}
+# run on cells with the top variable features (as defined in the later analysis)
 
-# don't transpose??
+# examine the data
+# summary(data_blocks_sc)
+
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, 
                                      preproc_method = "colprofile", 
-                                     num_PCs = 10, tol = 1e-9, 
-                                     metadata = metadata_sc, plots = "none")
-
-# TO DO: Alphabetize these
-mcia_results_sc$metadata <- metadata_sc
-
-saveRDS(mcia_results_sc, file = file.path("..", "data", "mcia_results_sc.Rds"))
-``` 
-
-```{r, eval = FALSE}
-# updated with Seurat
-
-# with transposition this works
-mcia_results_sc <- nipals_multiblock(data_blocks_sc_seurat, 
-                                     preproc_method = "colprofile", 
-                                     num_PCs = 10, tol = 1e-9, 
-                                     metadata = metadata_sc, plots = "none")
+                                     num_PCs = 10, tol = 1e-9,
+                                     metadata = metadata_sc, 
+                                     deflationMethod = 'global', 
+                                     plots = "none")
 # Performing centered column profile pre-processing...
 # Pre-processing completed.
 # Computing order 1 scores
@@ -339,15 +350,14 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc_seurat,
 # Computing order 9 scores
 # Computing order 10 scores
 
-# TO DO: Alphabetize these
-mcia_results_sc$metadata <- metadata_sc
+# saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
 
-saveRDS(mcia_results_sc, file = file.path("..", "inst", "extdata", "mcia_results_sc_seurat.Rds"))
+# pb_upload(file = file.path(path_data, "mcia_results_sc.Rds"),
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ``` 
 
-```{r}
-mcia_results_sc <- readRDS(file = file.path("..", "data", "mcia_results_sc_seurat.Rds"))
-
+```{r mcia-decomp-load}
+mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
 names(mcia_results_sc)
 ```
 
@@ -358,20 +368,22 @@ the metadata (see the "scRNA-Seq Seurat analysis" section for details on their o
 
 #### Projection plot
 
-```{r, fig.dim = c(8, 8)}
+```{r mcia-plots-projection, fig.dim = c(8, 8)}
 meta_colors <- get_metadata_colors(mcia_results = mcia_results_sc, 
                                    color_col = "CellType", 
                                    color_pal = scales::viridis_pal, 
                                    color_pal_params = list(option = "D"))
 
-projection_plot(mcia_results = mcia_results_sc, plot_type = "projection_global", 
+projection_plot(mcia_results = mcia_results_sc, 
+                plot_type = "projection_global", 
                 orders = c(1, 2), 
-                color_col = "CellType", color_pal = meta_colors)
+                color_col = "CellType", color_pal = meta_colors,
+                legend_loc = "bottomright")
 ```
 
 #### Global scores heatmap
 
-```{r, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-global, fig.dim = c(8, 6)}
 suppressMessages(global_scores_heatmap(mcia_results_sc))
 # The automatically generated colors map from the minus and plus 99^th of the absolute values in the matrix.
 # There are outliers in the matrix whose patterns might be hidden by this color mapping. You can manually
@@ -380,13 +392,13 @@ suppressMessages(global_scores_heatmap(mcia_results_sc))
 
 #### Block weights heatmap
 
-```{r, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
 block_weights_heatmap(mcia_results_sc)
 ```
 
 #### Loadings
 
-```{r, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-loadings, fig.dim = c(8, 6)}
 vis_load_plot(mcia_results_sc, axes = c(1, 4), 
               colors_omics = get_colors(mcia_results_sc))
 ```
@@ -408,7 +420,7 @@ This section demonstrates how to take in raw data (in this case, the output of C
 
 ```{r, message = FALSE}
 # load the data
-obj <- readRDS(file = file.path("..", "inst", "extdata", "tenx_pbmc5k_CITEseq_raw.rds"))
+obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_raw.rds"))
 
 # add useful metadata
 obj[["percent.mt"]] <- PercentageFeatureSet(obj, pattern = "^MT-")
@@ -418,9 +430,9 @@ obj[["percent.mt"]] <- PercentageFeatureSet(obj, pattern = "^MT-")
 
 #### Metrics summary
 
-```{r}
+```{r, eval = FALSE}
 # read in the summary table
-metrics_summary <- read_csv(file.path("..", "data", "tenx_pbmc5k_CITEseq", 
+metrics_summary <- read_csv(file.path(path_data, "tenx_pbmc5k_CITEseq", 
                                       "5k_pbmc_protein_v3_metrics_summary.csv"), 
                             show_col_types = FALSE)
 metrics_summary
@@ -477,10 +489,10 @@ obj <- FindClusters(obj, resolution = 0.4)
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:20)
 
 # save the object
-saveRDS(obj, file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"))
+saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_processed.rds"))
 
 # upload to piggyback
-pb_upload(file = file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"), 
+pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_processed.rds"), 
           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
@@ -489,7 +501,7 @@ pb_upload(file = file.path("..", "data", "tenx_pbmc5k_CITEseq_processed.rds"),
 Load in the processed object:
 
 ```{r}
-obj <- readRDS(file.path("..", "inst", "extdata", "tenx_pbmc5k_CITEseq_processed.rds"))
+obj <- readRDS(file.path(path_inst, "tenx_pbmc5k_CITEseq_processed.rds"))
 ```
 
 #### Most variable features
@@ -525,7 +537,7 @@ plot_seurat_clusters
 
 ```{r}
 # sort by Cell_Type and Marker if not already sorted
-markers_all <- read_csv(file.path("..", "data", "marker_genes.csv"), 
+markers_all <- read_csv(file.path(path_inst, "marker_genes.csv"), 
                         show_col_types = FALSE)
 markers_all %>% sample_n(10) # example
 ```
@@ -657,7 +669,9 @@ rownames(obj[["ADT"]])
 
 VlnPlot(obj, features = rownames(obj[["ADT"]]), 
         pt.size = 0, assay = "ADT", ncol = 4) &
-  theme(plot.title = element_text(size = 10))
+  theme(plot.title = element_text(size = 10), 
+        axis.text.x = element_text(angle = 0, hjust = 0.5),
+        axis.title.x = element_blank())
 ```
 
 ### Annotate cell clusters
@@ -665,7 +679,7 @@ VlnPlot(obj, features = rownames(obj[["ADT"]]),
 #### Annotations
 
 ```{r}
-# fix these
+# update these
 obj_annotations <- rbind(c("0", "Macrophages"), # or mDC
                          c("1", "T cells"), 
                          c("2", "T cells"), 
@@ -700,22 +714,30 @@ obj_annotations %>%
   transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
   distinct() %>% arrange(CellType)
 
-meta <- data.frame("CellType" = obj$annotated_clusters)
-head(meta)
+meta <- data.frame("CellType" = obj$annotated_clusters, 
+                   "Barcode" = colnames(obj))
+# meta <- data.frame("CellType" = Idents(obj))
 
-# save the annotations as a csv
-write_csv(obj_annotations,
-          file = file.path("..", "data", "obj_annotations.csv"))
-write_csv(meta,
-          file = file.path("..", "data", "metadata_sc_edel.csv"))
+# write_csv(meta, file = file.path(path_data, "metadata_sc.csv"))
 
+# save the annotations as a csv if you'd like 
+# write_csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
 
-# saveRDS(obj, file = file.path("..", "data", "tenx_pbmc5k_CITEseq_annotated.rds"))
+# save the processed and annotated Seurat object 
+# saveRDS(obj, file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"))
+
+# upload to piggyback
+# pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"), 
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ```{r, eval = FALSE}
 # upload to piggyback
-pb_upload(file = file.path("..", "data", "tenx_pbmc5k_CITEseq_annotated.rds"), 
+pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"), 
+          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+
+# upload to piggyback
+pb_upload(file = file.path(path_data, "metadata_sc.csv"), 
           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
@@ -739,274 +761,29 @@ plot_seurat_clusters + plot_annotated_clusters
 
 The file has to be structured in the form of a (large) list, with each omic saved as an element within it.
 
-**This entire section needs to updated/removed.**
-
-#### SingleCellExperiment
-
-5297 rows
-
-```{r, include = FALSE, eval = FALSE}
-# TO DO: Check and fix this
-data_blocks_sc_sce <- list()
-data_blocks_sc_sce$mrna <- data.frame(as.matrix(counts(tenx_pbmc3k)))
-data_blocks_sc_sce$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc3k))))
-
-summary(data_blocks_sc_sce)
-
-# save(data_blocks_sc, file = "data_blocks_sc.Rda")
-```
-
-#### Pre-made
-
-```{r, include = FALSE, eval = FALSE}
-# for comparison
-load(file = file.path("..", "data", "nci60_original.rda"))
-nci60_original <- nci60
-
-# download the data from the repository if needed
-pb_download(file = "data_blocks_sc.Rda", repo = "Muunraker/nipalsMCIA", 
-            tag = "v0.0.1", dest = file.path("..", "inst", "extdata"))
-```
-
-#### Seurat
-
-4193 rows
-
-```{r}
-data_blocks_sc_seurat <- list()
-data_blocks_sc_seurat$mrna <- data.frame(GetAssayData(obj, slot = 'data', assay = "RNA"))
-data_blocks_sc_seurat$adt <- data.frame(GetAssayData(obj, slot = 'data', assay = "ADT"))
-
-summary(data_blocks_sc_seurat)
-
-# add suffixes
-colnames(data_blocks_sc_seurat$mrna) <- paste(colnames(data_blocks_sc_seurat$mrna), 
-                                       "mrna", sep = "_")
-colnames(data_blocks_sc_seurat$adt) <- paste(colnames(data_blocks_sc_seurat$adt), 
-                                      "adt", sep = "_")
-
-# transpose the data
-data_blocks_sc_seurat$mrna <- t(data_blocks_sc_seurat$mrna)
-data_blocks_sc_seurat$adt <- t(data_blocks_sc_seurat$adt)
-
-# examine the contents
-data.frame(data_blocks_sc_seurat$mrna[1:5, 1:5])
-data.frame(data_blocks_sc_seurat$adt[1:5, 1:5])
-```
-
 ```{r, eval = FALSE}
-saveRDS(data_blocks_sc_seurat, file = file.path("..", "data", "data_blocks_sc_seurat.Rds"))
+data_rna <- GetAssayData(obj, slot = 'data')[VariableFeatures(obj), ]
+data_rna <- as.matrix(data_rna)
+# colnames(data_rna) <- paste(colnames(data_rna),"mrna", sep = "_") # add suffix??
+data_rna <- t(data_rna)
 
-# upload to piggyback
-pb_upload(file = file.path("..", "data", "data_blocks_sc_seurat.Rds"), 
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
-```
+data_adt <- GetAssayData(obj, slot = 'data', assay = 'ADT')
+data_adt <- as.matrix(data_adt)
+# colnames(data_adt) <- paste(colnames(data_adt),"mrna", sep = "_") # add suffix??
+data_adt <- t(data_adt)
 
-#### Load
-
-```{r}
-# load the data (as data_blocks_sc)
-# load(file = file.path("..", "inst", "extdata", "data_blocks_sc.Rda"))
-load(file = file.path("..", "inst", "extdata", "data_blocks_sc.Rda"))
-
-# examine the data
-summary(data_blocks_sc)
-```
-
-```{r, echo = FALSE}
-# add suffixes
-colnames(data_blocks_sc$mrna) <- paste(colnames(data_blocks_sc$mrna), 
-                                       "mrna", sep = "_")
-colnames(data_blocks_sc$adt) <- paste(colnames(data_blocks_sc$adt), 
-                                      "adt", sep = "_")
-
-# transpose the data
-data_blocks_sc$mrna <- t(data_blocks_sc$mrna)
-data_blocks_sc$adt <- t(data_blocks_sc$adt)
+data_blocks_sc <- list(mrna = data_rna, adt = data_adt)
 
 # examine the contents
 data.frame(data_blocks_sc$mrna[1:5, 1:5])
 data.frame(data_blocks_sc$adt[1:5, 1:5])
+
+# save(data_blocks_sc, file = file.path(path_data, "data_blocks_sc.Rda"))
+# 
+# pb_upload(file = file.path(path_data, "data_blocks_sc.Rda"), 
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
-## Save data
-
-```{r, eval = FALSE}
-save(obj_raw, obj, file = file.path("..", "data", "data_sc.Rdata"))
-
-# send to pb (doesn't currently work)
-pb_upload(file = file.path("data", "data_sc.Rdata"), 
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
-```
-
-## Testing
-
-*This will be removed from the final vignette.*
-
-Anna's experimental code:
-
-### Data
-
-"The first was created using the top 2K most variable mrnas; the second I log-transformed the mrnas and adt, as both their distributions were still heavy-tailed even after the Seurat normalization.
-
-For fun, I ran my 'wrong' preprocessing (this is the centered column profile, but run on the transposed data).  Still, I think the double-log has the best separation.  I also think, for the vignette, it will be of interest to compare this to PCAs of the individual omics.  If we can show that we observe some additional clustering or information in MCIA vs. analyzing each omic separately, that might be interesting."
-
-```{r}
-obj <- readRDS(file.path("..", "inst", "extdata", "tenx_pbmc5k_CITEseq_processed.rds"))
-metadata_sc <- read.csv(file.path("..", "data", "metadata_sc.csv"),
-                         header = TRUE, row.names = 1)
-# metadata_sc <- read.csv(file.path("..", "data", "metadata_sc_edel.csv"), 
-#                         header = TRUE, row.names = 1)
-
-# MRNA
-mrna_data <- GetAssayData(obj, slot = 'data', assay = 'RNA')
-mrna_data <- as.matrix(mrna_data)
-mrna_data <- t(mrna_data)
-
-# filter to top 2K most variable features
-sc_mrna_var <- resample::colVars(mrna_data)
-sc_mrna_var <- data.frame(sc_mrna_var)
-sc_mrna_var$temp <- 'temp'
-colnames(sc_mrna_var) <- c("Var", "Temp")
-sc_mrna_var <- sc_mrna_var[order(-sc_mrna_var$Var), ]
-top_2k <- rownames(sc_mrna_var[1:2000, ])
-mrna_data_filt <- mrna_data[, top_2k]
-
-# look at distribution
-hist(mrna_data_filt)
-
-# it is heavy-tailed, log-transform:
-mrna_data_filt_l <- log2(mrna_data_filt+1)
-
-# ADT
-adt_data <- GetAssayData(obj, slot = 'data', assay = 'ADT')
-adt_data <- as.matrix(adt_data)
-adt_data <- t(adt_data)
-
-# look at distribution
-hist(adt_data)
-
-# it is also heavy-tailed, log transform:
-adt_data_l <- log2(adt_data+1)
-```
-
-### PCA
-
-PCA of each dataset clusters by cell type. 
-
-```{r}
-# MRNA
-mrna_data_filt_l_s <- scale(mrna_data_filt_l)
-pca_mrna <- prcomp(mrna_data_filt_l_s)
-pca_mrna_top2 <- data.frame(pca_mrna$x[, 1:2])
-
-# Get metadata, match rownames to rownames in original dataset
-type <- metadata_sc[rownames(pca_mrna_top2), 'CellType']
-pca_mrna_top2$celltype <- type
-
-ggplot(data = pca_mrna_top2, aes(x = PC1, y = PC2, color = celltype)) +
-  geom_point() + labs(title = "mRNA")
-
-# ADT
-adt_data_l_s <- scale(adt_data_l)
-pca_adt <- prcomp(adt_data_l_s)
-pca_adt_top2 <- data.frame(pca_adt$x[, 1:2])
-
-# Get metadata, match rownames to rownames in original dataset
-type <- metadata_sc[rownames(pca_adt_top2), 'CellType']
-pca_adt_top2$celltype <- type
-
-ggplot(data = pca_adt_top2, aes(x = PC1, y = PC2, color = celltype)) +
-  geom_point() + labs(title = "ADT")
-```
-
-### MCIA
-
-#### Check
-
-```{r}
-data_blocks_sc_new <- list(mrna = mrna_data_filt_l, adt = adt_data_l)
-
-mcia_new <- nipals_multiblock(data_blocks_sc_new, num_PCs = 2, 
-                              deflationMethod = 'global', tol = 1e-9, 
-                              plot = "none")
-```
-
-#### Original metadata
-
-```{r}
-mcia_new$metadata <- metadata_sc
-meta_colors <- get_metadata_colors(mcia_results = mcia_new, 
-                                   color_col = "CellType", 
-                                   color_pal = scales::viridis_pal, 
-                                   color_pal_params = list(option = "D"))
-projection_plot(mcia_results = mcia_new, plot_type = "projection_global", 
-                orders = c(1, 2),
-                color_col = "CellType", color_pal = meta_colors)
-```
-
-#### Trick MCIA with identical data blocks
-
-```{r}
-data_blocks_sc_mrna <- data_blocks_sc_new
-data_blocks_sc_mrna$adt <- data_blocks_sc_mrna$mrna
-
-# setup like PCA: just center and scale variables, no other preprocessing
-data_blocks_sc_mrna$mrna <- scale(data_blocks_sc_mrna$mrna)
-data_blocks_sc_mrna$adt <- scale(data_blocks_sc_mrna$adt)
-```
-
-#### Run MCIA again
-
-Looks like the PCA
-
-```{r}
-mcia_mrna_test <- nipals_multiblock(data_blocks_sc_mrna, num_PCs = 2, 
-                                    deflationMethod = 'global', tol = 1e-9, 
-                                    plot = "none", preproc_method = 'none')
-
-mcia_mrna_test$metadata <- metadata_sc
-meta_colors <- get_metadata_colors(mcia_results = mcia_mrna_test, 
-                                   color_col = "CellType", 
-                                   color_pal = scales::viridis_pal, 
-                                   color_pal_params = list(option = "D"))
-projection_plot(mcia_results = mcia_mrna_test, plot_type = "projection_global", 
-                orders = c(1, 2), 
-                color_col = "CellType", color_pal = meta_colors)
-```
-
-### Metadata check
-
-```{r, eval = FALSE}
-metadata_sc_match <- metadata_sc
-metadata_sc_match$CellType <- metadata_sc[rownames(mrna_data_filt_l), "CellType"]
-rownames(metadata_sc_match) <- rownames(mrna_data_filt)
-```
-
-### New plots
-
-```{r, eval = FALSE}
-# RNA
-mcia_mrna_test$metadata <- metadata_sc_match
-meta_colors <- get_metadata_colors(mcia_results = mcia_mrna_test, 
-                                   color_col = "CellType", 
-                                   color_pal = scales::viridis_pal, 
-                                   color_pal_params = list(option = "D"))
-projection_plot(mcia_results = mcia_mrna_test, plot_type = "projection_global", 
-                orders = c(1, 2), 
-                color_col = "CellType", color_pal = meta_colors)
-
-# RNA and ADT
-mcia_new$metadata <- metadata_sc_match
-meta_colors <- get_metadata_colors(mcia_results = mcia_new, 
-                                   color_col = "CellType", 
-                                   color_pal = scales::viridis_pal, 
-                                   color_pal_params = list(option = "D"))
-projection_plot(mcia_results = mcia_new, plot_type = "projection_global", 
-                orders = c(1, 2), 
-                color_col = "CellType", color_pal = meta_colors)
-```
- 
 ## Session Info 
  
 ```{r, echo = FALSE} 
