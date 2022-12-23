@@ -27,7 +27,8 @@ Imports:
     rlang,
     RSpectra,
     scales,
-    stringr
+    stringr,
+    tidyverse
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8
