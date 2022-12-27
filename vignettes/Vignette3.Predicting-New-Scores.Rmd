@@ -50,12 +50,12 @@ for (i in seq(1, length(data_blocks))) {
 ```{r computing-MCIA-on-training-data, message = FALSE, fig.show = "hide"}
 MCIA_train <- nipals_multiblock(data_blocks_train,
                                 preproc_method = "colprofile", num_PCs = 10,
-                                plots = "none", tol = 1e-12)
+                                plots = "none", tol = 1e-9)
 ```
 
 ### Visualize model on training data using metadata on cancer type
 
-```{r visualize-training-model, fig.height = 4, fig.align = 'center'}
+```{r visualize-training-model, fig.height = 2.5, fig.align = 'center'}
 MCIA_train$metadata <- data.frame(metadata_NCI60[train_samples, ],
                                   row.names = rownames(data_blocks_train$mrna))
 colnames(MCIA_train$metadata) <- c("cancerType")
@@ -69,7 +69,7 @@ ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   geom_point(size = 3) +
   theme_bw() +
   scale_color_manual(values = meta_colors) +
-  ggtitle("MCIA for NCI60 training data")
+  ggtitle("MCIA for NCI60 training data") 
 ```
 
 ### Generate factor scores for test data using the MCIA_train model
@@ -78,7 +78,7 @@ We use the \verb+predict_gs+ function to generate new factor scores on the test
 data set using the MCIA_train model above
 
 ```{r generate-new-scores, message = FALSE}
-MCIA_test_scores <- predict_gs(MCIA_train, data_blocks_test)
+MCIA_test_scores <- predict_gs_v2(MCIA_train, data_blocks_test)
 ```
 
 ### Visualize new scores with old
@@ -86,7 +86,7 @@ MCIA_test_scores <- predict_gs(MCIA_train, data_blocks_test)
 We once again plot the top two factor scores for both the training and test
 datasets
 
-```{r visualize-both-models, fig.height = 4, fig.align = 'center'}
+```{r visualize-both-models, fig.height = 2.5, fig.align = 'center'}
 MCIA_out_test <- data.frame(MCIA_test_scores[, 1:2])
 MCIA_out_test$cancerType <- metadata_NCI60[-train_samples, ]
 
