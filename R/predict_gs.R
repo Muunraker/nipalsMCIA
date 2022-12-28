@@ -26,23 +26,30 @@ predict_gs <- function(mcia_results, df) {
 
   bl <- mcia_results$block_loadings
   bw <- mcia_results$block_score_weights
-  preproc_method <- mcia_results$preproc_method
+  col_preproc_method <- mcia_results$column_preproc_method
+  block_preproc_method <- mcia_results$block_preproc_method
 
   num_omics <- length(bl)
   if (length(df) != length(bl) || length(df) != dim(bw)[[1]]) {
     stop(paste("Mismatched number of omics between the block loadings, ",
          "block weights, and new data."))
   }
+  
+  # Apply same pre-processing methods as the model
+  message("Performing pre-processing on data")
+  df <- lapply(df, col_preproc, col_preproc_method)
+  df <- lapply(df, block_preproc, block_preproc_method)
+  message("Pre-processing completed")
 
-  if (tolower(preproc_method) == "colprofile") {
-    message("Centered column profile pre-processing detected.")
-    message("Performing pre-processing on data")
-    df <- lapply(df, CCpreproc)
-    message("Pre-processing completed.")
-  } else {
-    message("No pre-processing detected.")
-    df <- lapply(df, as.matrix)
-  }
+  #if (tolower(preproc_method) == "colprofile") {
+  #  message("Centered column profile pre-processing detected.")
+  #  message("Performing pre-processing on data")
+  #  df <- lapply(df, CCpreproc)
+  #  message("Pre-processing completed.")
+  #} else {
+  #  message("No pre-processing detected.")
+  #  df <- lapply(df, as.matrix)
+  # }
 
   # ensuring all arguments are matrices
   bl <- lapply(bl, as.matrix)

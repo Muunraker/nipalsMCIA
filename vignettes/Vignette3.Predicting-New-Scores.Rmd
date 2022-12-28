@@ -78,7 +78,7 @@ We use the \verb+predict_gs+ function to generate new factor scores on the test
 data set using the MCIA_train model above
 
 ```{r generate-new-scores, message = FALSE}
-MCIA_test_scores <- predict_gs_v2(MCIA_train, data_blocks_test)
+MCIA_test_scores <- predict_gs(MCIA_train, data_blocks_test)
 ```
 
 ### Visualize new scores with old

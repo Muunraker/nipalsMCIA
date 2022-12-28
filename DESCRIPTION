@@ -32,8 +32,11 @@ Imports:
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8
-Suggests: 
+Suggests:
+    KernSmooth, 
     knitr,
-    rmarkdown
+    rmarkdown,
+    rpart,
+    survival
 VignetteBuilder: knitr
 biocViews: Software, Clustering, Classification, MultipleComparison
