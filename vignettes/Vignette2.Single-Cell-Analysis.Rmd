@@ -42,9 +42,6 @@ library(ggplot2)
 library(nipalsMCIA)
 library(piggyback)
 library(Seurat)
-
-# maybe remove this one
-library(tidyverse)
 ```
 
 ```{r set-paths}
@@ -332,12 +329,15 @@ metadata_sc %>% slice_sample(n = 10)
 
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, 
                                      preproc_method = "colprofile", 
+                                     block_preproc_method = "largest_sv", 
                                      num_PCs = 10, tol = 1e-9,
                                      metadata = metadata_sc, 
                                      deflationMethod = 'global', 
                                      plots = "none")
-# Performing centered column profile pre-processing...
-# Pre-processing completed.
+# Performing column-level pre-processing...
+# Column pre-processing completed.
+# Performing block-level preprocessing...
+# Block pre-processing completed.
 # Computing order 1 scores
 # Computing order 2 scores
 # Computing order 3 scores
@@ -350,7 +350,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc,
 # Computing order 10 scores
 
 # saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
-
+# 
 # pb_upload(file = file.path(path_data, "mcia_results_sc.Rds"),
 #           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ``` 
@@ -364,6 +364,12 @@ names(mcia_results_sc)
 
 This data comes from only one subject, so we will use the annotated cell types for 
 the metadata (see the "scRNA-Seq Seurat analysis" section for details on their origin).
+
+#### Eigenvalue scree plot
+
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6)}
+global_scores_eigenvalues_plot(mcia_results_sc)
+```
 
 #### Projection plot
 
@@ -394,6 +400,8 @@ suppressMessages(global_scores_heatmap(mcia_results_sc))
 ```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
 block_weights_heatmap(mcia_results_sc)
 ```
+
+
 
 #### Loadings
 
