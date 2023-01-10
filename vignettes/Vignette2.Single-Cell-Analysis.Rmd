@@ -60,7 +60,7 @@ The following code details several ways in which to load in this dataset. You ma
 
 ### All Sources
 
-We have made most of the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **This file includes the processed object that you will need in order to run MCIA.**
+We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **These files includes the processed object that you will need in order to run MCIA (data_blocks_sc.Rda).**
 
 ```{r data-all-list}
 # list all of the currently available data in v0.0.1
@@ -68,51 +68,32 @@ pb_list(repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ```{r data-all-download, echo = FALSE}
-# markers for Seurat
-pb_download(file = "marker_genes.csv", 
+# files for running MCIA
+pb_download(file = "metadata_sc.csv", # "Annotations"
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "data_blocks_sc.Rda", # "10x Genomics and Seurat"
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+pb_download(file = "data_sc_sce.Rda", # "Bioconductor"
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
 
-# download the sc data
-pb_download(file = "data_blocks_sc.Rda", 
-            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-pb_download(file = "data_sc_sce.Rda", 
-            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-pb_download(file = "metadata_sc.csv", 
-            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-
-# downloads the MCIA results
+# MCIA results
 pb_download(file = "mcia_results_sc.Rds", 
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
 
-# Seurat files
-pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", 
+# marker genes for cell type annotation with Seurat
+pb_download(file = "marker_genes.csv", 
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
+
+# Seurat objects in different stages of processing
+pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", 
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
 pb_download(file = "tenx_pbmc5k_CITEseq_processed.rds", 
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", 
+pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", 
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-
 
 # clean out old files as needed
 # pb_delete(file = "", repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
-```
-
-*TO DO: Test this all*
-
-```{r data-all-load}
-# doesn't load everything (e.g. the metadata csv file)
-
-# load the MCIA data
-load(file = file.path(path_inst, "data_blocks_sc.Rda"))
-
-# load the Bioconductor data (both MCIA formatted and the Seurat object)
-# load(file = file.path(path_inst, "data_sc_sce.Rdata"))
-
-# load the Seurat object formatted for MCIA
-# compare with the previous file!
-# data_blocks_sc_seurat <- readRDS(file = file.path(path_inst, 
-#                                                   "data_blocks_sc_seurat.Rds"))
-# obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 ```
 
 ### Bioconductor
@@ -231,7 +212,6 @@ save(data_blocks_sc_sce, data_blocks_sc_sce_seurat,
      file = file.path(path_data, "data_sc_sce.Rda"))
 
 # these two files can be found as "data_sc_sce.Rda" on piggyback
-
 # pb_upload(file = file.path(path_data, "data_sc_sce.Rda"),
 #           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
@@ -280,7 +260,7 @@ obj[['ADT']] <- Seurat::CreateAssayObject(counts = data$`Antibody Capture`)
 Seurat::Assays(obj)
 # "RNA" "ADT"
 
-# list out the CITE-Seq markers
+# list out the CITE-Seq surface protein markers
 rownames(obj[["ADT"]])
 # [1] "CD3-TotalSeqB"            "CD4-TotalSeqB"           "CD8a-TotalSeqB"         
 # [4] "CD11b-TotalSeqB"          "CD14-TotalSeqB"          "CD15-TotalSeqB"         
@@ -309,11 +289,9 @@ You can also load the Seurat object directly, such as in the [Read in and proces
 Note that the "-1"s have been removed from the cell barcodes.
 
 ```{r mcia-metadata}
-# TO DO: Alphabetize the cell types
-
 # read in the annotated cells
 metadata_sc <- read.csv(file.path(path_inst, "metadata_sc.csv"),
-                         header = TRUE, row.names = "Barcode")
+                        header = TRUE, row.names = 1)
 
 # examples
 metadata_sc %>% slice_sample(n = 10)
@@ -321,12 +299,18 @@ metadata_sc %>% slice_sample(n = 10)
 
 ### Running the decomposition
 
+This will run on cells with the top 2000 variable features (as defined in the later analysis).
+
+```{r mcia-decomp-load-data}
+# load the object setup for running MCIA [10x Genomics & Seurat]
+load(file = file.path(path_inst, "data_blocks_sc.Rda"))
+
+# load the Bioconductor data (both MCIA formatted and the Seurat object) if desired
+# load(file = file.path(path_inst, "data_sc_sce.Rda"))
+```
+
 ```{r mcia-decomp-run, eval = FALSE}
-# run on cells with the top variable features (as defined in the later analysis)
-
-# examine the data
-# summary(data_blocks_sc)
-
+# "largest_sv" results in a more balanced contribution from the blocks than the default "unit_var"
 mcia_results_sc <- nipals_multiblock(data_blocks_sc, 
                                      preproc_method = "colprofile", 
                                      block_preproc_method = "largest_sv", 
@@ -367,13 +351,13 @@ the metadata (see the "scRNA-Seq Seurat analysis" section for details on their o
 
 #### Eigenvalue scree plot
 
-```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6)}
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6), echo = FALSE}
 global_scores_eigenvalues_plot(mcia_results_sc)
 ```
 
 #### Projection plot
 
-```{r mcia-plots-projection, fig.dim = c(8, 8)}
+```{r mcia-plots-projection, fig.dim = c(8, 8), echo = FALSE}
 meta_colors <- get_metadata_colors(mcia_results = mcia_results_sc, 
                                    color_col = "CellType", 
                                    color_pal = scales::viridis_pal, 
@@ -383,12 +367,12 @@ projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", 
                 orders = c(1, 2), 
                 color_col = "CellType", color_pal = meta_colors,
-                legend_loc = "bottomright")
+                legend_loc = "topright")
 ```
 
 #### Global scores heatmap
 
-```{r mcia-plots-heatmap-global, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-global, fig.dim = c(8, 6), echo = FALSE}
 suppressMessages(global_scores_heatmap(mcia_results_sc))
 # The automatically generated colors map from the minus and plus 99^th of the absolute values in the matrix.
 # There are outliers in the matrix whose patterns might be hidden by this color mapping. You can manually
@@ -397,15 +381,13 @@ suppressMessages(global_scores_heatmap(mcia_results_sc))
 
 #### Block weights heatmap
 
-```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-block, fig.dim = c(8, 6), echo = FALSE}
 block_weights_heatmap(mcia_results_sc)
 ```
 
-
-
 #### Loadings
 
-```{r mcia-plots-heatmap-loadings, fig.dim = c(8, 6)}
+```{r mcia-plots-heatmap-loadings, fig.dim = c(8, 6), echo = FALSE}
 vis_load_plot(mcia_results_sc, axes = c(1, 4), 
               colors_omics = get_colors(mcia_results_sc))
 ```
@@ -447,7 +429,7 @@ metrics_summary
 
 ##### Before filtering
 
-```{r seurat-qc-pre-filter, fig.dim = c(8, 6)}
+```{r seurat-qc-pre-filter, fig.dim = c(8, 5), echo = FALSE}
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
         pt.size = 0.01, ncol = 3) &
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
@@ -456,7 +438,9 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 ##### After filtering
 
-```{r seurat-qc-post-filter, fig.dim = c(8, 6)}
+Based on the previous plots, a minimum of 200 features and a maximum of 20% mitochondrial seemed like good cutoffs.
+
+```{r seurat-qc-post-filter, fig.dim = c(8, 5), echo = FALSE}
 # adjust cutoffs as desired
 obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
 
@@ -497,8 +481,8 @@ obj <- RunUMAP(obj, reduction = "pca", dims = 1:20)
 saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_processed.rds"))
 
 # upload to piggyback
-pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_processed.rds"),
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+# pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_processed.rds"),
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ### Dimensionality reduction
@@ -550,7 +534,7 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ##### GEX
 
-```{r seurat-markers-dot-gex, fig.dim = c(16, 6), warning = FALSE, echo = FALSE}
+```{r seurat-markers-dot-gex, fig.dim = c(20, 6), warning = FALSE, echo = FALSE}
 p <- DotPlot(obj, features = unique(markers_all$Marker),
              dot.scale = 3, cluster.idents = TRUE) + RotatedAxis()
 
@@ -674,9 +658,7 @@ FeaturePlot(object = obj,
 
 ##### ADT
 
-```{r seurat-markers-violin-adt, fig.dim = c(16, 32)}
-rownames(obj[["ADT"]])
-
+```{r seurat-markers-violin-adt, fig.dim = c(16, 32), echo = FALSE}
 VlnPlot(obj, features = rownames(obj[["ADT"]]),
         pt.size = 0, assay = "ADT", ncol = 4) &
   theme(plot.title = element_text(size = 10),
@@ -704,6 +686,9 @@ obj_annotations <- rbind(c("0", "Macrophages"), # or mDC
 colnames(obj_annotations) <- c("Cluster", "CellType")
 obj_annotations <- data.frame(obj_annotations)
 
+# save the annotations as a csv if you'd like
+# write.csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
+
 # prepare the annotation information
 annotations <- obj_annotations[["CellType"]] # you only need the cell type information
 names(annotations) <- levels(obj$seurat_clusters)
@@ -718,37 +703,27 @@ Idents(obj) <- factor(Idents(obj), levels = sort(levels(obj)))
 # useful metadata (e.g. if you want to have multiple annotation sets)
 obj[["annotated_clusters"]] <- Idents(obj)
 
-# info about the clusters
-obj_annotations %>%
-  group_by(CellType) %>%
-  transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
-  distinct() %>% arrange(CellType)
-
-meta <- data.frame("CellType" = obj$annotated_clusters,
-                   "Barcode" = colnames(obj))
-# meta <- data.frame("CellType" = Idents(obj))
-
-# write_csv(meta, file = file.path(path_data, "metadata_sc.csv"))
-
-# save the annotations as a csv if you'd like
-# write_csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
-
 # save the processed and annotated Seurat object
 # saveRDS(obj, file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
 # upload to piggyback
 # pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"),
 #           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
-```
 
-```{r seurat-object-upload, eval = FALSE}
-# upload to piggyback
-pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"),
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+# info about the clusters
+obj_annotations %>%
+  group_by(CellType) %>%
+  transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
+  distinct() %>% arrange(CellType)
+
+meta <- data.frame("CellType" = Idents(obj))
+
+# save the metadata file for MCIA
+# write.csv(meta, file = file.path(path_data, "metadata_sc.csv"))
 
 # upload to piggyback
-pb_upload(file = file.path(path_data, "metadata_sc.csv"),
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+# pb_upload(file = file.path(path_data, "metadata_sc.csv"),
+#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 #### UMAPs
@@ -760,11 +735,26 @@ plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6) +
 plot_seurat_clusters + plot_annotated_clusters
 ```
 
-```{r seurat-umap-adt, fig.dim = c(16, 8), echo = FALSE, eval = FALSE}
-# plot ADT information on top
+```{r seurat-umap-adt, fig.dim = c(16, 16), echo = FALSE, eval = FALSE}
+# plot ADT information on top as an example
 
-
+FeaturePlot(obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB", 
+                              "CD19-TotalSeqB", "CD27-TotalSeqB"),
+            label = TRUE, label.size = 2, ncol = 2, raster = FALSE)
 ```
+
+#### Check the annotations
+
+For example, if you want to visually check your T cell cluster annotations:
+
+```{r seurat-check-annotations-t, fig.dim = c(16, 12), echo = FALSE}
+VlnPlot(object = obj,
+        features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker,
+        ncol = 4, raster = FALSE) & 
+  theme(plot.title = element_text(size = 10), 
+        axis.title.x = element_blank())
+```
+
 
 ### Save for MCIA
 
@@ -774,12 +764,14 @@ The file has to be structured in the form of a (large) list, with each omic save
 data_rna <- GetAssayData(obj, slot = 'data')[VariableFeatures(obj), ]
 data_rna <- as.matrix(data_rna)
 # colnames(data_rna) <- paste(colnames(data_rna),"mrna", sep = "_") # add suffix??
-data_rna <- t(data_rna)
+data_rna <- t(data_rna) # switch the rows
+data_rna <- log2(data_rna + 1) # log-transform becuse the data is heavy tailed
 
 data_adt <- GetAssayData(obj, slot = 'data', assay = 'ADT')
 data_adt <- as.matrix(data_adt)
 # colnames(data_adt) <- paste(colnames(data_adt),"mrna", sep = "_") # add suffix??
-data_adt <- t(data_adt)
+data_adt <- t(data_adt) # switch the rows
+data_adt <- log2(data_adt + 1) # log-transform becuse the data is heavy tailed
 
 data_blocks_sc <- list(mrna = data_rna, adt = data_adt)
 
