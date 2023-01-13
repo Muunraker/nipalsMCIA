@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup-v2, include=FALSE}
+```{r setup-v2, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -24,22 +24,22 @@ After loading the nipalsMCIA library (see the X vignette for instructions on
 how to install), we randomly split the NCI60 cancer cell line data into
 training and test sets.
 
-```{r load-package}
+```{r load-packages}
 library(ggplot2)
 library(nipalsMCIA)
 ```
 
 ```{r split-data}
 data(NCI60)
-
 set.seed(8)
+
 num_samples <- dim(data_blocks[[1]])[1]
 num_train <- round(num_samples * 0.7, 0)
 train_samples <- sample.int(num_samples, num_train)
 
 data_blocks_train <- data_blocks
 data_blocks_test <- data_blocks
-for (i in seq(1, length(data_blocks))) {
+for (i in seq_along(data_blocks)) {
   data_blocks_train[[i]] <- data_blocks_train[[i]][train_samples, ]
   data_blocks_test[[i]] <- data_blocks_test[[i]][-train_samples, ]
 }
@@ -104,7 +104,8 @@ ggplot(data = MCIA_out_full, aes(x = Factor.1, y = Factor.2,
   ggtitle("MCIA for NCI60 training and test data")
 ```
 
-```{r}
+## Session Info 
+
+```{r session-info, echo = FALSE} 
 sessionInfo()
 ```
-

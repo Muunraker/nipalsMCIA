@@ -47,9 +47,11 @@ library(Seurat)
 ```{r set-paths}
 # recommended location for local data
 path_data <- file.path("..", "data")
+# path_data <- file.path("data")
 
 # recommended location for external data
 path_inst <- file.path("..", "inst", "extdata")
+# path_inst <- file.path("inst", "extdata")
 ```
 
 ## Data
@@ -367,7 +369,7 @@ projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", 
                 orders = c(1, 2), 
                 color_col = "CellType", color_pal = meta_colors,
-                legend_loc = "topright")
+                legend_loc = "bottomright")
 ```
 
 #### Global scores heatmap
@@ -680,9 +682,8 @@ obj_annotations <- rbind(c("0", "Macrophages"), # or mDC
                          c("5", "B cells"),
                          c("6", "mDCs"), # or B cells or macrophages
                          c("7", "Macrophages"), # or mDC
-                         c("8", "Unknown"),
-                         c("9", "pDCs"),
-                         c("10", "Unknown"))
+                         c("8", "T cells"),
+                         c("9", "pDCs"))
 colnames(obj_annotations) <- c("Cluster", "CellType")
 obj_annotations <- data.frame(obj_annotations)
 
@@ -729,7 +730,9 @@ meta <- data.frame("CellType" = Idents(obj))
 #### UMAPs
 
 ```{r seurat-umap-both, fig.dim = c(16, 8), echo = FALSE}
-plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6) +
+# change colors from default if desired
+plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6, 
+                                    cols = "Dark2") + 
                              labs(title = "Annotated Clusters")
 
 plot_seurat_clusters + plot_annotated_clusters
@@ -754,7 +757,6 @@ VlnPlot(object = obj,
   theme(plot.title = element_text(size = 10), 
         axis.title.x = element_blank())
 ```
-
 
 ### Save for MCIA
 
