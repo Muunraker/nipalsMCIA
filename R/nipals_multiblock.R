@@ -93,7 +93,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   }
 
   # Formatting feature labels to include omic type
-  for (i in seq_along(num_blocks)) {
+  for (i in seq_along(data_blocks)) {
     oName <- omics_names[[i]] # omic names
     fNames <- names(data_blocks[[i]]) # feature names
 
@@ -145,7 +145,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
   block_scores <- list() # list containing matrices of block scores
   block_loadings <- list() # list containing matrices of block loadings
-  for (i in seq_along(num_blocks)) {
+  for (i in seq_along(data_blocks)) {
     block_scores[[i]] <- nipals_result$block_scores[, i]
     block_loadings[[i]] <- nipals_result$block_loadings[[i]]
   }

@@ -753,7 +753,7 @@ For example, if you want to visually check your T cell cluster annotations:
 ```{r seurat-check-annotations-t, fig.dim = c(16, 12), echo = FALSE}
 VlnPlot(object = obj,
         features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker,
-        ncol = 4, raster = FALSE) & 
+        ncol = 4) & 
   theme(plot.title = element_text(size = 10), 
         axis.title.x = element_blank())
 ```
