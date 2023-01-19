@@ -21,19 +21,19 @@ nipals_multiblock(
 \item{data_blocks}{a list of data frames, each in "sample" x "variable"
 format}
 
-\item{preproc_method}{an option for the desired column-level data pre-processing, 
+\item{preproc_method}{an option for the desired column-level data pre-processing,
 either:
 \itemize{
-\item `colprofile` applies column-centering, row and column weighting by 
-contribution to variance. 
-\item `standardized` centers each column and divides by its standard 
-deviation. 
+\item `colprofile` applies column-centering, row and column weighting by
+contribution to variance.
+\item `standardized` centers each column and divides by its standard
+deviation.
 \item `centered_only` ONLY centers data
 }}
 
 \item{block_preproc_method}{an option for the desired block-level data pre-processing,
 either:\itemize{
-\item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance 
+\item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance
 \item `num_cols` divides each block by the number of variables in the block.
 \item `largest_sv` divides each block by its largest singular value.
 \item `none` performs no preprocessing

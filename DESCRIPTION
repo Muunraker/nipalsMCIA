@@ -7,36 +7,39 @@ Authors@R: c(
     person("Anna", "Konstorum", role = "aut"),
     person("Joaquin", "Reyna", email = "joreyna@live.com", role = "aut"),
     person("Edel", "Aron", email = "edel.aron@yale.edu", role = "aut"))
-Description: Computes Multiple Co-Inertia Analysis (MCIA) for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).
+Description: Computes Multiple Co-Inertia Analysis (MCIA), and doing dimensionality reduction (jDR) algorithm, for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).  Allows multiple options for row- and table-level preprocessing, and speeds up computation of variance explained.  Vignettes detail application to bulk- and single cell- multi-omics studies.
 License: GPL (>= 3)
 RoxygenNote: 7.2.1
 Depends:
     R (>= 3.5.0)
 Imports:
-    circlize,
     ComplexHeatmap,
     dplyr,
     fgsea,
     ggplot2,
-    ggpubr,
+    graphics,
     grid,
     methods,
-    piggyback,
     pracma,
-    reshape2,
     rlang,
     RSpectra,
     scales,
-    stringr,
-    tidyverse
+    stats
 Url: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA 
 Encoding: UTF-8
 Suggests:
+    circlize,
+    ggpubr,
     KernSmooth, 
     knitr,
+    piggyback,
+    reshape2,
     rmarkdown,
     rpart,
-    survival
+    stringr,
+    survival,
+    Seurat,
+    tidyverse
 VignetteBuilder: knitr
-biocViews: Software, Clustering, Classification, MultipleComparison
+biocViews: Software, Clustering, Classification, MultipleComparison, Normalization, Preprocessing, SingleCell

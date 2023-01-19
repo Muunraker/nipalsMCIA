@@ -20,6 +20,7 @@
 #' nipals_results <- NIPALS_iter(data_blocks, tol = 1e-7, maxIter = 1000)
 #' @importFrom pracma rand
 #' @importFrom RSpectra svds
+#' @importFrom stats cov var
 #' @export
 NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
 

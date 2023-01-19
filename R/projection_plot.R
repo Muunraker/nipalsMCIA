@@ -41,6 +41,7 @@
 #'   color_col = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
 #' @importFrom graphics grid legend points segments 
+#' @importFrom stats var
 #' @export
 projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                block_name = NULL,

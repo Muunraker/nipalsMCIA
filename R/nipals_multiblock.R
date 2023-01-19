@@ -12,18 +12,18 @@
 #'
 #' @param data_blocks a list of data frames, each in "sample" x "variable"
 #' format
-#' @param preproc_method an option for the desired column-level data pre-processing, 
+#' @param preproc_method an option for the desired column-level data pre-processing,
 #' either:
 #' \itemize{
-#' \item `colprofile` applies column-centering, row and column weighting by 
-#' contribution to variance. 
-#' \item `standardized` centers each column and divides by its standard 
-#' deviation. 
+#' \item `colprofile` applies column-centering, row and column weighting by
+#' contribution to variance.
+#' \item `standardized` centers each column and divides by its standard
+#' deviation.
 #' \item `centered_only` ONLY centers data
 #' }
 #' @param block_preproc_method an option for the desired block-level data pre-processing,
 #' either:\itemize{
-#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance 
+#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance
 #' \item `num_cols` divides each block by the number of variables in the block.
 #' \item `largest_sv` divides each block by its largest singular value.
 #' \item `none` performs no preprocessing
@@ -69,6 +69,7 @@
 #' NORMALIZATION OPTION APPLIED
 #' \item `metadata` the metadata dataframe supplied wuith the `metadata`
 #' argument.}
+#' @importFrom graphics par
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
@@ -79,7 +80,7 @@
 #'
 #' @export
 nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
-                              block_preproc_method = "unit_var", 
+                              block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
                               deflationMethod = "block", plots = "all") {
@@ -93,7 +94,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   }
 
   # Formatting feature labels to include omic type
-  for (i in 1:num_blocks) {
+  for (i in seq_along(data_blocks)) {
     oName <- omics_names[[i]] # omic names
     fNames <- names(data_blocks[[i]]) # feature names
 
@@ -118,7 +119,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   message("Performing column-level pre-processing...")
   data_blocks <- lapply(data_blocks, col_preproc, preproc_method)
   message("Column pre-processing completed.")
-  
+
   # Block-level pre-processing
   message("Performing block-level preprocessing...")
   data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
@@ -129,8 +130,8 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     block_vars <- get_TV(data_blocks)
   }
   message("Block pre-processing completed.")
-  
-  
+
+
   # First NIPALS run
   message(paste("Computing order", 1, "scores"))
   nipals_result <- NIPALS_iter(data_blocks, tol)
@@ -145,7 +146,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
   block_scores <- list() # list containing matrices of block scores
   block_loadings <- list() # list containing matrices of block loadings
-  for (i in 1:num_blocks) {
+  for (i in seq_along(data_blocks)) {
     block_scores[[i]] <- nipals_result$block_scores[, i]
     block_loadings[[i]] <- nipals_result$block_loadings[[i]]
   }
@@ -195,7 +196,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
   results_list <- list(global_scores, global_loadings, block_score_weights,
                       block_scores, block_loadings, eigvals,
-                      tolower(preproc_method),tolower(block_preproc_method), 
+                      tolower(preproc_method),tolower(block_preproc_method),
                       block_vars)
   names(results_list) <- c("global_scores", "global_loadings",
                            "block_score_weights", "block_scores",
@@ -219,7 +220,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1, 1))
   } else if (tolower(plots) == "none") {
-    # Are we mising sosmething here? Need to check previous 
+    # Are we mising sosmething here? Need to check previous
     # versions.
   } else {
     message("No known plotting options specified - skipping plots.")

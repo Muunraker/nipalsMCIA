@@ -12,6 +12,7 @@
 #'                               num_PCs = 10, plots = "none", tol=1e-12)
 #' global_scores_eigenvalues_plot(mcia_results)
 #' @return Displays the contribution plot using eigenvalues
+#' @importFrom graphics barplot
 #' @export
 global_scores_eigenvalues_plot <- function(mcia_results) {
 
