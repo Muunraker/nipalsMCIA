@@ -9,6 +9,7 @@
 #' @return data frame with the most significant p-value number of significant
 #' pathways
 #' @return the selectivity scores across the given factors
+#' @importFrom stats setNames
 #' @export
 gsea_report <- function(metagenes, path.database, factors = NULL,
                         pval.thr = 0.05, nproc = 4) {
