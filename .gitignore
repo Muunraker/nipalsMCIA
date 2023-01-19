@@ -17,3 +17,4 @@ vignettes/data_blocks_sc.Rda
 data/data_blocks_sc.Rda
 ..Rcheck/
 inst/extdata/data_blocks_sc.Rda
+tests/*.svg
