@@ -18,3 +18,4 @@ data/data_blocks_sc.Rda
 ..Rcheck/
 inst/extdata/data_blocks_sc.Rda
 tests/*.svg
+*.swp

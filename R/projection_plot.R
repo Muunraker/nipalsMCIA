@@ -30,6 +30,8 @@
 #' @param color_pal a list of colors or function which returns a list of colors
 #' @param color_pal_params a list of parameters for the color function
 #' @param legend_loc Option for legend location, or "none" for no legend.
+#' @param color_override Option to override colors when necessary, helpful for
+#' projection = "global" or "block" 
 #'
 #' @examples
 #' data(NCI60)
@@ -45,7 +47,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                color_col = NULL,
                                color_pal = scales::viridis_pal,
                                color_pal_params = list(option = "D"),
-                               legend_loc = "bottomleft") {
+                               legend_loc = "bottomleft",
+                               color_override = NULL,
+                               cex=0.5) {
     
     ### Identifying the membership of samples within
     ### the clusters/categories of the color_col column
@@ -92,6 +96,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                       color_pal_params = color_pal_params)
     if (is.null(color_col)) {
       plot_colors <- list("black")
+    }
+    if (!is.null(color_override)) {
+      plot_colors <- list(color_override)
     }
 
     ### Plot 1 - projection == all
@@ -143,7 +150,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              col = plot_colors[[1]],
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
-             cex = .5, pch = 16)
+             cex = cex, pch = 16)
         grid()
 
         # Plotting block scores (shapes correspond to different blocks)
@@ -169,7 +176,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             points(gs_normed[sample_indexes, orders[[1]]],
                    gs_normed[sample_indexes, orders[[2]]],
                    col = plot_colors[[i]],
-                   cex = .5,
+                   cex = cex,
                    pch = 16)
 
             for (j in seq(1, length(bs_normed))){
@@ -177,7 +184,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
               points(bs_j[sample_indexes, orders[[1]]],
                      bs_j[sample_indexes, orders[[2]]],
                      col = plot_colors[[i]],
-                     cex = 1, pch = j - 1)
+                     cex = cex, pch = j - 1)
               segments(bs_j[sample_indexes, orders[[1]]],
                        bs_j[sample_indexes, orders[[2]]],
                        gs_normed[sample_indexes, orders[[1]]],
@@ -194,7 +201,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
               legend(legend_loc,
                      legend = c(names(mcia_results$block_loadings)),
                      pch = 0:length(mcia_results$block_loadings),
-                     cex = 1)
+                     cex = cex)
             # plotting legend for clusters/categories
             } else {
               leg_labels <- c(names(mcia_results$block_loadings),
@@ -207,7 +214,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                      legend = leg_labels,
                      pch = leg_shapes,
                      col = leg_colors,
-                     cex = 1)
+                     cex = cex)
             }
         }
         
@@ -268,7 +275,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              col = plot_colors[[1]],
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
-             cex = .5, pch = 16)
+             cex = cex, pch = 16)
         grid()
         
         # Cluster 2+
@@ -278,7 +285,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 points(bs_normed[sample_indexes, orders[[1]]],
                        bs_normed[sample_indexes, orders[[2]]],
                        col = plot_colors[[i]],
-                       cex = 1, pch = j - 1)
+                       cex = cex, pch = j - 1)
             }
         }
         
@@ -300,7 +307,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                        legend = leg_labels,
                        pch = leg_shapes,
                        col = leg_colors,
-                       cex = 1)
+                       cex = cex)
             }
         }
         
@@ -329,7 +336,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              pch = 16,
-             cex = 0.5)
+             cex = cex)
         grid()
 
         # Cluster 2+
@@ -339,7 +346,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             points(gs_normed[sample_indexes, orders[[1]]],
                    gs_normed[sample_indexes, orders[[2]]],
                    col = plot_colors[[i]],
-                   cex = .5, pch = 16)
+                   cex = cex, pch = 16)
           }
         }
 
@@ -353,7 +360,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                    legend = leg_labels,
                    pch = leg_shapes,
                    col = leg_colors,
-                   cex = 1)
+                   cex = cex)
         }
     }
 }
