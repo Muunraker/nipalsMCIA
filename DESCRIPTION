@@ -19,6 +19,7 @@ Imports:
     fgsea,
     ggplot2,
     ggpubr,
+    graphics,
     grid,
     methods,
     piggyback,

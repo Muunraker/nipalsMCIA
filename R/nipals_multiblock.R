@@ -69,6 +69,7 @@
 #' NORMALIZATION OPTION APPLIED
 #' \item `metadata` the metadata dataframe supplied wuith the `metadata`
 #' argument.}
+#' @importFrom graphics par
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
