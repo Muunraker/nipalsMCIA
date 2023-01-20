@@ -49,13 +49,13 @@ NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
     gw <- crossprod(bs_list, gs)
     gw <- gw / norm(gw, type = "2")
     gs <- bs_list %*% gw
-
+    
     # Computing stopping criteria
-    covList <- sapply(as.data.frame(bs_list), function(bs, gs) {
-      gs_norm <- gs / sqrt(drop(var(gs)))
-      return(drop(cov(bs, gs_norm))^2)
-    }, gs = gs)
-
+    covList <- vapply(as.data.frame(bs_list), function(bs, gs) {
+        gs_norm <- gs / sqrt(drop(var(gs)))
+        return(drop(cov(bs, gs_norm))^2)
+    }, gs = gs, FUN.VALUE = numeric(1))
+    
     stopCrit <- abs(sum(covList) - covSquared_old)
     covSquared_old <- sum(covList)
 

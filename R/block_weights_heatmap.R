@@ -18,6 +18,8 @@ block_weights_heatmap <- function(mcia_results) {
     colnames(bs_weights) <- seq_len(ncol(bs_weights))
     
     
-    ComplexHeatmap::Heatmap(bs_weights, cluster_columns = FALSE, cluster_rows = FALSE, 
-            name = "weight", column_title_side = "bottom", column_title = "Factor")
+    ComplexHeatmap::Heatmap(bs_weights, cluster_columns = FALSE,
+                            cluster_rows = FALSE, name = "weight",
+                            column_title_side = "bottom",
+                            column_title = "Factor")
 }

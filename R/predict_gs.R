@@ -31,8 +31,8 @@ predict_gs <- function(mcia_results, df) {
 
   num_omics <- length(bl)
   if (length(df) != length(bl) || length(df) != dim(bw)[[1]]) {
-    stop(paste("Mismatched number of omics between the block loadings, ",
-         "block weights, and new data."))
+    stop("Mismatched number of omics between the block loadings, ",
+         "block weights, and new data.")
   }
   
   # Apply same pre-processing methods as the model
@@ -55,7 +55,7 @@ predict_gs <- function(mcia_results, df) {
   bl <- lapply(bl, as.matrix)
 
   if (dim(df[[1]])[[2]] != dim(bl[[1]])[[1]]) {
-    stop(paste("Error: mismatched number of features in omic ", 1))
+    stop("Error: mismatched number of features in omic ", 1)
   }
   new_gs <- df[[1]] %*% bl[[1]] # block score matrix for 1st omic
   new_gs <- t(t(new_gs) * bw[1, ]) # applying block weight
@@ -64,7 +64,7 @@ predict_gs <- function(mcia_results, df) {
   if (num_omics > 1) {
     for (i in 2:num_omics) {
       if (dim(df[[i]])[[2]] != dim(bl[[i]])[[1]]) {
-        stop(paste("Error: mismatched number of features in omic ", i))
+        stop("Error: mismatched number of features in omic ", i)
       }
       new_gs_i <- df[[i]] %*% bl[[i]] # block score matrix for ith omic
       new_gs <- new_gs + t(t(new_gs_i) * bw[i, ]) # applying block weight

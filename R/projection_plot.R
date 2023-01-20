@@ -32,6 +32,7 @@
 #' @param legend_loc Option for legend location, or "none" for no legend.
 #' @param color_override Option to override colors when necessary, helpful for
 #' projection = "global" or "block" 
+#' @param cex Resizing parameter for drawing the points
 #'
 #' @examples
 #' data(NCI60)
@@ -86,8 +87,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # case iii) catch-all, color_col argument not recognized
     } else {
-        message(paste("color_col option not recognized, ",
-                      "defaulting to black/white plotting."))
+        message("color_col option not recognized, ",
+                      "defaulting to black/white plotting.")
         clust_indexes <- list(seq(1, dim(mcia_results$global_score)[[1]]))
     }
 
@@ -121,16 +122,16 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         }
 
         # Getting bounds for projection plot
-         # minimum 1st block score
-        min_bs1 <- min(sapply(lapply(bs_normed, `[`, , orders[[1]]), min))
-         # minimum 2nd block score
-        min_bs2 <- min(sapply(lapply(bs_normed, `[`, , orders[[2]]), min))
+        # minimum 1st block score
+        min_bs1 <- min(vapply(lapply(bs_normed, `[`, , orders[[1]]), min, numeric(1)))
+        # minimum 2nd block score
+        min_bs2 <- min(vapply(lapply(bs_normed, `[`, , orders[[2]]), min, numeric(1)))
         # maximum 1st block score
-        max_bs1 <- max(sapply(lapply(bs_normed, `[`, , orders[[1]]), max))
+        max_bs1 <- max(vapply(lapply(bs_normed, `[`, , orders[[1]]), max, numeric(1)))
         # maximum 2nd block score
-        max_bs2 <- max(sapply(lapply(bs_normed, `[`, , orders[[2]]), max))
-
-         # minimum x coordinate in plot
+        max_bs2 <- max(vapply(lapply(bs_normed, `[`, , orders[[2]]), max, numeric(1)))
+ 
+        # minimum x coordinate in plot
         min_x <- min(c(min_bs1, min(gs_normed[, orders[[1]]])))
         # minimum y coordinate in plot
         min_y <- min(c(min_bs2, min(gs_normed[, orders[[2]]])))

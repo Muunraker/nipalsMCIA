@@ -1,10 +1,13 @@
 #' Block-level preprocessing
 #'
-#' @description A function that normalizes an input dataset (data block) according to a variety of options.
+#' @description A function that normalizes an input dataset (data block)
+#' according to a variety of options.
 #' Intended to be used after column/row-level normalization. 
 #' @param df dataset to preprocess (must be in data matrix form) 
-#' @param block_preproc_method method which is used to normalize blocks, with options: \itemize{
-#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance 
+#' @param block_preproc_method method which is used to normalize blocks, with
+#' options: \itemize{
+#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the
+#' square root of its variance 
 #' \item `num_cols` divides each block by the number of variables in the block.
 #' \item `largest_sv` divides each block by its largest singular value.
 #' \item `none` performs no preprocessing
@@ -53,6 +56,7 @@ block_preproc <- function(df,block_preproc_method) {
     return(temp_df)
     
   }else{
-    stop("block preprocessing method not recognized - pick from available options")
+    stop("block preprocessing method not recognized", 
+         "- pick from available options")
   }
 }

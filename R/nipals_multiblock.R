@@ -12,8 +12,8 @@
 #'
 #' @param data_blocks a list of data frames, each in "sample" x "variable"
 #' format
-#' @param preproc_method an option for the desired column-level data pre-processing,
-#' either:
+#' @param preproc_method an option for the desired column-level data
+#' pre-processing, either:
 #' \itemize{
 #' \item `colprofile` applies column-centering, row and column weighting by
 #' contribution to variance.
@@ -21,9 +21,10 @@
 #' deviation.
 #' \item `centered_only` ONLY centers data
 #' }
-#' @param block_preproc_method an option for the desired block-level data pre-processing,
-#' either:\itemize{
-#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the square root of its variance
+#' @param block_preproc_method an option for the desired block-level data
+#' pre-processing, either:\itemize{
+#' \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the
+#' square root of its variance
 #' \item `num_cols` divides each block by the number of variables in the block.
 #' \item `largest_sv` divides each block by its largest singular value.
 #' \item `none` performs no preprocessing
@@ -133,7 +134,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
 
   # First NIPALS run
-  message(paste("Computing order", 1, "scores"))
+  message("Computing order ", 1, " scores")
   nipals_result <- NIPALS_iter(data_blocks, tol)
 
   # Saving result
@@ -157,7 +158,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   if (num_PCs > 1) {
     # generate scores/loadings up to number of PCs
     for (i in seq(2, num_PCs)) {
-      message(paste("Computing order", i, "scores"))
+      message("Computing order", i, "scores")
       # Deflate blocks
       if (tolower(deflationMethod) == "block") {
         data_blocks <- mapply(deflate_block_bl,
