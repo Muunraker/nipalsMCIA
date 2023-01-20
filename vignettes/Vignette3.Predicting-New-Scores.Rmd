@@ -2,7 +2,7 @@
 title: "Predicting New MCIA scores"
 author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
-output: 
+output:
     rmdformats::readthedown:
       toc_depth: 4
 vignette: >
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Predicting MCIA global (factor) scores for new test samples
 
 It may be of interest to use the embedding that is calculated on a training
-sample set to predict scores on a test set (or, equivalently, on new data).  
+sample set to predict scores on a test set (or, equivalently, on new data).
 
 After loading the nipalsMCIA library (see the X vignette for instructions on
 how to install), we randomly split the NCI60 cancer cell line data into
@@ -69,7 +69,7 @@ ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   geom_point(size = 3) +
   theme_bw() +
   scale_color_manual(values = meta_colors) +
-  ggtitle("MCIA for NCI60 training data") 
+  ggtitle("MCIA for NCI60 training data")
 ```
 
 ### Generate factor scores for test data using the MCIA_train model
@@ -104,8 +104,8 @@ ggplot(data = MCIA_out_full, aes(x = Factor.1, y = Factor.2,
   ggtitle("MCIA for NCI60 training and test data")
 ```
 
-## Session Info 
+## Session Info
 
-```{r session-info, echo = FALSE} 
+```{r session-info, echo = FALSE}
 sessionInfo()
 ```
