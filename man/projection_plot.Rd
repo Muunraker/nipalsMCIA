@@ -12,7 +12,9 @@ projection_plot(
   color_col = NULL,
   color_pal = scales::viridis_pal,
   color_pal_params = list(option = "D"),
-  legend_loc = "bottomleft"
+  legend_loc = "bottomleft",
+  color_override = NULL,
+  cex = 0.5
 )
 }
 \arguments{
@@ -41,6 +43,11 @@ used for color_col}
 \item{color_pal_params}{a list of parameters for the color function}
 
 \item{legend_loc}{Option for legend location, or "none" for no legend.}
+
+\item{color_override}{Option to override colors when necessary, helpful for
+projection = "global" or "block"}
+
+\item{cex}{Resizing parameter for drawing the points}
 }
 \value{
 Displays the desired plots

@@ -350,8 +350,6 @@ all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
 all_4_plot
 ```
 
-<!-- Temporarily comment out pathway analysis -->
-<!--
 ### Pathway analysis for the top factors using data from gene-centric omics blocks 
 
 The NCI60 data set includes gene expression data and its corresponding global 
@@ -442,7 +440,6 @@ geneset_report[[2]]
 
 For the mRNA global loadings we can see that there is low selectivity which
 suggests that there is some overlap between the signals capture by each factor.
--->
 
 ## Session Info
 
