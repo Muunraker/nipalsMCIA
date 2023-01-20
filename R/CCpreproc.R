@@ -15,7 +15,7 @@
 #' "variable" format
 #' @return the processed data frame
 #' @examples
-#' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+#' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 #' preprocessed_dataframe <- CCpreproc(df)
 #' @export
 CCpreproc <- function(df) {
@@ -33,11 +33,11 @@ CCpreproc <- function(df) {
   colsums <- colSums(temp_df)
   row_contribs <- rowSums(temp_df) / totsum
 
-  ## Dividing by column sums
+  # Dividing by column sums
   nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
   temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
 
-  ## Subtracting row contributions
+  # Subtracting row contributions
   temp_df <- temp_df - row_contribs
 
   # Applying feature weighting ("multiplication by feature metrics")
@@ -48,8 +48,10 @@ CCpreproc <- function(df) {
 
   if (block_var != 0) {
     temp_df <- temp_df * (1 / sqrt(block_var))
-  } else {
+  }
+  else {
     warning("New data has zero variance.")
   }
+
   return(temp_df)
 }

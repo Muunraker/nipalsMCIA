@@ -23,7 +23,6 @@
 #' @export
 #'
 predict_gs <- function(mcia_results, df) {
-
   bl <- mcia_results$block_loadings
   bw <- mcia_results$block_score_weights
   col_preproc_method <- mcia_results$column_preproc_method
@@ -34,7 +33,7 @@ predict_gs <- function(mcia_results, df) {
     stop("Mismatched number of omics between the block loadings, ",
          "block weights, and new data.")
   }
-  
+
   # Apply same pre-processing methods as the model
   message("Performing pre-processing on data")
   df <- lapply(df, col_preproc, col_preproc_method)
@@ -66,9 +65,11 @@ predict_gs <- function(mcia_results, df) {
       if (dim(df[[i]])[[2]] != dim(bl[[i]])[[1]]) {
         stop("Error: mismatched number of features in omic ", i)
       }
+
       new_gs_i <- df[[i]] %*% bl[[i]] # block score matrix for ith omic
       new_gs <- new_gs + t(t(new_gs_i) * bw[i, ]) # applying block weight
     }
   }
+
   return(new_gs)
 }

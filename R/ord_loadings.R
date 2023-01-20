@@ -46,7 +46,8 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
     } else {
         gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE), ]
     }
-  } else {
+  }
+  else {
     gl_f_abs <- gl_f
     gl_f_abs$abs <- abs(gl_f_abs$loading)
     gl_f_ord <- gl_f_abs[order(gl_f_abs$abs, decreasing = TRUE), ]
