@@ -43,3 +43,4 @@ Suggests:
     tidyverse
 VignetteBuilder: knitr
 biocViews: Software, Clustering, Classification, MultipleComparison, Normalization, Preprocessing, SingleCell
+License: Artistic-2.0
