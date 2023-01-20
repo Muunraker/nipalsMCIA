@@ -92,4 +92,10 @@ Todo:
 
 *A.K. will add notes here*
 
+## Session Info 
+
+```{r session-info, echo = FALSE} 
+sessionInfo()
+```
+
 

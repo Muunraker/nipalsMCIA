@@ -22,14 +22,13 @@ MCIA pipeline, with a focus on the standard preprocessing of multi-block data
 and post-processing following MCIA. The target audience of this Mini-Lecture
 are bioinformaticians or any other general practitioners.
 
-<!--```{r, echo=FALSE, out.width="100%", out.length="80%", fig.align="center", fig.cap="Overview of the MCIA decomposition pipeline. There are three data blocks $X^1, X^2,$ and $X^3$ which are being decomposed via MCIA to produce a global scores matrix."}
-knitr::include_graphics("../images/MCIA-Pipeline-V4.png")
-```-->
-
 ```{r, echo = FALSE, out.width = "100%", out.length = "80%", fig.align = "center"}
-knitr::include_graphics("images/MCIA-Pipeline-V4.png")
+knitr::include_graphics("images/MCIA-Pipeline-V5.svg")
 ```
-.
-.
-.
-(tbd)
+
+
+## Session Info 
+
+```{r session-info, echo = FALSE} 
+sessionInfo()
+```
