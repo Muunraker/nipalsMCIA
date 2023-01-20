@@ -53,7 +53,8 @@ specific to one block.
 In the context of the NCI60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and
 proteins. More specifically, we will show you how to interpret the global
-factor scores in Part 1 and global loadings in Part 2.
+factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings 
+in [Part 2: Interpreting Global Loadings].
 
 **Preview of the NCI60 dataset**
 
@@ -138,7 +139,7 @@ This matrix encodes the contribution of each feature to the  low-dimensional
 representation.
 
 The remainder of this vignette will be broken down into two sections,
-**Part 1: Interpreting Global Factor Scores** and **Part 2: Interpreting Global Loadings**
+[Part 1: Interpreting Global Factor Scores] and [Part 2: Interpreting Global Loadings]
 where we show how to interpret $\mb F$ and $\mb A$, respectively. 
 
 ## Part 1: Interpreting Global Factor Scores  
@@ -160,23 +161,25 @@ mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
 ```
 
 The first plot visualizes each sample using factor 1 and 2 as a lower
-dimensional representation (Factor plot). Each sample is actually represented
-by 4 points, a center point (solid block dot) which represents to global factor
-score, a mRNA factor score (square), a miRNA factor score (circle), and a
-protein factor score (triangle). The last three omic-specific block factor
-scores are connected to the global factor point by lines. If a block factor
-scores is plotted far from its corresponding global factor score then this is
-an indication that the block does not agree with/contribute to the trend found
-by the global decomposition but can also be an proxy for batch effects within
-a particular block if points from a block are consistently far away from their
-global point. As an example, we can take a look at the global factor score at
-$(-1.1, 0.4)$, the block factor scores are all quite near which suggests all
-three omics are contributing somewhat equally, this is contrast to the global
-factor score at $(-0.3, 0.9)$ where the mRNA factor score is close but the
-mRNA and miRNA are far from their respective global factor score.
+dimensional representation (factor plot).
+
+- Each sample is actually represented by 4 points, a center point (solid block 
+dot) which represents to global factor score, a mRNA factor score (square), a 
+miRNA factor score (circle), and a protein factor score (triangle).
+- The last three omic-specific block factor scores are connected to the global 
+factor point by lines. If a block factor scores is plotted far from its 
+corresponding global factor score, then this is an indication that the block 
+does not agree with/contribute to the trend found by the global decomposition 
+but can also be an proxy for batch effects within a particular block if points 
+from a block are consistently far away from their global point.
+- As an example, we can take a look at the global factor score at $(-1.1, 0.4)$. 
+The block factor scores are all quite near which suggests all three omics are 
+contributing somewhat equally. This is in contrast to the global factor score at 
+$(-0.3, 0.9)$ where the mRNA factor score is close, but the mRNA and miRNA are 
+far from their respective global factor score.
 
 The second plot is a scree plot of singular values corresponding to global
-factors, higher values assign a greater importance and can be interpreted
+factors; higher values assign a greater importance and can be interpreted
 exactly the same as an eigenvalue scree plot in principal component analysis.
 
 ### Visualizing a Factor Plot with Only Global Factor Scores
@@ -185,7 +188,7 @@ For clustering, it is useful to look at global factor scores without block
 factor scores. The `projection_plot()` function can be used to generate such a
 plot using `projection = "global"` as show below:
 
-```{r visualize-clusters, fig.dim = c(4, 4), fig.align = 'center'}
+```{r visualize-clusters, fig.dim = c(8, 8), fig.align = 'center'}
 projection_plot(mcia_results, "global", orders = c(1, 2))
 ```
 
@@ -209,22 +212,22 @@ part of the `metadata` argument of `nipals_multiblock()` or added directly to
 ```{r, warning = FALSE, message = FALSE}
 set.seed(42)
 
-# Adding metadata as part of the nipals_multiblock() function
+# adding metadata as part of the nipals_multiblock() function
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   metadata = metadata_NCI60, plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 
-# Alternative method for adding metadata
+# alternative method for adding metadata
 mcia_results$metadata <- metadata_NCI60
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine
 which column of `metadata` is used for color_col the projection plots, in this
 case the column is `cancerType`. `color_pal` can then be used with a character
-vector or `scales::\<function\>` to select the colors which are applied
+vector or `scales::<function>` to select the colors which are applied
 alphabetically:
 
-```{r visualize-clusters-color-col, fig.dim = c(4, 4), fig.align = 'center'}
+```{r visualize-clusters-color-col, fig.dim = c(8, 8), fig.align = 'center'}
 # meta_colors = c('orange', 'purple', 'pink')
 meta_colors <- get_metadata_colors(mcia_results, 1)
 
@@ -236,12 +239,12 @@ projection_plot(mcia_results, "global", orders = c(1, 2),
 Clusters of samples can be computed from the global factor scores using any
 method, such as k-means clustering and visualized similarly.
 
-### Visualizing the clustering of samples by factor scores
+### Visualizing the Clustering of Samples by Factor Scores
 
 You may also be interested in viewing how each factor contributes to each sample; 
 for this you can visualize a heatmap using `global_scores_heatmap()`:
 
-```{r, fig.align = 'center'}
+```{r, fig.dim = c(8, 6), fig.align = 'center'}
 global_scores_heatmap(mcia_results)
 ```
 
@@ -249,7 +252,7 @@ In the heatmap above, the samples have been hierarchically clustered. To
 further understand these clusters, it is useful to add some `color_col` which
 is available through the `color_col` + `color_pal` parameters as shown below:
 
-```{r, fig.align = 'center'}
+```{r, fig.dim = c(8, 6), fig.align = 'center'}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
@@ -263,13 +266,13 @@ interesting to see that factor 1 alone can discern cancer type fairly well.
 In addition to the global scores matrix, MCIA also calculates a global loadings
 matrix $A$ that is $p\times r$.
 
-### Pseudoeigenvalues representing the contribution of each omic to the global factor score
+### Pseudoeigenvalues Representing the Contribution of Each Omic to the Global Factor Score
 
-```{r, fig.dim = c(4, 1.5), fig.align = 'center'}
+```{r, fig.dim = c(8, 4), fig.align = 'center'}
 block_weights_heatmap(mcia_results)
 ```
 
-### Visualize all feature loadings on two axes
+### Visualize All Feature Loadings on Two Axes
 
 MCIA returns feature loadings for each factor that can be used to understand 
 important contributions of multi-omic features to a given factor.
@@ -278,18 +281,18 @@ each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.
 
 ```{r}
-#colors_omics = c('red', 'blue', 'green')
-#colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
+# colors_omics = c('red', 'blue', 'green')
+# colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 
 colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
 
-### Scree Plot: Visualizing the top features per factor
+### Scree Plot: Visualizing the Top Features per Factor
 
 For a given factor, users can return and visualize a ranked list of top
 magnitude features. Features can be ranked based on the users preference:
-either by absolute value, ascending, or descending values.  All features, or
+either by absolute value, ascending, or descending values. All features, or
 features in a given omic can be ranked. The `ord_loadings` function returns a
 ranked list, and `vis_load_ord` allows users to visualize the features loadings
 as a scree plot.
@@ -342,15 +345,17 @@ One can observe that while miRNA dominate the top features, all omics are
 represented.
 
 ```{r, fig.dim = c(10, 4)}
+# define the loadings
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
                       descending = TRUE, factor = 4)
+
+# visualization
 all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
                            n_feat = 60)
-
 all_4_plot
 ```
 
-### Pathway analysis for the top factors using data from gene-centric omics blocks 
+### Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks 
 
 The NCI60 data set includes gene expression data and its corresponding global 
 loading matrix is a gene by factor matrix. We can learn more about the pathways
@@ -358,12 +363,13 @@ a given factor may be capturing by running each factor vector (column of the
 global loadings matrix) through a gene set enrichment analysis (GSEA). In the
 previous sections we saw how much each mRNA factor is contributing to the MCIA
 decomposition and so we will focus on factors X, Y, Z. We will run
-gsea_report() which reports on the p-value of the most significant pathway as
+`gsea_report()` which reports on the p-value of the most significant pathway as
 well as the total number of significant pathways for each factor. Finally the
 report will summarize all factors using the selectivity score as described by
 Cantini et al., 2021 (more details below).
 
-#### Gather data and generate the report
+#### Gather Data and Generate the Report
+
 ```{r, warning = FALSE}
 # extract mRNA global loadings
 mrna_gfscores <- mcia_results$global_loadings
@@ -381,6 +387,7 @@ pathways <- fgsea::gmtPathways(path.database)
 geneset_report <- gsea_report(mrna_gfscores, path.database,
                              factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
 ```
+
 #### Investigating the GSEA Summary Table  
 
 The report comes in the form of a list where the first element is a data frame
@@ -422,6 +429,7 @@ as.list(sig_path3)
 
 The second element in the report is the selectivity score which is calculated
 as follows:
+
 $$
     S = Selectivity\,Score = (N_c + N_f) / 2L
 $$
