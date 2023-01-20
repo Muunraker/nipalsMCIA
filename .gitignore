@@ -19,3 +19,6 @@ data/data_blocks_sc.Rda
 inst/extdata/data_blocks_sc.Rda
 tests/*.svg
 *.swp
+biocCheck.txt
+devtoolsCheck.txt
+tests_temp

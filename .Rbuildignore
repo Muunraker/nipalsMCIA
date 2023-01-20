@@ -6,3 +6,6 @@
 ^doc$
 ^Meta$
 ^README\.Rmd$
+^biocCheck.txt
+^devtoolsCheck.txt
+^tests_temp
