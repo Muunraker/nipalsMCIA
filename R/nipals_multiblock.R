@@ -158,7 +158,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   if (num_PCs > 1) {
     # generate scores/loadings up to number of PCs
     for (i in seq(2, num_PCs)) {
-      message("Computing order", i, "scores")
+      message("Computing order ", i, " scores")
       # Deflate blocks
       if (tolower(deflationMethod) == "block") {
         data_blocks <- mapply(deflate_block_bl,
