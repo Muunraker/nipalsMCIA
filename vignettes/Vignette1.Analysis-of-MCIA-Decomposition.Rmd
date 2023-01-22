@@ -431,29 +431,6 @@ sig_path3 <- factor3_paths[min(factor3_paths$pval) == factor3_paths$pval, ][1, ]
 as.list(sig_path3)
 ```
 
-#### Investigating the Selectivity Score
-
-The second element in the report is the selectivity score which is calculated
-as follows:
-
-$$
-    S = Selectivity\,Score = (N_c + N_f) / 2L
-$$
-where $N_c$ is the total number of clinical annotations associated with at
-least one factor, $N_f$ the total number of factors associated with at least
-one clinical annotation, and $L$ the total number of associations between
-clinical annotations and factors. $S$ has a maximum value of 1 when each factor
-is associated with one and only one clinical/biological annotation, and a
-minimum of 0 in the opposite case. An optimal method should thus maximize its
-number of factors associated with clinical/biological annotations without
-having a too low selectivity.
-
-```{r}
-geneset_report[[2]]
-```
-
-For the mRNA global loadings we can see that there is low selectivity which
-suggests that there is some overlap between the signals capture by each factor.
 
 ## Session Info
 

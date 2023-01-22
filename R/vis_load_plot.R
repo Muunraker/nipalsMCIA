@@ -15,7 +15,7 @@
 #' colors_omics <- get_colors(mcia_results)
 #' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 #' @importFrom ggplot2 ggplot aes_string geom_point theme_bw scale_color_manual
-#' @importFrom ggplot2 xlab ylab
+#' @importFrom ggplot2 xlab ylab labs
 #' @export
 
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {

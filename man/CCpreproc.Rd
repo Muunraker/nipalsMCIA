@@ -29,6 +29,6 @@ sum of singular values)
 }
 }
 \examples{
-df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 preprocessed_dataframe <- CCpreproc(df)
 }
