@@ -15,12 +15,12 @@
 #' @importFrom graphics barplot
 #' @export
 global_scores_eigenvalues_plot <- function(mcia_results) {
-
-  # Getting total variance if supplied
+  # getting total variance if supplied
   if (is.list(mcia_results$block_variances)) {
     ylabel <- "Prop. Total Variance"
     totvar <- sum(unlist(mcia_results$block_variances))
-  } else {
+  }
+  else {
     ylabel <- "Eigenvalue"
     totvar <- 1
   }
