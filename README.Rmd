@@ -26,10 +26,13 @@ This package currently can only be installed using `devtools::install_github()`.
 
 You can install the development version of nipalsMCIA from [GitHub](https://github.com/) with:
 
-```{r installation, echo = TRUE, results = 'hide', message = FALSE}
+```{r installation, echo = TRUE, results = 'hide', message = FALSE, eval=FALSE}
 library(devtools)
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
                          force = TRUE, build_vignettes = TRUE)
+```
+
+```{r}
 library(nipalsMCIA)
 ```
 
@@ -45,7 +48,9 @@ data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
 
 summary(data_blocks)
 
-metadata_NCI60
+head(metadata_NCI60)
+
+table(metadata_NCI60)
 ```
 
 Note: this dataset is reproduced from the [omicade4 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html) (Meng et. al., 2014). 
@@ -55,8 +60,8 @@ The main MCIA function can be called on `data_blocks` and optionally can include
 plot coloring by cancer type:
 
 ```{r call-mcia, message = FALSE}
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
-                                  metadata = metadata_NCI60, coloring = "cancerType", 
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
+                                  metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 10, tol = 1e-12)
 ```
 
