@@ -22,3 +22,10 @@ tests/*.svg
 biocCheck.txt
 devtoolsCheck.txt
 tests_temp
+inst/extdata/data_sc_sce.Rda
+inst/extdata/tenx_pbmc5k_CITEseq_annotated.rds
+inst/extdata/tenx_pbmc5k_CITEseq_processed.rds
+inst/extdata/tenx_pbmc5k_CITEseq_raw.rds
+inst/extdata/metadata_sc.csv
+inst/extdata/mcia_results_sc.Rds
+inst/extdata/marker_genes.csv
