@@ -24,24 +24,22 @@
 #' @export
 
 vis_load_ord <- function(gl_f_ord, omic_name, colors_omics, n_feat = 15) {
-    
   # setting parameters with tidy evaluation
   loading <- quo(`loading`)
   omic <- quo(`omic`)
-  
+
   # making a plot for the given omics
   n_plot <- min(nrow(gl_f_ord), n_feat)
   omic_subset <- names(table(droplevels(gl_f_ord[seq(0, n_plot), ])$omic))
   color_vals <- colors_omics[omic_subset]
+
   p <- ggplot(data = gl_f_ord[seq_len(n_plot), ],
               aes(x = factor(omic_name, levels = omic_name),
                   y = !!loading, color = !!omic)) +
        geom_point() +
-       theme_bw() +
        xlab("Feature") +
-       theme(axis.text.x = element_text(angle = 45,
-                                        hjust = 1,
-                                        size = 6)) +
-      scale_color_manual(values = color_vals)
+       scale_color_manual(values = color_vals) +
+       theme_bw() +
+       theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
   return(p)
 }

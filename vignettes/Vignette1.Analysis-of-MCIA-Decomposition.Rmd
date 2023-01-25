@@ -5,8 +5,11 @@ date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{amsfonts}
-output: 
+output:
     rmdformats::readthedown:
+      code_folding: show
+      df_print: kable
+      highlight: kate
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Analysis-of-MCIA-Decomposition}
@@ -39,21 +42,21 @@ In the mini-lectures, we covered in detail the math behind MCIA as well as a
 generic pipeline. In this vignette, we will cover the most important functions
 within the nipalsMCIA package as well as downstream analyses that help can
 interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block
-data. 
+data.
 
 For this vignette, we are using a cancer data set from
 [Meng et al., 2016](https://doi.org/10.1093/bib/bbv108) that includes 21
 subjects with three data blocks. The data blocks include mRNA levels
 (12895 features), microRNA levels (537 features) and protein levels
-(7016 features). Without a multi-block method, researchers may try to use 
+(7016 features). Without a multi-block method, researchers may try to use
 feature reduction methods on each block individually, but this strategy ignores
 relationships between different blocks or under-appreciates signals which are
-specific to one block. 
+specific to one block.
 
 In the context of the NCI60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and
 proteins. More specifically, we will show you how to interpret the global
-factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings 
+factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings
 in [Part 2: Interpreting Global Loadings].
 
 **Preview of the NCI60 dataset**
@@ -73,7 +76,7 @@ data_blocks$prot[1:5, 1:3]
 
 One important detail is the use of a suffix at the end of each variable name;
 this is used later downstream to extract omics specific datasets from the
-global loadings and scoring matrices. 
+global loadings and scoring matrices.
 
 **Running and reviewing the MCIA output**
 
@@ -118,7 +121,7 @@ $$
 
 This matrix encodes a low-dimensional representation of the data set, with the
 $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th
-sample. 
+sample.
 
 **Brief overview of the Global Loadings Matrix A**
 
@@ -140,9 +143,9 @@ representation.
 
 The remainder of this vignette will be broken down into two sections,
 [Part 1: Interpreting Global Factor Scores] and [Part 2: Interpreting Global Loadings]
-where we show how to interpret $\mb F$ and $\mb A$, respectively. 
+where we show how to interpret $\mb F$ and $\mb A$, respectively.
 
-## Part 1: Interpreting Global Factor Scores  
+## Part 1: Interpreting Global Factor Scores
 
 ### nipals_multiblock() Generates Basic Visualizations
 
@@ -163,19 +166,19 @@ mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
 The first plot visualizes each sample using factor 1 and 2 as a lower
 dimensional representation (factor plot).
 
-- Each sample is actually represented by 4 points, a center point (solid block 
-dot) which represents to global factor score, a mRNA factor score (square), a 
+- Each sample is actually represented by 4 points, a center point (solid block
+dot) which represents to global factor score, a mRNA factor score (square), a
 miRNA factor score (circle), and a protein factor score (triangle).
-- The last three omic-specific block factor scores are connected to the global 
-factor point by lines. If a block factor scores is plotted far from its 
-corresponding global factor score, then this is an indication that the block 
-does not agree with/contribute to the trend found by the global decomposition 
-but can also be an proxy for batch effects within a particular block if points 
+- The last three omic-specific block factor scores are connected to the global
+factor point by lines. If a block factor scores is plotted far from its
+corresponding global factor score, then this is an indication that the block
+does not agree with/contribute to the trend found by the global decomposition
+but can also be an proxy for batch effects within a particular block if points
 from a block are consistently far away from their global point.
-- As an example, we can take a look at the global factor score at $(-1.1, 0.4)$. 
-The block factor scores are all quite near which suggests all three omics are 
-contributing somewhat equally. This is in contrast to the global factor score at 
-$(-0.3, 0.9)$ where the mRNA factor score is close, but the mRNA and miRNA are 
+- As an example, we can take a look at the global factor score at $(-1.1, 0.4)$.
+The block factor scores are all quite near which suggests all three omics are
+contributing somewhat equally. This is in contrast to the global factor score at
+$(-0.3, 0.9)$ where the mRNA factor score is close, but the mRNA and miRNA are
 far from their respective global factor score.
 
 The second plot is a scree plot of singular values corresponding to global
@@ -198,8 +201,8 @@ include such data using the `metadata` argument. The `metadata` arguments
 requires a data frame where rows are samples and columns are different labels,
 allowing for a variety of visualization objectives/explorations. For instance,
 each of the 21 samples in the NCI-60 dataset represents a patient with one of
-three cancer types: CNS, Leukemia, or Melanoma. We have provided this metadata 
-as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`: 
+three cancer types: CNS, Leukemia, or Melanoma. We have provided this metadata
+as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`:
 
 ```{r}
 metadata_NCI60
@@ -262,7 +265,7 @@ global_scores_heatmap(mcia_results,
 
 This second heatmap allows us to see that global factor scores can successfully
 encode and find differences between cancer types. For these results, it is
-interesting to see that factor 1 alone can discern cancer type fairly well. 
+interesting to see that factor 1 alone can discern cancer type fairly well.
 
 ## Part 2: Interpreting Global Loadings
 
@@ -277,10 +280,10 @@ block_weights_heatmap(mcia_results)
 
 ### Visualize All Feature Loadings on Two Axes
 
-MCIA returns feature loadings for each factor that can be used to understand 
+MCIA returns feature loadings for each factor that can be used to understand
 important contributions of multi-omic features to a given factor.
-To get a sense of which omics features show highest contribution to 
-each factor, one can plot feature loadings for any two omics using the 
+To get a sense of which omics features show highest contribution to
+each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.
 
 ```{r}
@@ -358,9 +361,9 @@ all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
 all_4_plot
 ```
 
-### Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks 
+### Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks
 
-The NCI60 data set includes gene expression data and its corresponding global 
+The NCI60 data set includes gene expression data and its corresponding global
 loading matrix is a gene by factor matrix. We can learn more about the pathways
 a given factor may be capturing by running each factor vector (column of the
 global loadings matrix) through a gene set enrichment analysis (GSEA). In the
@@ -391,7 +394,7 @@ geneset_report <- gsea_report(mrna_gfscores, path.database,
                              factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
 ```
 
-#### Investigating the GSEA Summary Table  
+#### Investigating the GSEA Summary Table
 
 The report comes in the form of a list where the first element is a data frame
 with summary level of the GSEA analysis per factor. Ideally, each factor is
@@ -428,29 +431,6 @@ sig_path3 <- factor3_paths[min(factor3_paths$pval) == factor3_paths$pval, ][1, ]
 as.list(sig_path3)
 ```
 
-#### Investigating the Selectivity Score  
-
-The second element in the report is the selectivity score which is calculated
-as follows:
-
-$$
-    S = Selectivity\,Score = (N_c + N_f) / 2L
-$$
-where $N_c$ is the total number of clinical annotations associated with at
-least one factor, $N_f$ the total number of factors associated with at least
-one clinical annotation, and $L$ the total number of associations between
-clinical annotations and factors. $S$ has a maximum value of 1 when each factor
-is associated with one and only one clinical/biological annotation, and a
-minimum of 0 in the opposite case. An optimal method should thus maximize its
-number of factors associated with clinical/biological annotations without
-having a too low selectivity.
-
-```{r}
-geneset_report[[2]]
-```
-
-For the mRNA global loadings we can see that there is low selectivity which
-suggests that there is some overlap between the signals capture by each factor.
 
 ## Session Info
 

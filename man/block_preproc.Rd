@@ -12,7 +12,7 @@ block_preproc(df, block_preproc_method)
 \item{block_preproc_method}{method which is used to normalize blocks, with
 options: \itemize{
 \item `unit_var` FOR CENTERED MATRICES ONLY - divides each block by the
-square root of its variance 
+square root of its variance
 \item `num_cols` divides each block by the number of variables in the block.
 \item `largest_sv` divides each block by its largest singular value.
 \item `none` performs no preprocessing
@@ -27,6 +27,6 @@ according to a variety of options.
 Intended to be used after column/row-level normalization.
 }
 \examples{
-df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 preprocessed_dataframe <- block_preproc(df,"unit_var")
 }

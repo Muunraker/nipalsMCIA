@@ -4,6 +4,7 @@
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
@@ -23,6 +24,9 @@ You can install the development version of nipalsMCIA from
 library(devtools)
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
                          force = TRUE, build_vignettes = TRUE)
+```
+
+``` r
 library(nipalsMCIA)
 ```
 
@@ -43,29 +47,19 @@ summary(data_blocks)
 #> miRNA   537  data.frame list
 #> prot   7016  data.frame list
 
-metadata_NCI60
-#>               cancerType
-#> CNS.SF_268           CNS
-#> CNS.SF_295           CNS
-#> CNS.SF_539           CNS
-#> CNS.SNB_19           CNS
-#> CNS.SNB_75           CNS
-#> CNS.U251             CNS
-#> LE.CCRF_CEM     Leukemia
-#> LE.HL_60        Leukemia
-#> LE.K_562        Leukemia
-#> LE.MOLT_4       Leukemia
-#> LE.RPMI_8226    Leukemia
-#> LE.SR           Leukemia
-#> ME.LOXIMVI      Melanoma
-#> ME.MALME_3M     Melanoma
-#> ME.M14          Melanoma
-#> ME.SK_MEL_2     Melanoma
-#> ME.SK_MEL_28    Melanoma
-#> ME.SK_MEL_5     Melanoma
-#> ME.UACC_257     Melanoma
-#> ME.UACC_62      Melanoma
-#> ME.MDA_MB_435   Melanoma
+head(metadata_NCI60)
+#>            cancerType
+#> CNS.SF_268        CNS
+#> CNS.SF_295        CNS
+#> CNS.SF_539        CNS
+#> CNS.SNB_19        CNS
+#> CNS.SNB_75        CNS
+#> CNS.U251          CNS
+
+table(metadata_NCI60)
+#> metadata_NCI60
+#>      CNS Leukemia Melanoma 
+#>        6        6        9
 ```
 
 Note: this dataset is reproduced from the [omicade4
@@ -77,8 +71,8 @@ The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
 
 ``` r
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod = 'colprofile',
-                                  metadata = metadata_NCI60, coloring = "cancerType", 
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
+                                  metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 10, tol = 1e-12)
 ```
 

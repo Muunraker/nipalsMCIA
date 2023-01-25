@@ -12,15 +12,15 @@ col_preproc(df, col_preproc_method)
 
 \item{col_preproc_method}{denotes the type of column-centered preprocessing.
 Options are: \itemize{
-\item `colprofile` Performs the following steps on a given data frame: 
+\item `colprofile` Performs the following steps on a given data frame:
 \itemize{
 \item Offsets data to make whole matrix non-negative
 \item Divides each column by its sum
 \item Subtracts (row sum/total sum) from each row
 \item Multiplies each column by sqrt(column sum/total sum)
 }
-\item `standardized` centers each column and divides by its standard 
-deviation. 
+\item `standardized` centers each column and divides by its standard
+deviation.
 \item `centered_only` ONLY centers data
 }}
 }
@@ -37,6 +37,6 @@ Performs preprocessing on a sample/variable (row/column) level
 according to the parameter given.
 }
 \examples{
-df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 preprocessed_dataframe <- col_preproc(df, col_preproc_method = 'colprofile')
 }

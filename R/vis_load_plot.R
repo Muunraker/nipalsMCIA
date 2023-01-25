@@ -15,11 +15,10 @@
 #' colors_omics <- get_colors(mcia_results)
 #' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 #' @importFrom ggplot2 ggplot aes_string geom_point theme_bw scale_color_manual
-#' @importFrom ggplot2 xlab ylab
+#' @importFrom ggplot2 xlab ylab labs
 #' @export
 
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
-
   # extracting global loadings
   gl <- mcia_out$global_loadings
 
@@ -34,13 +33,12 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
 
   # plot data
   p <- ggplot(data = gl_f,
-              aes_string(x = colnames(gl_f)[1],
-                         y = colnames(gl_f)[2],
+              aes_string(x = colnames(gl_f)[1], y = colnames(gl_f)[2],
                          color = "omic")) +
-              xlab(paste0("Axis ", axes[1])) + 
-              ylab(paste0("Axis ", axes[2])) +
-              geom_point(alpha = 0.3) +
-              theme_bw() +
-              scale_color_manual(values = colors_omics)
+         geom_point(alpha = 0.3) +
+         labs(x = paste0("Axis ", axes[1]), y = paste0("Axis ", axes[2])) +
+         scale_color_manual(values = colors_omics) +
+         theme_bw()
+
   return(p)
 }

@@ -15,13 +15,14 @@
 #' @importFrom methods is
 #' @export
 get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
-                                color_pal_params = list(option = "D")) {
+                       color_pal_params = list(option = "D")) {
   omic_list <- names(mcia_results$block_loadings)
 
   if (is(color_pal, "function")) {
-      colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
-  } else if (is(color_pal, "character")) {
-      colors_omics <- color_pal
+    colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
+  }
+  else if (is(color_pal, "character")) {
+    colors_omics <- color_pal
   }
 
   names(colors_omics) <- omic_list
