@@ -124,14 +124,15 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   # Block-level pre-processing
   message("Performing block-level preprocessing...")
   data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
-  if(tolower(block_preproc_method) == "unit_var"){
+  if (tolower(block_preproc_method) == "unit_var") {
     block_vars <- rep(list(1),length(data_blocks))
     names(block_vars) <- names(data_blocks)
-  }else{
+  }
+  else {
     block_vars <- get_TV(data_blocks)
   }
-  message("Block pre-processing completed.")
 
+  message("Block pre-processing completed.")
 
   # First NIPALS run
   message("Computing order ", 1, " scores")
@@ -213,17 +214,19 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                color_col = color_col) # first two orders of scores
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1, 1))
-
-  } else if (tolower(plots) == "global") {
+  }
+  else if (tolower(plots) == "global") {
     par(mfrow = c(1, 2))
     # first two global scores
     projection_plot(results_list, "global", color_col = color_col)
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1, 1))
-  } else if (tolower(plots) == "none") {
+  }
+  else if (tolower(plots) == "none") {
     # Are we mising sosmething here? Need to check previous
     # versions.
-  } else {
+  }
+  else {
     message("No known plotting options specified - skipping plots.")
   }
 

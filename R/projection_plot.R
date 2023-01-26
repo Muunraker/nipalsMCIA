@@ -62,14 +62,14 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     # locating the color_col column within metadata
     col_idx <- grep(color_col, names(mcia_results$metadata))
     if (any(length(col_idx) < 1)) {
-        stop("Column name for color_col not found in metadata.")
+      stop("Column name for color_col not found in metadata.")
     }
 
     # catching if two columns happen to have the same name.
     if (length(col_idx) > 1) {
-        msg <- paste0("Metadata has duplicate columns for ", color_col,
-                     ". Selecting the first one for plotting.")
-        warning(msg)
+      msg <- paste0("Metadata has duplicate columns for ", color_col,
+                   ". Selecting the first one for plotting.")
+      warning(msg)
     }
     col_idx <- col_idx[[1]]
 
@@ -92,8 +92,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
   ### Resolving the cluster colors
   plot_colors <- get_metadata_colors(mcia_results, color_col = color_col,
-                                    color_pal = color_pal,
-                                    color_pal_params = color_pal_params)
+                                     color_pal = color_pal,
+                                     color_pal_params = color_pal_params)
   if (is.null(color_col)) {
     plot_colors <- list("black")
   }
@@ -178,7 +178,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                cex = cex,
                pch = 16)
 
-        for (j in seq(1, length(bs_normed))){
+        for (j in seq(1, length(bs_normed))) {
           bs_j <- bs_normed[[j]]
           points(bs_j[sample_indexes, orders[[1]]],
                  bs_j[sample_indexes, orders[[2]]],
@@ -194,27 +194,28 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     }
 
     # Adding legend
-    if (! tolower(legend_loc) == "none") {
-        # plotting legend without clusters/categories
-        if (length(plot_colors) == 1) {
-          legend(legend_loc,
-                 legend = c(names(mcia_results$block_loadings)),
-                 pch = 0:length(mcia_results$block_loadings),
-                 cex = cex)
-        # plotting legend for clusters/categories
-        } else {
-          leg_labels <- c(names(mcia_results$block_loadings),
-                         names(plot_colors))
-          leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
-                         rep(16, length(plot_colors))) - 1
-          leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
-                         unname(unlist(plot_colors)))
-          legend(legend_loc,
-                 legend = leg_labels,
-                 pch = leg_shapes,
-                 col = leg_colors,
-                 cex = cex)
-        }
+    if (!tolower(legend_loc) == "none") {
+      # plotting legend without clusters/categories
+      if (length(plot_colors) == 1) {
+        legend(legend_loc,
+               legend = c(names(mcia_results$block_loadings)),
+               pch = 0:length(mcia_results$block_loadings),
+               cex = cex)
+      # plotting legend for clusters/categories
+      }
+      else {
+        leg_labels <- c(names(mcia_results$block_loadings),
+                       names(plot_colors))
+        leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
+                       rep(16, length(plot_colors))) - 1
+        leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
+                       unname(unlist(plot_colors)))
+        legend(legend_loc,
+               legend = leg_labels,
+               pch = leg_shapes,
+               col = leg_colors,
+               cex = cex)
+      }
     }
   }
   else if (tolower(projection) == "block") {
@@ -227,17 +228,17 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     # Check for the presence of the block name
     block_check = any(block_name == names(mcia_results[["block_scores"]]))
     if (block_check == FALSE) {
-        block_names = paste(names(mcia_results$block_scores),
-                            collapse = ", ")
-        msg = paste0("block_name: '", block_name,
-                    "' is not part of the data blocks list: ",
-                    "'", block_names, "'.")
-        stop(msg)
+      block_names = paste(names(mcia_results$block_scores),
+                          collapse = ", ")
+      msg = paste0("block_name: '", block_name,
+                  "' is not part of the data blocks list: ",
+                  "'", block_names, "'.")
+      stop(msg)
     }
     block_idx = as.numeric(which(block_name == names(mcia_results[["block_scores"]])))
 
     # Normalize block scores to unit variance
-    #print(mcia_results$block_scores[[block_idx]])
+    # print(mcia_results$block_scores[[block_idx]])
     bs_norms <- apply(mcia_results$block_scores[[block_idx]], 2,
                       function(x) (sqrt(var(x))))
     bs_normed <- t(t(mcia_results$block_scores[[block_idx]]) / bs_norms)
@@ -278,35 +279,36 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # Cluster 2+
     if (length(clust_indexes) > 1) {
-        for (i in seq(2, length(clust_indexes))) {
-            sample_indexes <- clust_indexes[[i]]
-            points(bs_normed[sample_indexes, orders[[1]]],
-                   bs_normed[sample_indexes, orders[[2]]],
-                   col = plot_colors[[i]],
-                   cex = cex, pch = j - 1)
-        }
+      for (i in seq(2, length(clust_indexes))) {
+        sample_indexes <- clust_indexes[[i]]
+        points(bs_normed[sample_indexes, orders[[1]]],
+               bs_normed[sample_indexes, orders[[2]]],
+               col = plot_colors[[i]],
+               cex = cex, pch = j - 1)
+      }
     }
 
     # Adding legend
-    if (! tolower(legend_loc) == "none") {
-        # plotting legend without clusters/categories
-        if (length(plot_colors) == 1) {
-            # do not plot legend when only one block is used
-            invisible()
-        # plotting legend for clusters/categories
-        } else {
-            leg_labels <- c(names(mcia_results$block_loadings),
-                            names(plot_colors))
-            leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
-                            rep(16, length(plot_colors))) - 1
-            leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
-                            unname(unlist(plot_colors)))
-            legend(legend_loc,
-                   legend = leg_labels,
-                   pch = leg_shapes,
-                   col = leg_colors,
-                   cex = cex)
-        }
+    if (!tolower(legend_loc) == "none") {
+      # plotting legend without clusters/categories
+      if (length(plot_colors) == 1) {
+        # do not plot legend when only one block is used
+        invisible()
+      # plotting legend for clusters/categories
+      }
+      else {
+        leg_labels <- c(names(mcia_results$block_loadings),
+                        names(plot_colors))
+        leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
+                        rep(16, length(plot_colors))) - 1
+        leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
+                        unname(unlist(plot_colors)))
+        legend(legend_loc,
+               legend = leg_labels,
+               pch = leg_shapes,
+               col = leg_colors,
+               cex = cex)
+      }
     }
   }
   else if (tolower(projection) == "global") {

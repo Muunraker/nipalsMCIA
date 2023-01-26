@@ -37,8 +37,8 @@ vis_load_ord <- function(gl_f_ord, omic_name, colors_omics, n_feat = 15) {
               aes(x = factor(omic_name, levels = omic_name),
                   y = !!loading, color = !!omic)) +
        geom_point() +
-       xlab("Feature") +
-       scale_color_manual(values = color_vals) +
+       labs(x = "Feature") +
+       scale_color_manual(values = color_vals, limits = force) +
        theme_bw() +
        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
   return(p)
