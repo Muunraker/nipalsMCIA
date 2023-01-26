@@ -12,7 +12,6 @@ inst/doc
 /doc/
 .gitignore
 .DS_Store
-vignettes/.build.timestamp
 vignettes/data_blocks_sc.Rda
 data/data_blocks_sc.Rda
 ..Rcheck/
