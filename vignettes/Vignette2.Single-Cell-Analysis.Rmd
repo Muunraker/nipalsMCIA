@@ -29,8 +29,8 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-```{r flowcharts, echo = FALSE}
-knitr::include_graphics("images/Vignette-2-Pipeline.png")
+```{r flowcharts}
+# knitr::include_graphics("images/Vignette-2-Pipeline.png")
 ```
 
 ```{r load-packages, echo = TRUE, include = FALSE}
@@ -68,7 +68,7 @@ We have the objects described below available in data files which you can downlo
 pb_list(repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
-```{r data-all-download, echo = FALSE}
+```{r data-all-download}
 # files for running MCIA
 pb_download(file = "metadata_sc.csv", # "Annotations"
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
@@ -266,11 +266,9 @@ rownames(obj[["ADT"]])
 # [25] "CD278-TotalSeqB"         "CD335-TotalSeqB"         "PD-1-TotalSeqB"
 # [28] "HLA-DR-TotalSeqB"        "TIGIT-TotalSeqB"         "IgG1-control-TotalSeqB"
 # [31] "IgG2a-control-TotalSeqB" "IgG2b-control-TotalSeqB"
-```
 
-```{r data-10x-save, eval = FALSE}
 # save the data locally if desired
-saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
+# saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 ```
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
@@ -343,7 +341,9 @@ the metadata (see the [Deep dive: Seurat analysis] section for details on their 
 #### Define colors
 
 ```{r mcia-plots-colors}
-# for the project plot
+# for the projection plot
+# technically you could just do color_pal_params = list(option = "D"), but saving
+# the colors is useful for other plots like in the Seurat section
 meta_colors_sc <- get_metadata_colors(mcia_results = mcia_results_sc,
                                       color_col = "CellType",
                                       color_pal = scales::viridis_pal,
@@ -355,13 +355,13 @@ colors_omics_sc <- get_colors(mcia_results_sc)
 
 #### Eigenvalue scree plot
 
-```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6), echo = FALSE}
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6)}
 global_scores_eigenvalues_plot(mcia_results_sc)
 ```
 
 #### Projection plot
 
-```{r mcia-plots-projection, fig.dim = c(8, 8), echo = FALSE}
+```{r mcia-plots-projection, fig.dim = c(8, 8)}
 projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", orders = c(1, 2),
                 color_col = "CellType", color_pal = meta_colors_sc,
@@ -370,7 +370,7 @@ projection_plot(mcia_results = mcia_results_sc,
 
 #### Global scores heatmap
 
-```{r mcia-plots-heatmap-global, fig.dim = c(8, 6), echo = FALSE}
+```{r mcia-plots-heatmap-global, fig.dim = c(8, 6)}
 suppressMessages(global_scores_heatmap(mcia_results_sc))
 # The automatically generated colors map from the minus and plus 99^th of the absolute values in the matrix.
 # There are outliers in the matrix whose patterns might be hidden by this color mapping. You can manually
@@ -379,17 +379,19 @@ suppressMessages(global_scores_heatmap(mcia_results_sc))
 
 #### Block weights heatmap
 
-```{r mcia-plots-heatmap-block, fig.dim = c(8, 6), echo = FALSE}
+```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
 block_weights_heatmap(mcia_results_sc)
 ```
 
 #### Loadings
 
-```{r mcia-plots-loadings, fig.dim = c(8, 6), echo = FALSE}
+```{r mcia-plots-loadings, fig.dim = c(8, 6)}
 vis_load_plot(mcia_results_sc, axes = c(1, 4), colors_omics = colors_omics_sc)
 ```
 
 #### Top features
+
+In a few factors of interest:
 
 ##### Factor 1
 
@@ -409,39 +411,36 @@ mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
 ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-##### Factor 2
-
-```{r mcia-plots-top-features-factor-2, fig.dim = c(10, 5)}
-# define the loadings
-all_abs_2 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
-                          absolute = TRUE, descending = TRUE, factor = 2)
-prot_abs_2 <- ord_loadings(mcia_out = mcia_results_sc, omic = "adt",
-                           absolute = TRUE, descending = TRUE, factor = 2)
-
-# visualization
-all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_name = "all",
-                              colors_omics = colors_omics_sc)
-prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "adt",
-                               colors_omics = colors_omics_sc)
-
-ggarrange(all_abs_2_vis, prot_abs_2_vis)
-```
-
 ##### Factor 4
+
+If you don't want to rank by the absolute value and see a large number of features:
 
 ```{r mcia-plots-top-features-factor-4, fig.dim = c(10, 5)}
 # define the loadings
-all_4 <- ord_loadings(mcia_results_sc, omic = "all", absolute = FALSE,
-                      descending = TRUE, factor = 4)
+all_4 <- ord_loadings(mcia_results_sc, omic = "all", 
+                      absolute = FALSE, descending = TRUE, factor = 4)
 
 # visualization
-vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics_sc, n_feat = 60)
+vis_load_ord(gl_f_ord = all_4, omic_name = "all", 
+             colors_omics = colors_omics_sc, n_feat = 60)
 ```
 
-### PCA
+##### Factor 7
 
-```{r mcia-pca}
+```{r mcia-plots-top-features-factor-7, fig.dim = c(10, 5)}
+# define the loadings
+all_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
+                          absolute = TRUE, descending = TRUE, factor = 7)
+prot_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "mrna",
+                           absolute = TRUE, descending = TRUE, factor = 7)
 
+# visualization
+all_abs_7_vis <- vis_load_ord(gl_f_ord = all_abs_7, omic_name = "all",
+                              colors_omics = colors_omics_sc)
+prot_abs_7_vis <- vis_load_ord(gl_f_ord = prot_abs_7, omic_name = "mrna",
+                               colors_omics = colors_omics_sc)
+
+ggarrange(all_abs_7_vis, prot_abs_7_vis)
 ```
 
 ## Deep dive: Seurat analysis
@@ -475,7 +474,7 @@ metrics_summary
 
 ##### Before filtering
 
-```{r seurat-qc-pre-filter, fig.dim = c(8, 5), echo = FALSE}
+```{r seurat-qc-pre-filter, fig.dim = c(8, 5)}
 VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
         pt.size = 0.01, ncol = 3) &
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
@@ -486,7 +485,7 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 Based on the previous plots, a minimum of 200 features and a maximum of 20% mitochondrial seemed like good cutoffs.
 
-```{r seurat-qc-post-filter, fig.dim = c(8, 5), echo = FALSE}
+```{r seurat-qc-post-filter, fig.dim = c(8, 5)}
 # adjust cutoffs as desired
 obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
 
@@ -544,7 +543,7 @@ obj$annotated_clusters <- c()
 
 Examine the top twenty most variable features:
 
-```{r seurat-top-features, fig.dim = c(6, 6), warning = FALSE, echo = FALSE}
+```{r seurat-top-features, fig.dim = c(6, 6), warning = FALSE}
 LabelPoints(plot = VariableFeaturePlot(obj),
             points = head(VariableFeatures(obj), 20),
             repel = TRUE, xnudge = 0, ynudge = 0) +
@@ -553,17 +552,18 @@ LabelPoints(plot = VariableFeaturePlot(obj),
 
 #### Elbow plot
 
-```{r seurat-elbow, fig.dim = c(8, 4), echo = FALSE}
-# used in selecting how many PCs to choose when identifying neighbors/clusters
+This kind of plot is typically used for selecting how many PCs to choose when 
+identifying neighbors/clusters.
+
+```{r seurat-elbow, fig.dim = c(8, 4)}
 ElbowPlot(obj)
 ```
 
 #### UMAP
 
-```{r seurat-umap-initial, fig.dim = c(8, 8), echo = FALSE}
-# note that you can use the LabelClusters function to help label individual clusters
-
-plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6) +
+```{r seurat-umap-initial, fig.dim = c(8, 8)}
+# note that you can also use the LabelClusters function to help label individual clusters
+plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4) +
                           labs(title = "Initial Clusters") +
                           theme(plot.title = element_text(hjust = 0.5),
                                 axis.text = element_blank(), 
@@ -588,7 +588,7 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ##### GEX
 
-```{r seurat-markers-dot-gex, fig.dim = c(20, 6), warning = FALSE, echo = FALSE}
+```{r seurat-markers-dot-gex, fig.dim = c(20, 6), warning = FALSE}
 p <- DotPlot(obj, features = unique(markers_all$Marker),
              cols = "RdBu", dot.scale = 3, cluster.idents = TRUE) 
 
@@ -604,7 +604,7 @@ p +
 
 The average expression was set to a minimum of zero to better see the up-regulated features.
 
-```{r seurat-markers-dot-adt, fig.dim = c(16, 6), echo = FALSE}
+```{r seurat-markers-dot-adt, fig.dim = c(16, 6)}
 DefaultAssay(obj) <- "ADT"
 
 DotPlot(obj, features = rownames(obj@assays[["ADT"]]@counts),
@@ -618,7 +618,7 @@ DefaultAssay(obj) <- "RNA"
 
 ##### B cells
 
-```{r seurat-markers-feature-b, fig.dim = c(16, 24), echo = FALSE}
+```{r seurat-markers-feature-b, fig.dim = c(16, 24)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "B"))$Marker,
@@ -630,7 +630,7 @@ FeaturePlot(object = obj,
 
 aka myeloid dendritic cells
 
-```{r seurat-markers-feature-mdcs, fig.dim = c(16, 8), echo = FALSE}
+```{r seurat-markers-feature-mdcs, fig.dim = c(16, 8)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "mDC"))$Marker,
@@ -640,7 +640,7 @@ FeaturePlot(object = obj,
 
 ##### Melanocytes
 
-```{r seurat-markers-feature-melanocytes, fig.dim = c(4, 4), echo = FALSE}
+```{r seurat-markers-feature-melanocytes, fig.dim = c(4, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Melanocytes"))$Marker,
@@ -650,7 +650,7 @@ FeaturePlot(object = obj,
 
 ##### Myocytes
 
-```{r seurat-markers-feature-myocytes, fig.dim = c(4, 4), echo = FALSE}
+```{r seurat-markers-feature-myocytes, fig.dim = c(4, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Myocytes"))$Marker,
@@ -662,7 +662,7 @@ FeaturePlot(object = obj,
 
 aka natural killer cells
 
-```{r seurat-markers-feature-nk, fig.dim = c(16, 12), echo = FALSE}
+```{r seurat-markers-feature-nk, fig.dim = c(16, 12)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "NK"))$Marker,
@@ -674,7 +674,7 @@ FeaturePlot(object = obj,
 
 aka plasmacytoid dendritic cells
 
-```{r seurat-markers-feature-pdcs, fig.dim = c(16, 12), echo = FALSE}
+```{r seurat-markers-feature-pdcs, fig.dim = c(16, 12)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "pDC"))$Marker,
@@ -684,7 +684,7 @@ FeaturePlot(object = obj,
 
 ##### Plasma cells
 
-```{r seurat-markers-feature-plasma, fig.dim = c(16, 12), echo = FALSE}
+```{r seurat-markers-feature-plasma, fig.dim = c(16, 12)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Plasma"))$Marker,
@@ -694,7 +694,7 @@ FeaturePlot(object = obj,
 
 ##### Platelets
 
-```{r seurat-markers-feature-platelets, fig.dim = c(4, 4), echo = FALSE}
+```{r seurat-markers-feature-platelets, fig.dim = c(4, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Platelets"))$Marker,
@@ -704,7 +704,7 @@ FeaturePlot(object = obj,
 
 ##### T cells
 
-```{r seurat-markers-feature-t, fig.dim = c(16, 12), echo = FALSE}
+```{r seurat-markers-feature-t, fig.dim = c(16, 12)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "T"))$Marker,
@@ -716,7 +716,9 @@ FeaturePlot(object = obj,
 
 ##### ADT
 
-```{r seurat-markers-violin-adt, fig.dim = c(16, 32), echo = FALSE}
+Here the point size is set to zero so that you can just see the violins.
+
+```{r seurat-markers-violin-adt, fig.dim = c(16, 32)}
 VlnPlot(obj, features = rownames(obj[["ADT"]]),
         pt.size = 0, assay = "ADT", ncol = 4) &
   theme(plot.title = element_text(size = 10),
@@ -732,17 +734,19 @@ publication. There are also [automated methods for annotation](https://www.scien
 
 #### Annotations
 
+If you would like to further break down these clusters, you can increase the clustering resolution
+in the standard pipeline in order to increase the number of clusters.
+
 ```{r seurat-annotations}
-# update these
-obj_annotations <- rbind(c("0", "Macrophages"),
+obj_annotations <- rbind(c("0", "Macrophages/mDCs"), # difficult to separate
                          c("1", "T Cells"),
                          c("2", "T Cells"),
                          c("3", "T Cells"),
                          c("4", "Natural Killers"),
                          c("5", "B Cells"),
-                         c("6", "mDCs"),
-                         c("7", "Macrophages"),
-                         c("8", "T Cells"),
+                         c("6", "Macrophages/mDCs"), # difficult to separate
+                         c("7", "Macrophages/mDCs"), # difficult to separate
+                         c("8", "T Cells"), # faint signal
                          c("9", "pDCs"))
 colnames(obj_annotations) <- c("Cluster", "CellType")
 obj_annotations <- data.frame(obj_annotations)
@@ -781,19 +785,23 @@ meta <- data.frame("CellType" = Idents(obj))
 
 #### UMAPs
 
-```{r seurat-umap-both, fig.dim = c(16, 8), echo = FALSE}
-# change colors from default if desired
-plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6,
-                                    cols = "Dark2") +
+Here we use the selected metadata colors from the [[MCIA]] section, so be sure to 
+change that (or just remove the `cols = ...` to use the default) if you are running
+this section first.
+
+```{r seurat-umap-both, fig.dim = c(16, 8)}
+# change colors and themes as desired
+plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4,
+                                    cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
                              theme(plot.title = element_text(hjust = 0.5),
                                    axis.text = element_blank(), 
                                    axis.ticks = element_blank())
 
-plot_seurat_clusters + plot_annotated_clusters
+ggarrange(plot_seurat_clusters, plot_annotated_clusters)
 ```
 
-```{r seurat-umap-adt, fig.dim = c(16, 16), echo = FALSE}
+```{r seurat-umap-adt, fig.dim = c(16, 16)}
 # plot ADT information on top as an example
 
 DefaultAssay(obj) <- "ADT"
@@ -809,10 +817,10 @@ DefaultAssay(obj) <- "RNA"
 
 For example, if you want to visually check your T cell cluster annotations:
 
-```{r seurat-check-annotations-t, fig.dim = c(16, 12), echo = FALSE}
+```{r seurat-check-annotations-t, fig.dim = c(16, 12)}
 VlnPlot(object = obj,
         features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker,
-        ncol = 4) &
+        cols = meta_colors_sc, pt.size = 0.01, ncol = 4) &
   theme(plot.title = element_text(size = 10),
         axis.title.x = element_blank())
 ```
@@ -823,7 +831,7 @@ The file has to be structured in the form of a (large) list, with each omic save
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
-data_rna <- GetAssayData(obj, slot = 'data')[VariableFeatures(obj), ]
+data_rna <- GetAssayData(obj, slot = 'data', assay = 'RNA')[VariableFeatures(obj), ]
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
 # colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
@@ -848,6 +856,6 @@ data.frame(data_blocks_sc$adt[1:5, 1:5])
 
 ## Session Info
 
-```{r session-info, echo = FALSE}
+```{r session-info}
 sessionInfo()
 ```
