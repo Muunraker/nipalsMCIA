@@ -90,9 +90,6 @@ pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds",
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
 pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
             repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_inst)
-
-# clean out old files as needed
-# pb_delete(file = "", repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ### Bioconductor
@@ -332,10 +329,10 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc,
 # Computing order 9 scores
 # Computing order 10 scores
 
-# saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
-#
-# pb_upload(file = file.path(path_data, "mcia_results_sc.Rds"),
-#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
+
+pb_upload(file = file.path(path_data, "mcia_results_sc.Rds"),
+          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ```{r mcia-decomp-load}
@@ -374,7 +371,7 @@ global_scores_eigenvalues_plot(mcia_results_sc)
 projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", orders = c(1, 2),
                 color_col = "CellType", color_pal = meta_colors_sc,
-                legend_loc = "topright")
+                legend_loc = "bottomright")
 ```
 
 #### Global scores heatmap
@@ -394,7 +391,7 @@ block_weights_heatmap(mcia_results_sc)
 
 #### Loadings
 
-```{r mcia-plots-heatmap-loadings, fig.dim = c(8, 6), echo = FALSE}
+```{r mcia-plots-loadings, fig.dim = c(8, 6), echo = FALSE}
 vis_load_plot(mcia_results_sc, axes = c(1, 4), colors_omics = colors_omics_sc)
 ```
 
@@ -544,7 +541,7 @@ as normal.
 ```{r seurat-load-processed-object}
 obj <- readRDS(file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
-# reset to normal
+# reset to baseline
 Idents(obj) <- "seurat_clusters"
 obj$annotated_clusters <- c()
 ```
@@ -571,12 +568,19 @@ ElbowPlot(obj)
 
 ```{r seurat-umap-initial, fig.dim = c(8, 8), echo = FALSE}
 # note that you can use the LabelClusters function to help label individual clusters
+
 plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6) +
-                          labs(title = "Initial Clusters")
+                          labs(title = "Initial Clusters") +
+                          theme(plot.title = element_text(hjust = 0.5),
+                                axis.text = element_blank(), 
+                                axis.ticks = element_blank())
 plot_seurat_clusters
 ```
 
 ### Marker overlays
+
+Note that the following marker genes **are not meant to be an exhaustive list.**
+They are included as examples of some of the cell types you could look for.
 
 #### Load marker genes
 
@@ -728,29 +732,32 @@ VlnPlot(obj, features = rownames(obj[["ADT"]]),
 
 ### Annotate cell clusters
 
+These annotations are chosen here more as a proof of general concept instead of a more
+highly refined and verified approach that you would typically see within a single-cell
+publication. There are also [automated methods for annotation](https://www.sciencedirect.com/science/article/pii/S2001037021000192).
+
 #### Annotations
 
 ```{r seurat-annotations}
 # update these
-obj_annotations <- rbind(c("0", "Macrophages"), # or mDC
-                         c("1", "T cells"),
-                         c("2", "T cells"),
-                         c("3", "T cells"), # or NK
-                         c("4", "Natural killers"),
-                         c("5", "B cells"),
-                         c("6", "mDCs"), # or B cells or macrophages
-                         c("7", "Macrophages"), # or mDC
-                         c("8", "T cells"),
+obj_annotations <- rbind(c("0", "Macrophages"),
+                         c("1", "T Cells"),
+                         c("2", "T Cells"),
+                         c("3", "T Cells"),
+                         c("4", "Natural Killers"),
+                         c("5", "B Cells"),
+                         c("6", "mDCs"),
+                         c("7", "Macrophages"),
+                         c("8", "T Cells"),
                          c("9", "pDCs"))
 colnames(obj_annotations) <- c("Cluster", "CellType")
 obj_annotations <- data.frame(obj_annotations)
 
 # save the annotations as a csv if you'd like
-# write.csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
+write.csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
 
 # prepare the annotation information
-annotations <- obj_annotations[["CellType"]] # you only need the cell type information
-names(annotations) <- levels(obj$seurat_clusters)
+annotations <- setNames(obj_annotations$CellType, obj_annotations$Cluster)
 
 # relabel the Seurat clusters
 # Idents(obj) <- "seurat_clusters"
@@ -792,17 +799,22 @@ meta <- data.frame("CellType" = Idents(obj))
 # change colors from default if desired
 plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 6,
                                     cols = "Dark2") +
-                             labs(title = "Annotated Clusters")
+                             labs(title = "Annotated Clusters") +
+                             theme(plot.title = element_text(hjust = 0.5),
+                                   axis.text = element_blank(), 
+                                   axis.ticks = element_blank())
 
 plot_seurat_clusters + plot_annotated_clusters
 ```
 
-```{r seurat-umap-adt, fig.dim = c(16, 16), echo = FALSE, eval = FALSE}
+```{r seurat-umap-adt, fig.dim = c(16, 16), echo = FALSE}
 # plot ADT information on top as an example
 
+DefaultAssay(obj) <- "ADT"
 FeaturePlot(obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB",
                               "CD19-TotalSeqB", "CD27-TotalSeqB"),
             label = TRUE, label.size = 2, ncol = 2, raster = FALSE)
+DefaultAssay(obj) <- "RNA"
 ```
 
 #### Check the annotations
@@ -819,22 +831,22 @@ VlnPlot(object = obj,
 
 ### Save for MCIA
 
-The file has to be structured in the form of a (large) list, with each omic saved as an element within it.
+The file has to be structured in the form of a (large) list, with each omic saved as an element within it. If you would like to append the type of omic to the end of your features, uncomment the commented lines.
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
 data_rna <- GetAssayData(obj, slot = 'data')[VariableFeatures(obj), ]
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
-colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
-data_rna <- log2(data_rna + 1) # log-transform becuse the data is heavy tailed
+# colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
+data_rna <- log2(data_rna + 1) # log-transform because the data is heavy tailed
 
 # adt
 data_adt <- GetAssayData(obj, slot = 'data', assay = 'ADT')
 data_adt <- as.matrix(data_adt)
 data_adt <- t(data_adt) # switch the rows
-colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")
-data_adt <- log2(data_adt + 1) # log-transform becuse the data is heavy tailed
+# colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")
+data_adt <- log2(data_adt + 1) # log-transform because the data is heavy tailed
 
 # combined
 data_blocks_sc <- list(mrna = data_rna, adt = data_adt)
