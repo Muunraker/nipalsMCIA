@@ -20,8 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 It may be of interest to use the embedding that is calculated on a training
 sample set to predict scores on a test set (or, equivalently, on new data).
 
-After loading the nipalsMCIA library (see the X vignette for instructions on
-how to install), we randomly split the NCI60 cancer cell line data into
+After loading the nipalsMCIA library, we randomly split the NCI60 cancer cell line data into
 training and test sets.
 
 ```{r load-packages}
