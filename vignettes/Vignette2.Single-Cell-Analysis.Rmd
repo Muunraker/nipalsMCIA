@@ -204,12 +204,9 @@ head(data_blocks_sc_sce_seurat[[]])
 
 ```{r data-bioconductor-save, eval = FALSE}
 # save the data locally if desired
+# these two files can be found as "data_sc_sce.Rda" on piggyback
 save(data_blocks_sc_sce, data_blocks_sc_sce_seurat,
      file = file.path(path_data, "data_sc_sce.Rda"))
-
-# these two files can be found as "data_sc_sce.Rda" on piggyback
-# pb_upload(file = file.path(path_data, "data_sc_sce.Rda"),
-#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ### 10x Genomics and Seurat
@@ -329,10 +326,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc,
 # Computing order 9 scores
 # Computing order 10 scores
 
-saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
-
-pb_upload(file = file.path(path_data, "mcia_results_sc.Rds"),
-          repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
+# saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
 ```
 
 ```{r mcia-decomp-load}
@@ -754,7 +748,7 @@ colnames(obj_annotations) <- c("Cluster", "CellType")
 obj_annotations <- data.frame(obj_annotations)
 
 # save the annotations as a csv if you'd like
-write.csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
+# write.csv(obj_annotations, file = file.path(path_data, "obj_annotations.csv"))
 
 # prepare the annotation information
 annotations <- setNames(obj_annotations$CellType, obj_annotations$Cluster)
@@ -772,10 +766,6 @@ obj[["annotated_clusters"]] <- Idents(obj)
 # save the processed and annotated Seurat object
 # saveRDS(obj, file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
-# upload to piggyback
-# pb_upload(file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"),
-#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
-
 # info about the clusters
 obj_annotations %>%
   group_by(CellType) %>%
@@ -787,10 +777,6 @@ meta <- data.frame("CellType" = Idents(obj))
 
 # save the metadata file for MCIA
 # write.csv(meta, file = file.path(path_data, "metadata_sc.csv"))
-
-# upload to piggyback
-# pb_upload(file = file.path(path_data, "metadata_sc.csv"),
-#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 #### UMAPs
@@ -811,9 +797,11 @@ plot_seurat_clusters + plot_annotated_clusters
 # plot ADT information on top as an example
 
 DefaultAssay(obj) <- "ADT"
+
 FeaturePlot(obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB",
                               "CD19-TotalSeqB", "CD27-TotalSeqB"),
             label = TRUE, label.size = 2, ncol = 2, raster = FALSE)
+
 DefaultAssay(obj) <- "RNA"
 ```
 
@@ -856,9 +844,6 @@ data.frame(data_blocks_sc$mrna[1:5, 1:5])
 data.frame(data_blocks_sc$adt[1:5, 1:5])
 
 # save(data_blocks_sc, file = file.path(path_data, "data_blocks_sc.Rda"))
-#
-# pb_upload(file = file.path(path_data, "data_blocks_sc.Rda"),
-#           repo = "Muunraker/nipalsMCIA", tag = "v0.0.1")
 ```
 
 ## Session Info
