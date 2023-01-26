@@ -11,7 +11,7 @@ projection_plot(
   block_name = NULL,
   color_col = NULL,
   color_pal = scales::viridis_pal,
-  color_pal_params = list(option = "D"),
+  color_pal_params = list(option = "E"),
   legend_loc = "bottomleft",
   color_override = NULL,
   cex = 0.5
