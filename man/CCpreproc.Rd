@@ -7,24 +7,28 @@
 CCpreproc(df)
 }
 \arguments{
-\item{df}{the data frame to apply pre-processing to, in "sample" x "variable" format}
+\item{df}{the data frame to apply pre-processing to, in "sample" x
+"variable" format}
 }
 \value{
 the processed data frame
 }
 \description{
-Converts data blocks into centered column profiles where each 
-block has unit variance. Mimics the pre-processing in the Omicade4 package (Meng et al. 2014)
+Converts data blocks into centered column profiles where each
+block has unit variance. Mimics the pre-processing in the Omicade4 package
+(Meng et al. 2014)
 }
 \details{
 Performs the following steps on a given data frame: \itemize{
 \item Offsets data to make whole matrix non-negative
-\item Divides each column by its sum 
+\item Divides each column by its sum
 \item Subtracts (row sum/total sum) from each row
 \item Multiplies each column by sqrt(column sum/total sum)
-\item Divides the whole data frame by its total variance (the sqrt of the sum of singular values)
+\item Divides the whole data frame by its total variance (the sqrt of the
+sum of singular values)
 }
 }
 \examples{
-preproced_df <- CCpreproc(df)
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
+preprocessed_dataframe <- CCpreproc(df)
 }
