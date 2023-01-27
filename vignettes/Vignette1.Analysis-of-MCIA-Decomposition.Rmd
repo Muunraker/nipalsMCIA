@@ -113,10 +113,10 @@ represents an order of the global factors, i.e.
 
 $$
 \mb F = \begin{pmatrix}
-		| & |&  & |\\
-		\mb f^{(1)} &\mb f^{(2)} & \dots & \mb f^{(r)}\\
-		| & |&  & |
-	\end{pmatrix} \in \mathbb{R}^{n \times r}
+    | & |&  & |\\
+    \mb f^{(1)} &\mb f^{(2)} & \dots & \mb f^{(r)}\\
+    | & |&  & |
+  \end{pmatrix} \in \mathbb{R}^{n \times r}
 $$
 
 This matrix encodes a low-dimensional representation of the data set, with the
@@ -132,10 +132,10 @@ i.e.
 
 $$
 \mb A = \begin{pmatrix}
-		| & |&  & |\\
-		\mb a^{(1)} &\mb a^{(2)} & \dots & \mb a^{(r)}\\
-		| & |&  & |
-	\end{pmatrix} \in \mathbb{R}^{p \times r}
+    | & |&  & |\\
+    \mb a^{(1)} &\mb a^{(2)} & \dots & \mb a^{(r)}\\
+    | & |&  & |
+  \end{pmatrix} \in \mathbb{R}^{p \times r}
 $$
 
 This matrix encodes the contribution of each feature to the  low-dimensional
