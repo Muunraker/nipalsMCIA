@@ -4,10 +4,10 @@ Date: 2022-06-04
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
 Authors@R: c(
     person("Maximilian", "Mattessich", email = "maximilian.mattessich@northwestern.edu", role = "cre"),
-    person("Anna", "Konstorum", email = "konstorum.anna@gmail.com", role = "aut"),
+    person("Anna", "Konstorum", email = "konstorum.anna@gmail.com", role = "aut", comment = c(ORCID = "0000-0003-4024-2058)),
     person("Joaquin", "Reyna", email = "joreyna@live.com", role = "aut"),
     person("Edel", "Aron", email = "edel.aron@yale.edu", role = "aut", comment = c(ORCID = "0000-0002-8683-4772")))
-Description: Computes Multiple Co-Inertia Analysis (MCIA), and doing dimensionality reduction (jDR) algorithm, for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).  Allows multiple options for row- and table-level preprocessing, and speeds up computation of variance explained.  Vignettes detail application to bulk- and single cell- multi-omics studies.
+Description: Computes Multiple Co-Inertia Analysis (MCIA), a dimensionality reduction (jDR) algorithm, for a multi-block dataset using a modification to the Nonlinear Iterative Partial Least Squares method (NIPALS) proposed in (Hanafi et. al, 2010).  Allows multiple options for row- and table-level preprocessing, and speeds up computation of variance explained.  Vignettes detail application to bulk- and single cell- multi-omics studies.
 License: GPL-3
 RoxygenNote: 7.2.1
 Depends:
