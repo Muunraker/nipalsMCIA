@@ -9,6 +9,8 @@
 *.Ruserdata
 
 # other file extensions
+*.html
+*.png
 *.swp
 *.tex
 *.un~
