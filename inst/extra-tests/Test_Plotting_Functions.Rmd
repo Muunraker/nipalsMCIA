@@ -26,18 +26,18 @@ mcia_results$metadata <- metadata_NCI60
 
 # Test projection_plot with NO colors
 
-```{r fig.height=4, fig.width=4, fig.align="center"}
-plotType <- "projection_global"
-orders <- c(1,2)
-projection_plot(mcia_results, plotType,
-                orders=c(1,2), color_col = NULL,
+```{r, fig.dim = c(4, 4), fig.align = "center"}
+plot_type <- "projection_global"
+orders <- c(1, 2)
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = NULL,
                 legend_loc = "bottomleft")
 ```
 
-```{r fig.height=6, fig.width=4, fig.align="center"}
-plotType <- "projection"
-projection_plot(mcia_results, plotType,
-                orders=c(1,2), color_col = NULL,
+```{r, fig.dim = c(6, 4), fig.align = "center"}
+plot_type <- "projection"
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = NULL,
                 legend_loc = "bottomleft")
 ```
 
@@ -47,48 +47,48 @@ projection_plot(mcia_results, plotType,
 color_col <- "cancerType"
 ```
 
-```{r fig.height=4, fig.width=4, fig.align="center"}
-plotType <- "projection_global"
+```{r, fig.dim = c(4, 4), fig.align = "center"}
+plot_type <- "projection_global"
 orders <- c(1, 2)
-projection_plot(mcia_results, plotType,
-                orders = c(1,2), color_col = "cancerType",
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = "cancerType",
                 legend_loc = "bottomleft")
 ```
 
-```{r fig.height=6, fig.width=4, fig.align="center"}
-plotType <- "projection"
-projection_plot(mcia_results, plotType,
-                orders = c(1,2), color_col = "cancerType",
+```{r, fig.dim = c(6, 4), fig.align = "center"}
+plot_type <- "projection"
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = "cancerType",
                 legend_loc = "bottomleft")
 ```
 
 # Test projection_plot with the user specified colors
 
-```{r fig.height=4, fig.width=4, fig.align="center"}
-plotType <- "projection_global"
-orders <- c(1,2)
-projection_plot(mcia_results, plotType,
-                orders = c(1,2), color_col = "cancerType",
+```{r, fig.dim = c(4, 4), fig.align = "center"}
+plot_type <- "projection_global"
+orders <- c(1, 2)
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = "cancerType",
                 color_pal = c("red", "green", "blue"),
                 legend_loc = "bottomleft")
 ```
 
-```{r fig.height=6, fig.width=4, fig.align="center"}
-plotType <- "projection"
-projection_plot(mcia_results, plotType,
-                orders = c(1,2), color_col = "cancerType",
+```{r, fig.dim = c(6, 4), fig.align = "center"}
+plot_type <- "projection"
+projection_plot(mcia_results, projection = plot_type,
+                orders = c(1, 2), color_col = "cancerType",
                 color_pal = c("orange", "purple", "pink"),
                 legend_loc = "bottomleft")
 ```
 
 # Test global_scores_eigenvalues_plot(mcia_results)
 
-```{r}
+```{r, fig.dim = c(6, 4)}
 global_scores_eigenvalues_plot(mcia_results)
 ```
 
 # Test block_weights_heatmap
 
-```{r}
+```{r, fig.dim = c(6, 4)}
 block_weights_heatmap(mcia_results)
 ```

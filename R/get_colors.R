@@ -20,8 +20,8 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
 
   if (is(color_pal, "function")) {
     colors_omics <- do.call(color_pal, color_pal_params)(length(omic_list))
-  }
-  else if (is(color_pal, "character")) {
+
+  } else if (is(color_pal, "character")) {
     colors_omics <- color_pal
   }
 
@@ -55,8 +55,8 @@ get_metadata_colors <- function(mcia_results, color_col,
 
   if (is(color_pal, "function")) {
     colors_meta <- do.call(color_pal, color_pal_params)(length(meta_list))
-  }
-  else if (is(color_pal, "character")) {
+
+  } else if (is(color_pal, "character")) {
     colors_meta <- color_pal
   }
 

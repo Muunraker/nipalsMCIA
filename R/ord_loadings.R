@@ -33,13 +33,13 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
   gl <- mcia_out$global_loadings
   # omic_type <- gsub("^.*_", "", rownames(gl))
 
-  omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1,]
+  omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
   omic_type <- c()
   omics_labels <- names(mcia_out$block_loadings)
   for (i in seq_along(omics_labels)) {
     omic_label <- omics_labels[i]
     length_omic <- omic_dims[i]
-    omic_type <- c(omic_type, rep(omic_label,each=length_omic))
+    omic_type <- c(omic_type, rep(omic_label, each = length_omic))
   }
 
   # Filter on factor, and add omic type
@@ -52,11 +52,12 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
   if (absolute == FALSE) {
     if (descending == TRUE) {
         gl_f_ord <- gl_f[order(gl_f$loading, decreasing = TRUE), ]
+
     } else {
         gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE), ]
     }
-  }
-  else {
+
+  } else {
     gl_f_abs <- gl_f
     gl_f_abs$abs <- abs(gl_f_abs$loading)
     gl_f_ord <- gl_f_abs[order(gl_f_abs$abs, decreasing = TRUE), ]

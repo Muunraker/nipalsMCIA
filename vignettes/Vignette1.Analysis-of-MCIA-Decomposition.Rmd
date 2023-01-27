@@ -391,7 +391,7 @@ pathways <- fgsea::gmtPathways(path.database)
 
 # generate the GSEA report
 geneset_report <- gsea_report(mrna_gfscores, path.database,
-                             factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
+                              factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
 ```
 
 #### Investigating the GSEA Summary Table

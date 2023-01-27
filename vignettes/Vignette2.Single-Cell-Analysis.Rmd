@@ -774,7 +774,7 @@ obj[["annotated_clusters"]] <- Idents(obj)
 obj_annotations %>%
   group_by(CellType) %>%
   transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
-  distinct() %>% 
+  distinct() %>%
   arrange(CellType)
 
 # metadata file for MCIA

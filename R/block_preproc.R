@@ -29,35 +29,32 @@ block_preproc <- function(df, block_preproc_method) {
 
     if (block_var != 0) {
       temp_df <- temp_df * (1 / sqrt(block_var))
-    }
-    else {
+    } else {
       warning("Data block has zero variance.")
     }
-
     return(temp_df)
-  }
-  else if (block_preproc_method == "num_cols") {
+
+  } else if (block_preproc_method == "num_cols") {
     temp_df <- temp_df * (1 / ncol(temp_df))
     return(temp_df)
-  }
-  else if (block_preproc_method == "largest_sv") {
+
+  } else if (block_preproc_method == "largest_sv") {
     svdres <- RSpectra::svds(temp_df, 1)
     eigval <- svdres$d # largest singular value of the data block
 
     if (eigval != 0) {
       temp_df <- temp_df * (1 / eigval)
-    }
-    else {
+    } else {
       warning("Data block has zero largest eigenvalue")
     }
 
     return(temp_df)
-  }
-  else if (block_preproc_method == "none") {
+
+  } else if (block_preproc_method == "none") {
     return(temp_df)
-  }
-  else {
+
+  } else {
     stop("block preprocessing method not recognized",
-         "- pick from available options")
+        "- pick from available options")
   }
 }

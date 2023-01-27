@@ -19,8 +19,8 @@ global_scores_eigenvalues_plot <- function(mcia_results) {
   if (is.list(mcia_results$block_variances)) {
     ylabel <- "Prop. Total Variance"
     totvar <- sum(unlist(mcia_results$block_variances))
-  }
-  else {
+
+  } else {
     ylabel <- "Eigenvalue"
     totvar <- 1
   }
