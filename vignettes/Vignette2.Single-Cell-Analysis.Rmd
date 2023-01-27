@@ -29,7 +29,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
+![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.0/Vignette-2-Pipeline.png)
 
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
