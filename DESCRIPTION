@@ -40,6 +40,7 @@ Suggests:
     stringr,
     survival,
     Seurat,
-    tidyverse
+    tidyverse, 
+    spatstat.explore
 VignetteBuilder: knitr
 biocViews: Software, Clustering, Classification, MultipleComparison, Normalization, Preprocessing, SingleCell
