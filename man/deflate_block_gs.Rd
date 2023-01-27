@@ -23,7 +23,7 @@ Subtracts the component of each column in the direction of a given
 global scores vector to yield a `deflated' data matrix.
 }
 \examples{
-df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 global_score <- rbinom(5, 1, prob = 0.3)
 deflated_data <- deflate_block_gs(df, global_score)
 
