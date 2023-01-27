@@ -123,9 +123,9 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
   # Block-level pre-processing
   message("Performing block-level preprocessing...")
-  data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
+  data_blocks <- lapply(data_blocks, block_preproc, block_preproc_method)
   if (tolower(block_preproc_method) == "unit_var") {
-    block_vars <- rep(list(1),length(data_blocks))
+    block_vars <- rep(list(1), length(data_blocks))
     names(block_vars) <- names(data_blocks)
   }
   else {
@@ -198,11 +198,11 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
   results_list <- list(global_scores, global_loadings, block_score_weights,
                       block_scores, block_loadings, eigvals,
-                      tolower(preproc_method),tolower(block_preproc_method),
+                      tolower(preproc_method), tolower(block_preproc_method),
                       block_vars)
   names(results_list) <- c("global_scores", "global_loadings",
                            "block_score_weights", "block_scores",
-                           "block_loadings", "eigvals","column_preproc_method",
+                           "block_loadings", "eigvals", "column_preproc_method",
                            "block_preproc_method", "block_variances")
   results_list$metadata <- metadata
 

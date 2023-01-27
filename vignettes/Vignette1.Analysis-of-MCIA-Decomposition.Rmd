@@ -244,8 +244,8 @@ method, such as k-means clustering and visualized similarly.
 
 ### Visualizing the Clustering of Samples by Factor Scores
 
-The global scores represent data from our samples projected down into our 
-lower dimensional space $r$. Now that MCIA has compressed our data into 
+The global scores represent data from our samples projected down into our
+lower dimensional space $r$. Now that MCIA has compressed our data into
 these lower dimensions we can make a heatmap for samples versus factors to
 begin mining patterns and relationships. To facilitate this process you can
 visual a global scores heatmap using using `global_scores_heatmap()`:

@@ -10,7 +10,7 @@
 #' @param gs a global scores vector in sample space
 #' @return the deflated data frame
 #' @examples
-#' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3) 
+#' df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
 #' global_score <- rbinom(5, 1, prob = 0.3)
 #' deflated_data <- deflate_block_gs(df, global_score)
 #'

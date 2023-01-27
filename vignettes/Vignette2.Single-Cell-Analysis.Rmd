@@ -246,7 +246,7 @@ data <- Seurat::Read10X(file.path(path_data, "tenx_pbmc5k_CITEseq",
 # set minimum cells and/or features here if you'd like
 obj <- Seurat::CreateSeuratObject(counts = data$`Gene Expression`,
                                   project = "pbmc5k_CITEseq")
-obj[['ADT']] <- Seurat::CreateAssayObject(counts = data$`Antibody Capture`)
+obj[["ADT"]] <- Seurat::CreateAssayObject(counts = data$`Antibody Capture`)
 # Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
 
 # check the assays
@@ -307,7 +307,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks_sc,
                                      block_preproc_method = "largest_sv",
                                      num_PCs = 10, tol = 1e-9,
                                      metadata = metadata_sc,
-                                     deflationMethod = 'global',
+                                     deflationMethod = "global",
                                      plots = "none")
 # Performing column-level pre-processing...
 # Column pre-processing completed.
@@ -417,11 +417,11 @@ If you don't want to rank by the absolute value and see a large number of featur
 
 ```{r mcia-plots-top-features-factor-4, fig.dim = c(10, 5)}
 # define the loadings
-all_4 <- ord_loadings(mcia_results_sc, omic = "all", 
+all_4 <- ord_loadings(mcia_results_sc, omic = "all",
                       absolute = FALSE, descending = TRUE, factor = 4)
 
 # visualization
-vis_load_ord(gl_f_ord = all_4, omic_name = "all", 
+vis_load_ord(gl_f_ord = all_4, omic_name = "all",
              colors_omics = colors_omics_sc, n_feat = 60)
 ```
 
@@ -566,7 +566,7 @@ ElbowPlot(obj)
 plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4) +
                           labs(title = "Initial Clusters") +
                           theme(plot.title = element_text(hjust = 0.5),
-                                axis.text = element_blank(), 
+                                axis.text = element_blank(),
                                 axis.ticks = element_blank())
 plot_seurat_clusters
 ```
@@ -590,12 +590,12 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ```{r seurat-markers-dot-gex, fig.dim = c(20, 6), warning = FALSE}
 p <- DotPlot(obj, features = unique(markers_all$Marker),
-             cols = "RdBu", dot.scale = 3, cluster.idents = TRUE) 
+             cols = "RdBu", dot.scale = 3, cluster.idents = TRUE)
 
 p$data <- suppressMessages(left_join(p$data, markers_all %>%
                                              dplyr::rename(features.plot = "Marker")))
 
-p + 
+p +
   facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
   theme(strip.text.x = element_text(size = 10)) + RotatedAxis()
 ```
@@ -608,7 +608,7 @@ The average expression was set to a minimum of zero to better see the up-regulat
 DefaultAssay(obj) <- "ADT"
 
 DotPlot(obj, features = rownames(obj@assays[["ADT"]]@counts),
-        cols = "RdBu", col.min = 0, dot.scale = 3, cluster.idents = TRUE) + 
+        cols = "RdBu", col.min = 0, dot.scale = 3, cluster.idents = TRUE) +
   RotatedAxis()
 
 DefaultAssay(obj) <- "RNA"
@@ -774,7 +774,8 @@ obj[["annotated_clusters"]] <- Idents(obj)
 obj_annotations %>%
   group_by(CellType) %>%
   transmute(Clusters = paste0(Cluster, collapse = ", ")) %>%
-  distinct() %>% arrange(CellType)
+  distinct() %>% 
+  arrange(CellType)
 
 # metadata file for MCIA
 meta <- data.frame("CellType" = Idents(obj))
@@ -795,7 +796,7 @@ plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4,
                                     cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
                              theme(plot.title = element_text(hjust = 0.5),
-                                   axis.text = element_blank(), 
+                                   axis.text = element_blank(),
                                    axis.ticks = element_blank())
 
 ggarrange(plot_seurat_clusters, plot_annotated_clusters)
@@ -831,14 +832,14 @@ The file has to be structured in the form of a (large) list, with each omic save
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
-data_rna <- GetAssayData(obj, slot = 'data', assay = 'RNA')[VariableFeatures(obj), ]
+data_rna <- GetAssayData(obj, slot = "data", assay = "RNA")[VariableFeatures(obj), ]
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
 # colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
 data_rna <- log2(data_rna + 1) # log-transform because the data is heavy tailed
 
 # adt
-data_adt <- GetAssayData(obj, slot = 'data', assay = 'ADT')
+data_adt <- GetAssayData(obj, slot = "data", assay = "ADT")
 data_adt <- as.matrix(data_adt)
 data_adt <- t(data_adt) # switch the rows
 # colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")

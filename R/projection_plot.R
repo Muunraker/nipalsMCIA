@@ -49,7 +49,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                             color_pal = scales::viridis_pal,
                             color_pal_params = list(option = "E"),
                             legend_loc = "bottomleft", color_override = NULL,
-                            cex=0.5) {
+                            cex = 0.5) {
   ### Identifying the membership of samples within
   ### the clusters/categories of the color_col column
   # case i) no color_col, clusters/categories were not specified
@@ -120,13 +120,17 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # Getting bounds for projection plot
     # minimum 1st block score
-    min_bs1 <- min(vapply(lapply(bs_normed, `[`, , orders[[1]]), min, numeric(1)))
+    min_bs1 <- min(vapply(lapply(bs_normed, `[`, , orders[[1]]),
+                          min, numeric(1)))
     # minimum 2nd block score
-    min_bs2 <- min(vapply(lapply(bs_normed, `[`, , orders[[2]]), min, numeric(1)))
+    min_bs2 <- min(vapply(lapply(bs_normed, `[`, , orders[[2]]),
+                          min, numeric(1)))
     # maximum 1st block score
-    max_bs1 <- max(vapply(lapply(bs_normed, `[`, , orders[[1]]), max, numeric(1)))
+    max_bs1 <- max(vapply(lapply(bs_normed, `[`, , orders[[1]]),
+                          max, numeric(1)))
     # maximum 2nd block score
-    max_bs2 <- max(vapply(lapply(bs_normed, `[`, , orders[[2]]), max, numeric(1)))
+    max_bs2 <- max(vapply(lapply(bs_normed, `[`, , orders[[2]]),
+                          max, numeric(1)))
 
     # minimum x coordinate in plot
     min_x <- min(c(min_bs1, min(gs_normed[, orders[[1]]])))
@@ -228,14 +232,15 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     # Check for the presence of the block name
     block_check = any(block_name == names(mcia_results[["block_scores"]]))
     if (block_check == FALSE) {
-      block_names = paste(names(mcia_results$block_scores),
+      block_names <- paste(names(mcia_results$block_scores),
                           collapse = ", ")
-      msg = paste0("block_name: '", block_name,
-                  "' is not part of the data blocks list: ",
-                  "'", block_names, "'.")
+      msg <- paste0("block_name: '", block_name,
+                    "' is not part of the data blocks list: ",
+                    "'", block_names, "'.")
       stop(msg)
     }
-    block_idx = as.numeric(which(block_name == names(mcia_results[["block_scores"]])))
+    block_idx <- which(block_name == names(mcia_results[["block_scores"]]))
+    block_idx <- as.numeric(block_idx)
 
     # Normalize block scores to unit variance
     # print(mcia_results$block_scores[[block_idx]])
@@ -245,13 +250,13 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # Getting bounds for projection plot
     # minimum 1st block score
-    min_bs1 <- min(bs_normed[,orders[[1]]])
+    min_bs1 <- min(bs_normed[, orders[[1]]])
     # minimum 2nd block score
-    min_bs2 <- min(bs_normed[,orders[[2]]])
+    min_bs2 <- min(bs_normed[, orders[[2]]])
     # maximum 1st block score
-    max_bs1 <- max(bs_normed[,orders[[1]]])
+    max_bs1 <- max(bs_normed[, orders[[1]]])
     # maximum 2nd block score
-    max_bs2 <- max(bs_normed[,orders[[2]]])
+    max_bs2 <- max(bs_normed[, orders[[2]]])
 
     # minimum x coordinate in plot
     min_x <- min(c(min_bs1, min(gs_normed[, orders[[1]]])))
