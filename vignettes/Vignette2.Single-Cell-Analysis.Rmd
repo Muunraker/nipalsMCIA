@@ -29,6 +29,8 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
+![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
+
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
 # decide to pull data from another source or use our provided objects
@@ -47,17 +49,6 @@ path_data <- file.path("..", "data")
 
 # recommended location for external data
 path_inst <- file.path("..", "inst", "extdata")
-
-# external images for the vignette
-path_image <- file.path(".", "images")
-```
-
-```{r flowchart, echo = FALSE}
-# download the flowchart
-pb_download(file = "Vignette-2-Pipeline.png", # created with Whimsical
-            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_image)
-
-knitr::include_graphics("images/Vignette-2-Pipeline.png")
 ```
 
 ## Data
