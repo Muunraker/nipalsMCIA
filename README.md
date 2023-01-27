@@ -4,7 +4,6 @@
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
@@ -57,7 +56,7 @@ head(metadata_NCI60)
 #> CNS.U251          CNS
 
 table(metadata_NCI60)
-#> metadata_NCI60
+#> cancerType
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
@@ -76,7 +75,7 @@ mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
                                   num_PCs = 10, tol = 1e-12)
 ```
 
-<img src="man/figures/README-call-mcia-1.png" width="100%" />
+<img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
 
 Here `numPCs` is the dimension of the low-dimensional embedding of the
 data chosen by the user.
