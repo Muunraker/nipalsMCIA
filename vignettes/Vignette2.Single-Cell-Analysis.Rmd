@@ -29,10 +29,6 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-```{r flowcharts}
-# knitr::include_graphics("images/Vignette-2-Pipeline.png")
-```
-
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
 # decide to pull data from another source or use our provided objects
@@ -51,6 +47,17 @@ path_data <- file.path("..", "data")
 
 # recommended location for external data
 path_inst <- file.path("..", "inst", "extdata")
+
+# external images for the vignette
+path_image <- file.path(".", "images")
+```
+
+```{r flowchart, echo = FALSE}
+# download the flowchart
+pb_download(file = "Vignette-2-Pipeline.png", # created with Whimsical
+            repo = "Muunraker/nipalsMCIA", tag = "v0.0.1", dest = path_image)
+
+knitr::include_graphics("images/Vignette-2-Pipeline.png")
 ```
 
 ## Data
@@ -177,7 +184,7 @@ data_blocks_sc_sce_seurat <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna
 data_blocks_sc_sce_seurat[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # add metadata
-# rownames(obj[[]]) <- rownames(obj@assays$RNA@counts)
+# rownames(obj[[]]) <- rownames(GetAssayData(obj, slot = "counts")))
 data_blocks_sc_sce_seurat <- AddMetaData(data_blocks_sc_sce_seurat,
                                          as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k),
                                                        row.names = rownames(obj)))
@@ -562,8 +569,8 @@ ElbowPlot(obj)
 #### UMAP
 
 ```{r seurat-umap-initial, fig.dim = c(8, 8)}
-# note that you can also use the LabelClusters function to help label individual clusters
-plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4) +
+# you can also use the LabelClusters function to help label individual clusters
+plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 5) +
                           labs(title = "Initial Clusters") +
                           theme(plot.title = element_text(hjust = 0.5),
                                 axis.text = element_blank(),
@@ -588,12 +595,13 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ##### GEX
 
-```{r seurat-markers-dot-gex, fig.dim = c(20, 6), warning = FALSE}
+```{r seurat-markers-dot-gex, fig.dim = c(20, 6), message = FALSE}
 p <- DotPlot(obj, features = unique(markers_all$Marker),
-             cols = "RdBu", dot.scale = 3, cluster.idents = TRUE)
+             cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE)
 
-p$data <- suppressMessages(left_join(p$data, markers_all %>%
-                                             dplyr::rename(features.plot = "Marker")))
+p$data <- left_join(p$data, 
+                    markers_all %>% dplyr::rename(features.plot = "Marker"), 
+                    by = "features.plot")
 
 p +
   facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
@@ -607,8 +615,9 @@ The average expression was set to a minimum of zero to better see the up-regulat
 ```{r seurat-markers-dot-adt, fig.dim = c(16, 6)}
 DefaultAssay(obj) <- "ADT"
 
-DotPlot(obj, features = rownames(obj@assays[["ADT"]]@counts),
-        cols = "RdBu", col.min = 0, dot.scale = 3, cluster.idents = TRUE) +
+DotPlot(obj, features = rownames(GetAssayData(obj,
+                                              assay = "ADT", slot = "counts")),
+        cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE) +
   RotatedAxis()
 
 DefaultAssay(obj) <- "RNA"
@@ -640,22 +649,22 @@ FeaturePlot(object = obj,
 
 ##### Melanocytes
 
-```{r seurat-markers-feature-melanocytes, fig.dim = c(4, 4)}
+```{r seurat-markers-feature-melanocytes, fig.dim = c(16, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Melanocytes"))$Marker,
             min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 1, raster = FALSE)
+            ncol = 4, raster = FALSE)
 ```
 
 ##### Myocytes
 
-```{r seurat-markers-feature-myocytes, fig.dim = c(4, 4)}
+```{r seurat-markers-feature-myocytes, fig.dim = c(16, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Myocytes"))$Marker,
             min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 1, raster = FALSE)
+            ncol = 4, raster = FALSE)
 ```
 
 ##### NKs
@@ -694,17 +703,17 @@ FeaturePlot(object = obj,
 
 ##### Platelets
 
-```{r seurat-markers-feature-platelets, fig.dim = c(4, 4)}
+```{r seurat-markers-feature-platelets, fig.dim = c(12, 4)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "Platelets"))$Marker,
             min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 1, raster = FALSE)
+            ncol = 4, raster = FALSE)
 ```
 
 ##### T cells
 
-```{r seurat-markers-feature-t, fig.dim = c(16, 12)}
+```{r seurat-markers-feature-t, fig.dim = c(16, 16)}
 FeaturePlot(object = obj,
             features = (dplyr::filter(markers_all,
                                       Cell_Type == "T"))$Marker,
