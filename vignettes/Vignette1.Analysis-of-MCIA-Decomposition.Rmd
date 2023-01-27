@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(42) # NIPALS starts with a random vector
 ```
 
-```{r, echo = FALSE, include = FALSE}
+```{r libraries, echo = FALSE, include = FALSE}
 library(ComplexHeatmap)
 library(dplyr)
 library(fgsea)
@@ -64,7 +64,7 @@ in [Part 2: Interpreting Global Loadings].
 The NCI60 data set has been included with the `nipalsMCIA` package and is
 easily available as shown below:
 
-```{r}
+```{r intro-load-data}
 # load the dataset which uses the name data_blocks
 data(NCI60)
 
@@ -85,7 +85,7 @@ specific constraint that $r$ is (much) less than the number of features in the
 omics with the fewest features (i.e. $r << min(p_b)$). Here we are calculating
 the first 10 global factors by using:
 
-```{r, warning = FALSE, message = FALSE}
+```{r intro-mcia, warning = FALSE, message = FALSE}
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
@@ -93,7 +93,7 @@ mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
 The results is a list of various decomposition matrices for MCIA and few other
 values:
 
-```{r}
+```{r intro-mcia-results}
 names(mcia_results)
 ```
 
@@ -113,10 +113,10 @@ represents an order of the global factors, i.e.
 
 $$
 \mb F = \begin{pmatrix}
-		| & |&  & |\\
-		\mb f^{(1)} &\mb f^{(2)} & \dots & \mb f^{(r)}\\
-		| & |&  & |
-	\end{pmatrix} \in \mathbb{R}^{n \times r}
+    | & |&  & |\\
+    \mb f^{(1)} &\mb f^{(2)} & \dots & \mb f^{(r)}\\
+    | & |&  & |
+  \end{pmatrix} \in \mathbb{R}^{n \times r}
 $$
 
 This matrix encodes a low-dimensional representation of the data set, with the
@@ -132,10 +132,10 @@ i.e.
 
 $$
 \mb A = \begin{pmatrix}
-		| & |&  & |\\
-		\mb a^{(1)} &\mb a^{(2)} & \dots & \mb a^{(r)}\\
-		| & |&  & |
-	\end{pmatrix} \in \mathbb{R}^{p \times r}
+    | & |&  & |\\
+    \mb a^{(1)} &\mb a^{(2)} & \dots & \mb a^{(r)}\\
+    | & |&  & |
+  \end{pmatrix} \in \mathbb{R}^{p \times r}
 $$
 
 This matrix encodes the contribution of each feature to the  low-dimensional
@@ -156,7 +156,7 @@ generate two plots which help establish an initial intuition for the MCIA
 decomposition. Here we will re-run `nipals_multiblock()` and omit the `plots`
 parameter (default=all):
 
-```{r, warning = FALSE, message = FALSE, fig.dim = c(8, 4), fig.align = 'center'}
+```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(8, 4), fig.align = 'center'}
 set.seed(42)
 
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
@@ -191,7 +191,7 @@ For clustering, it is useful to look at global factor scores without block
 factor scores. The `projection_plot()` function can be used to generate such a
 plot using `projection = "global"` as show below:
 
-```{r visualize-clusters, fig.dim = c(8, 8), fig.align = 'center'}
+```{r part-1-visualize-clusters, fig.dim = c(8, 8), fig.align = 'center'}
 projection_plot(mcia_results, "global", orders = c(1, 2))
 ```
 
@@ -204,7 +204,7 @@ each of the 21 samples in the NCI-60 dataset represents a patient with one of
 three cancer types: CNS, Leukemia, or Melanoma. We have provided this metadata
 as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`:
 
-```{r}
+```{r part-1-metadata}
 metadata_NCI60
 ```
 
@@ -212,7 +212,7 @@ In order to use this data it must be converted into a data frame and passed as
 part of the `metadata` argument of `nipals_multiblock()` or added directly to
 `mcia_results`:
 
-```{r, warning = FALSE, message = FALSE}
+```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 set.seed(42)
 
 # adding metadata as part of the nipals_multiblock() function
@@ -230,7 +230,7 @@ case the column is `cancerType`. `color_pal` can then be used with a character
 vector or `scales::<function>` to select the colors which are applied
 alphabetically:
 
-```{r visualize-clusters-color-col, fig.dim = c(8, 8), fig.align = 'center'}
+```{r part-1-visualize-clusters-color-col, fig.dim = c(8, 8), fig.align = 'center'}
 # meta_colors = c('orange', 'purple', 'pink')
 meta_colors <- get_metadata_colors(mcia_results, 1)
 
@@ -244,13 +244,13 @@ method, such as k-means clustering and visualized similarly.
 
 ### Visualizing the Clustering of Samples by Factor Scores
 
-The global scores represent data from our samples projected down into our 
-lower dimensional space $r$. Now that MCIA has compressed our data into 
+The global scores represent data from our samples projected down into our
+lower dimensional space $r$. Now that MCIA has compressed our data into
 these lower dimensions we can make a heatmap for samples versus factors to
 begin mining patterns and relationships. To facilitate this process you can
 visual a global scores heatmap using using `global_scores_heatmap()`:
 
-```{r, fig.dim = c(8, 6), fig.align = 'center'}
+```{r part-1-global-heatmap, fig.dim = c(8, 6), fig.align = 'center'}
 global_scores_heatmap(mcia_results)
 ```
 
@@ -258,7 +258,7 @@ In the heatmap above, the samples have been hierarchically clustered. To
 further understand these clusters, it is useful to add some `color_col` which
 is available through the `color_col` + `color_pal` parameters as shown below:
 
-```{r, fig.dim = c(8, 6), fig.align = 'center'}
+```{r part-1-global-heatmap-colored, fig.dim = c(8, 6), fig.align = 'center'}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
@@ -274,7 +274,7 @@ matrix $A$ that is $p\times r$.
 
 ### Pseudoeigenvalues Representing the Contribution of Each Omic to the Global Factor Score
 
-```{r, fig.dim = c(8, 4), fig.align = 'center'}
+```{r part-2-block-heatmap, fig.dim = c(8, 4), fig.align = 'center'}
 block_weights_heatmap(mcia_results)
 ```
 
@@ -286,11 +286,11 @@ To get a sense of which omics features show highest contribution to
 each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.
 
-```{r}
+```{r part-2-loadings}
 # colors_omics = c('red', 'blue', 'green')
 # colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
-
 colors_omics <- get_colors(mcia_results)
+
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
 
@@ -307,7 +307,7 @@ as a scree plot.
 
 Here, we return and visualize two ranked lists for Factor 1: using all omics, or just mrna.
 
-```{r, fig.dim = c(10, 5)}
+```{r part-2-factor-1, fig.dim = c(10, 5)}
 # define the loadings
 all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
                           absolute = FALSE, descending = TRUE, factor = 1)
@@ -328,7 +328,7 @@ ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 Here, we return and visualize two ranked lists for Factor 2: using all omics,
 or just protein, this time ranking features by magnitude (absolute value).
 
-```{r, fig.dim = c(10, 5)}
+```{r part-2-factor-2, fig.dim = c(10, 5)}
 # define the loadings
 all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all",
                           absolute = TRUE, descending = TRUE, factor = 2)
@@ -350,7 +350,7 @@ We return and visualize a ranked list for Factor 4 with the top 60 features.
 One can observe that while miRNA dominate the top features, all omics are
 represented.
 
-```{r, fig.dim = c(10, 4)}
+```{r part-2-factor-4, fig.dim = c(10, 4)}
 # define the loadings
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
                       descending = TRUE, factor = 4)
@@ -376,7 +376,7 @@ Cantini et al., 2021 (more details below).
 
 #### Gather Data and Generate the Report
 
-```{r, warning = FALSE}
+```{r part-2-pathways, warning = FALSE}
 # extract mRNA global loadings
 mrna_gfscores <- mcia_results$global_loadings
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
@@ -391,7 +391,7 @@ pathways <- fgsea::gmtPathways(path.database)
 
 # generate the GSEA report
 geneset_report <- gsea_report(mrna_gfscores, path.database,
-                             factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
+                              factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
 ```
 
 #### Investigating the GSEA Summary Table
@@ -403,7 +403,7 @@ report (below) we can see that the most significant pathway is associated with
 Factor3 and that there is a large variation in the number of total (significant)
 pathways ranging from 7 (Factor 8) to 143 (Factor 4).
 
-```{r}
+```{r part-2-genesets}
 geneset_report[[1]]
 ```
 
@@ -411,7 +411,7 @@ As just mentioned, Factor3 contains the most enrichment gene set so we can
 re-run GSEA for this factor in order to get a full list of enrichment scores
 across all gene sets:
 
-```{r GSEA for Factor 3, warning = FALSE}
+```{r part-2-gsea-for-factor-3, warning = FALSE}
 # re-running GSEA
 factor3_paths <- fgseaMultilevel(pathways, mrna_gfscores[, 3],
                                  nPermSimple = 10000, minSize = 15,
@@ -424,16 +424,15 @@ REACTOME_CELL_CYCLE gene set comes up which makes sense given that the NCI60
 data set is studying cancer. This analysis can be repeated as necessary to make
 sense of other gene based factor loadings.
 
-```{r}
+```{r part-2-significant}
 # extracting to most significant gene set
 sig_path3 <- factor3_paths[min(factor3_paths$pval) == factor3_paths$pval, ][1, ]
 
 as.list(sig_path3)
 ```
 
-
 ## Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```

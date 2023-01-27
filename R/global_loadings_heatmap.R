@@ -17,8 +17,8 @@ global_loadings_heatmap <- function(global_loadings, data_blocks,
   # find at what index we should start in the global loadings
   if (omics_index == 1) {
     global_start <- 1
-  }
-  else {
+
+  } else {
     i <- 1
     global_start <- 0
     while (i != omics_index) {

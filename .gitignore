@@ -1,30 +1,30 @@
-*.Rproj.user
-*.Rhistory
-*.RData
-*.Ruserdata
-*.Rproj
-*.tex
-*.Rnw
-*.un~
-.Rproj.user
-/Meta/
-inst/doc
-/doc/
-.gitignore
-.DS_Store
-vignettes/data_blocks_sc.Rda
-data/data_blocks_sc.Rda
+# R specific
 ..Rcheck/
-inst/extdata/data_blocks_sc.Rda
-tests/*.svg
+.Rproj.user
+*.RData
+*.Rhistory
+*.Rnw
+*.Rproj
+*.Rproj.user
+*.Ruserdata
+
+# other file extensions
+*.html
+*.png
 *.swp
+*.tex
+*.un~
+
+# specific files
+.DS_Store
+.gitignore
 biocCheck.txt
 devtoolsCheck.txt
-tests_temp
-inst/extdata/data_sc_sce.Rda
-inst/extdata/tenx_pbmc5k_CITEseq_annotated.rds
-inst/extdata/tenx_pbmc5k_CITEseq_processed.rds
-inst/extdata/tenx_pbmc5k_CITEseq_raw.rds
-inst/extdata/metadata_sc.csv
-inst/extdata/mcia_results_sc.Rds
-inst/extdata/marker_genes.csv
+vignettes/.build.timestamp
+
+# directories
+/doc/
+/Meta/
+data/
+inst/doc
+inst/extdata/

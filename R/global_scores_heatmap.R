@@ -57,8 +57,8 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
                                  row_names_gp = grid::gpar(fontsize = 7),
                                  show_column_names = TRUE,
                                  right_annotation = row_ha)
-  }
-  else {
+
+  } else {
     p <- ComplexHeatmap::Heatmap(matrix = global_scores,
                                  name = "GS Score",
                                  row_title = "Samples",

@@ -24,12 +24,12 @@
 #' @export
 NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
   # Main iteration loop
-  stopCrit <- 2 * tol
-  covSquared_old <- 0
+  stop_crit <- 2 * tol
+  cov_squared_old <- 0
   iter <- 0
   gs <- pracma::rand(nrow(ds[[1]]), 1) # begin with random global score vector
 
-  while (stopCrit > tol && iter <= maxIter) {
+  while (stop_crit > tol && iter <= maxIter) {
     # Computing block loadings
     bl_list <- lapply(ds, function(df, q) {
       bl_k <- crossprod(df, q)
@@ -49,13 +49,13 @@ NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
     gs <- bs_list %*% gw
 
     # Computing stopping criteria
-    covList <- vapply(as.data.frame(bs_list), function(bs, gs) {
+    cov_list <- vapply(as.data.frame(bs_list), function(bs, gs) {
         gs_norm <- gs / sqrt(drop(var(gs)))
         return(drop(cov(bs, gs_norm))^2)
     }, gs = gs, FUN.VALUE = numeric(1))
 
-    stopCrit <- abs(sum(covList) - covSquared_old)
-    covSquared_old <- sum(covList)
+    stop_crit <- abs(sum(cov_list) - cov_squared_old)
+    cov_squared_old <- sum(cov_list)
 
     iter <- iter + 1
   }

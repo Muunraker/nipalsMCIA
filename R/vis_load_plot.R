@@ -24,16 +24,16 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
 
   # parsing data
   #omic_name <- gsub("^.*_", "", rownames(gl))
-  
-  omic_dims <- vapply(mcia_out$block_loadings,dim,numeric(2))[1,]
-  omic_type<-c()
-  omics_labels<-names(mcia_out$block_loadings)
-  for (i in seq_along(omics_labels)){
-    omic_label = omics_labels[i]
-    length_omic = omic_dims[i]
-    omic_type<-c(omic_type,rep(omic_label,each=length_omic))
+
+  omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
+  omic_type <- c()
+  omics_labels <- names(mcia_out$block_loadings)
+  for (i in seq_along(omics_labels)) {
+    omic_label <- omics_labels[i]
+    length_omic <- omic_dims[i]
+    omic_type <- c(omic_type, rep(omic_label, each = length_omic))
   }
-  
+
   gl_f <- data.frame(gl[, axes])
   gl_f$omic <- omic_type
   gl_f$omic <- as.factor(gl_f$omic)

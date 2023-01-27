@@ -31,9 +31,9 @@ col_preproc <- function(df, col_preproc_method) {
 
   if (col_preproc_method == "colprofile") {
     # Making data non-negative
-    minVal <- min(temp_df)
-    if (minVal < 0) {
-      offset <- floor(minVal)
+    min_val <- min(temp_df)
+    if (min_val < 0) {
+      offset <- floor(min_val)
       temp_df <- temp_df + abs(offset)
     }
 
@@ -51,14 +51,14 @@ col_preproc <- function(df, col_preproc_method) {
 
     # Applying feature weighting by proportion of variance
     temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
-  }
-  else if (col_preproc_method == "standardized") {
+
+  } else if (col_preproc_method == "standardized") {
     temp_df <- scale(temp_df)
-  }
-  else if (col_preproc_method == "centered_only") {
+
+  } else if (col_preproc_method == "centered_only") {
     temp_df <- scale(temp_df, center = TRUE, scale = FALSE)
-  }
-  else {
+
+  } else {
     stop("Column preprocessing method not recognized ",
          "- pick from available options")
   }

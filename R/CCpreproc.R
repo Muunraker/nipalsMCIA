@@ -22,9 +22,9 @@ CCpreproc <- function(df) {
   temp_df <- as.matrix(df)
 
   # Making data non-negative
-  minVal <- min(temp_df)
-  if (minVal < 0) {
-    offset <- floor(minVal)
+  min_val <- min(temp_df)
+  if (min_val < 0) {
+    offset <- floor(min_val)
     temp_df <- temp_df + abs(offset)
   }
 
@@ -48,8 +48,7 @@ CCpreproc <- function(df) {
 
   if (block_var != 0) {
     temp_df <- temp_df * (1 / sqrt(block_var))
-  }
-  else {
+  } else {
     warning("New data has zero variance.")
   }
 

@@ -123,15 +123,16 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
   # Block-level pre-processing
   message("Performing block-level preprocessing...")
-  data_blocks <- lapply(data_blocks,block_preproc, block_preproc_method)
-  if(tolower(block_preproc_method) == "unit_var"){
-    block_vars <- rep(list(1),length(data_blocks))
+  data_blocks <- lapply(data_blocks, block_preproc, block_preproc_method)
+  if (tolower(block_preproc_method) == "unit_var") {
+    block_vars <- rep(list(1), length(data_blocks))
     names(block_vars) <- names(data_blocks)
-  }else{
+
+  } else {
     block_vars <- get_TV(data_blocks)
   }
-  message("Block pre-processing completed.")
 
+  message("Block pre-processing completed.")
 
   # First NIPALS run
   message("Computing order ", 1, " scores")
@@ -164,10 +165,12 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
         data_blocks <- mapply(deflate_block_bl,
                               data_blocks,
                               nipals_result$block_loadings)
+
       } else if (tolower(deflationMethod) == "global") {
         data_blocks <- lapply(data_blocks,
                               deflate_block_gs,
                               gs = nipals_result$global_scores)
+
       } else {
         stop("Uknown option for deflation step - use 'block' or 'global'")
       }
@@ -197,11 +200,11 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
   results_list <- list(global_scores, global_loadings, block_score_weights,
                       block_scores, block_loadings, eigvals,
-                      tolower(preproc_method),tolower(block_preproc_method),
+                      tolower(preproc_method), tolower(block_preproc_method),
                       block_vars)
   names(results_list) <- c("global_scores", "global_loadings",
                            "block_score_weights", "block_scores",
-                           "block_loadings", "eigvals","column_preproc_method",
+                           "block_loadings", "eigvals", "column_preproc_method",
                            "block_preproc_method", "block_variances")
   results_list$metadata <- metadata
 
@@ -220,9 +223,10 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     projection_plot(results_list, "global", color_col = color_col)
     global_scores_eigenvalues_plot(results_list) # global score eigenvalues
     par(mfrow = c(1, 1))
+
   } else if (tolower(plots) == "none") {
-    # Are we mising sosmething here? Need to check previous
-    # versions.
+    # Are we missing something here? Need to check previous versions.
+
   } else {
     message("No known plotting options specified - skipping plots.")
   }
