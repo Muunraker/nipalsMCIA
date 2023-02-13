@@ -10,8 +10,9 @@
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames, each in "sample" x "variable"
-#' format
+#' @param data_blocks a list of data frames in "sample" x "variable" format,
+#'  or a MultiAssayExperiment class object.
+#'  
 #' @param preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
@@ -69,8 +70,9 @@
 #' \item `block_variances` a list of variances of each block AFTER
 #' NORMALIZATION OPTION APPLIED
 #' \item `metadata` the metadata dataframe supplied wuith the `metadata`
-#' argument.}
+#' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
+#' @importFrom MultiAssayExperiment experiments metadata colData
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
@@ -85,8 +87,35 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
                               deflationMethod = "block", plots = "all") {
+
+  # Check for input type MAE or list
+  if(class(data_blocks) == "MultiAssayExperiment"){
+    data_blocks_mae <- data_blocks
+    
+    data_blocks <- experiments(data_blocks_mae)@listData
+    data_blocks <- sapply(data_blocks, t)
+    data_blocks <- sapply(data_blocks, data.frame, check.names = FALSE)
+    
+    # if no metadata supplied, attempt to extract from MAE object
+    if(is.null(metadata)){
+      # Convert metadata
+      metadata <- MultiAssayExperiment::metadata(data_blocks_mae)
+      if (length(metadata) > 0) {
+        # extract rownames
+        metadata <- data.frame(metadata, row.names = colData(data_blocks_mae)@rownames )
+      }else{
+        metadata <- NULL
+      }
+    }else if(class(data_blocks) == "list"){
+      
+    }else{
+      stop("Unknown input data format - please use MultiAssayExperiment or list.")
+    }
+  }
+  
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
+  
 
   # Check for omics names and assign generic name if null
   if (is.null(omics_names)) {

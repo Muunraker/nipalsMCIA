@@ -18,8 +18,8 @@ nipals_multiblock(
 )
 }
 \arguments{
-\item{data_blocks}{a list of data frames, each in "sample" x "variable"
-format}
+\item{data_blocks}{a list of data frames in "sample" x "variable" format,
+or a MultiAssayExperiment class object.}
 
 \item{preproc_method}{an option for the desired column-level data
 pre-processing, either:
@@ -70,7 +70,7 @@ plot
 \item `block_variances` a list of variances of each block AFTER
 NORMALIZATION OPTION APPLIED
 \item `metadata` the metadata dataframe supplied wuith the `metadata`
-argument.}}
+argument. Note: overrides metadata present in any MAE class object.}}
 }
 \value{
 a list containing the following: \itemize{
