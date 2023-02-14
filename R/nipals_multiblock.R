@@ -92,7 +92,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
   if (class(data_blocks) == "MultiAssayExperiment") {
     data_blocks_mae <- data_blocks
 
-    data_blocks <- experiments(data_blocks_mae)@listData
+    data_blocks <- assays(data_blocks_mae)
     data_blocks <- sapply(data_blocks, t)
     data_blocks <- sapply(data_blocks, data.frame, check.names = FALSE)
 
