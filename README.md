@@ -11,14 +11,17 @@ This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
 data using the Nonlinear Iterative Partial Least Squares (NIPALS)
 method.
 
-Features include:  
-\* Efficient computation of deflation and variance enabling embedding of
-high-volume (e.g. single-cell) datasets. \* Functionality to perform
-out-of-sample embedding. \* Easy-to-adjust options for deflation and
-pre-processing \* Multiple visualization and analysis options for
-sample- and feature-level embedding results \* Streamlined and
-well-documented and supported code that is consistent with published
-theory to enable more efficient algorithm development and extension
+Features include:
+
+  - Efficient computation of deflation and variance enabling embedding
+    of high-volume (e.g. single-cell) datasets.  
+  - Functionality to perform out-of-sample embedding.
+  - Easy-to-adjust options for deflation and pre-processing
+  - Multiple visualization and analysis options for sample- and
+    feature-level embedding results
+  - Streamlined and well-documented and supported code that is
+    consistent with published theory to enable more efficient algorithm
+    development and extension
 
 **References**
 

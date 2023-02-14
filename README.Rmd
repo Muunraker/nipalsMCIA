@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block data using the Nonlinear Iterative Partial Least Squares (NIPALS) method.
 
 Features include:  
-* Efficient computation of deflation and variance enabling embedding of high-volume (e.g. single-cell) datasets.
+
+* Efficient computation of deflation and variance enabling embedding of high-volume (e.g. single-cell) datasets.  
 * Functionality to perform out-of-sample embedding.
 * Easy-to-adjust options for deflation and pre-processing
 * Multiple visualization and analysis options for sample- and feature-level embedding results
@@ -31,7 +32,7 @@ Features include:
 
 Mattesich (2022) A Review of Multi-Block Dimensionality Reduction via Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts University (http://hdl.handle.net/10427/CZ30Q6773)
 
-Hanafi et al. (2011) Connections between multiple co-inertia analysis and consensus principal component analysis, Chemometrics and Intelligent Laboratory Systems 106(1) (https://doi.org/10.1016/j.chemolab.2010.05.010.)
+Hanafi et al. (2011) Connections between multiple co-inertia analysis and consensus principal component analysis, Chemometrics and Intelligent Laboratory Systems 106 (1) (https://doi.org/10.1016/j.chemolab.2010.05.010.)
 
 Meng et al. (2014) A multivariate approach to the integration of multi-omics datasets, BMC Bioinformatics 2014(15) (https://doi.org/10.1186/1471-2105-15-162)
 
