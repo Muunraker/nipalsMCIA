@@ -195,7 +195,8 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
       if (tolower(deflationMethod) == "block") {
         data_blocks <- mapply(deflate_block_bl,
                               data_blocks,
-                              nipals_result$block_loadings)
+                              nipals_result$block_loadings,
+                              SIMPLIFY = FALSE)
 
       } else if (tolower(deflationMethod) == "global") {
         data_blocks <- lapply(data_blocks,
