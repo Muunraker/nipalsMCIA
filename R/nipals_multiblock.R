@@ -11,7 +11,8 @@
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
 #' @param data_blocks a list of data frames in "sample" x "variable" format,
-#'  or a MultiAssayExperiment class object.
+#'  or a MultiAssayExperiment class object 
+#'  (with sample metadata as a dataframe in the colData attribute).
 #'
 #' @param preproc_method an option for the desired column-level data
 #' pre-processing, either:
@@ -72,7 +73,7 @@
 #' \item `metadata` the metadata dataframe supplied wuith the `metadata`
 #' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
-#' @importFrom MultiAssayExperiment experiments metadata colData
+#' @importFrom MultiAssayExperiment experiments metadata colData assays
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
@@ -99,12 +100,8 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     # If no metadata supplied, attempt to extract it from the MAE object
     if (is.null(metadata)) {
       # Convert metadata
-      metadata <- MultiAssayExperiment::metadata(data_blocks_mae)
-      if (length(metadata) > 0) {
-        # Extract rownames
-        metadata <- data.frame(metadata,
-                               row.names = colData(data_blocks_mae)@rownames)
-      } else {
+      metadata <- data.frame(colData(data_blocks_mae))
+      if (length(metadata) == 0){
         metadata <- NULL
       }
     }

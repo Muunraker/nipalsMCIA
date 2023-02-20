@@ -57,7 +57,8 @@ The `nipals_multiblock` function can also accept as input a [MultiAssayExperimen
 (MAE) object. Such objects represent a sophisticated approach to organizing multi-omics
 data in which each assay can be stored as an individual experiment alongside any
 relevant metadata for the experiment as a whole. *The function will automatically
-detect whether your data is in the form of a list or a MAE.*
+detect whether your data is in the form of a list or a MAE.*  (Note that sample metadata
+must be supplied as a dataframe in the colData attribute of the MAE object).
 
 In the context of the NCI60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and

@@ -19,7 +19,8 @@ nipals_multiblock(
 }
 \arguments{
 \item{data_blocks}{a list of data frames in "sample" x "variable" format,
-or a MultiAssayExperiment class object.}
+or a MultiAssayExperiment class object 
+(with sample metadata as a dataframe in the colData attribute).}
 
 \item{preproc_method}{an option for the desired column-level data
 pre-processing, either:
