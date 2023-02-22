@@ -77,6 +77,7 @@ The main MCIA function can be called on `data_blocks` and optionally can include
 plot coloring by cancer type:
 
 ```{r call-mcia, fig.dim = c(8, 4), fig.align = 'center', message = FALSE}
+set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
                                   metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 10, tol = 1e-12)

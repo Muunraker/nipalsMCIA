@@ -31,7 +31,7 @@ University (<http://hdl.handle.net/10427/CZ30Q6773>)
 
 Hanafi et al. (2011) Connections between multiple co-inertia analysis
 and consensus principal component analysis, Chemometrics and Intelligent
-Laboratory Systems 106(1)
+Laboratory Systems 106 (1)
 (<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
 
 Meng et al. (2014) A multivariate approach to the integration of
@@ -98,6 +98,7 @@ The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
 
 ``` r
+set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
                                   metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 10, tol = 1e-12)
