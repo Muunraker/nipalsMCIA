@@ -131,16 +131,6 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     if (is.null(fNames) || nchar(fNames[1]) == 0) {
       fNames <- paste("feature", seq(1, dim(data_blocks[[i]])[[2]]), sep = "_")
     }
-
-    # Checking if omics names are already at the end of feature names
-    #lastchars <- strsplit(fNames[[1]], split = "_")
-    #lastchars <- lastchars[[1]][[length(lastchars[[1]])]]
-
-    # If features do not have omics name at end of name, add it
-    #if (!tolower(lastchars) == oName && !lastchars == oName) {
-    #  new_names <- paste(fNames, oName, sep = "_")
-    #  names(data_blocks[[i]]) <- new_names
-    #}
   }
 
 
