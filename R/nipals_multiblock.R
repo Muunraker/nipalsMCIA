@@ -90,7 +90,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                               deflationMethod = "block", plots = "all") {
 
   # Check for input type MAE or list
-  if (class(data_blocks) == "MultiAssayExperiment") {
+  if (toString(class(data_blocks)) == "MultiAssayExperiment") {
     data_blocks_mae <- data_blocks
 
     data_blocks <- assays(data_blocks)@listData
@@ -106,7 +106,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
       }
     }
   }
-  else if (class(data_blocks) == "list") {
+  else if (toString(class(data_blocks)) == "list") {
     # Nothing needs changing
   }
   else {
