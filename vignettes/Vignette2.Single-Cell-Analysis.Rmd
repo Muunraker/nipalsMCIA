@@ -29,7 +29,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.0/Vignette-2-Pipeline.png)
+![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
 
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
@@ -48,7 +48,8 @@ library(Seurat)
 path_data <- file.path("..", "data")
 
 # recommended location for external data
-path_inst <- file.path("..", "inst", "extdata")
+# path_inst <- file.path("..", "inst", "extdata")
+path_inst <- tempdir()
 ```
 
 ## Data
@@ -62,32 +63,32 @@ The following code details several ways in which to load in this dataset. You ma
 We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **These files includes the processed object that you will need in order to run MCIA (data_blocks_sc.Rda).**
 
 ```{r data-all-list}
-# list all of the currently available data in v0.99.0
-pb_list(repo = "Muunraker/nipalsMCIA", tag = "v0.99.0")
+# list all of the currently available files in the latest release
+pb_list(repo = "Muunraker/nipalsMCIA")
 ```
 
 ```{r data-all-download}
 # files for running MCIA
 pb_download(file = "metadata_sc.csv", # "Annotations"
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 pb_download(file = "data_blocks_sc.Rda", # "10x Genomics and Seurat"
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 pb_download(file = "data_sc_sce.Rda", # "Bioconductor"
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 
 # MCIA results
 pb_download(file = "mcia_results_sc.Rds",
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 
 # marker genes for cell type annotation with Seurat
 pb_download(file = "marker_genes.csv",
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 
 # Seurat objects in different stages of processing
 pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds",
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
-            repo = "Muunraker/nipalsMCIA", tag = "v0.99.0", dest = path_inst)
+            repo = "Muunraker/nipalsMCIA", dest = path_inst)
 ```
 
 ### Bioconductor

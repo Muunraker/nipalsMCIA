@@ -4,11 +4,39 @@
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
 data using the Nonlinear Iterative Partial Least Squares (NIPALS)
 method.
+
+Features include:
+
+  - Efficient computation of deflation and variance enabling embedding
+    of high-volume (e.g. single-cell) datasets.  
+  - Functionality to perform out-of-sample embedding.
+  - Easy-to-adjust options for deflation and pre-processing
+  - Multiple visualization and analysis options for sample- and
+    feature-level embedding results
+  - Streamlined and well-documented and supported code that is
+    consistent with published theory to enable more efficient algorithm
+    development and extension
+
+**References**
+
+Mattesich (2022) A Review of Multi-Block Dimensionality Reduction via
+Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
+University (<https://dl.tufts.edu/concern/pdfs/cz30q6773>)
+
+Hanafi et al. (2011) Connections between multiple co-inertia analysis
+and consensus principal component analysis, Chemometrics and Intelligent
+Laboratory Systems 106 (1)
+(<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
+
+Meng et al. (2014) A multivariate approach to the integration of
+multi-omics datasets, BMC Bioinformatics 2014(15)
+(<https://doi.org/10.1186/1471-2105-15-162>)
 
 ## Installation
 
@@ -56,7 +84,7 @@ head(metadata_NCI60)
 #> CNS.U251          CNS
 
 table(metadata_NCI60)
-#> cancerType
+#> metadata_NCI60
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
@@ -70,6 +98,7 @@ The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
 
 ``` r
+set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
                                   metadata = metadata_NCI60, color_col = "cancerType", 
                                   num_PCs = 10, tol = 1e-12)

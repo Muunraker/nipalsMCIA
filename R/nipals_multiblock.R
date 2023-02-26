@@ -10,8 +10,10 @@
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames, each in "sample" x "variable"
-#' format
+#' @param data_blocks a list of data frames in "sample" x "variable" format,
+#'  or a MultiAssayExperiment class object 
+#'  (with sample metadata as a dataframe in the colData attribute).
+#'
 #' @param preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
@@ -69,8 +71,9 @@
 #' \item `block_variances` a list of variances of each block AFTER
 #' NORMALIZATION OPTION APPLIED
 #' \item `metadata` the metadata dataframe supplied wuith the `metadata`
-#' argument.}
+#' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
+#' @importFrom MultiAssayExperiment experiments metadata colData assays
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
@@ -85,6 +88,31 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
                               deflationMethod = "block", plots = "all") {
+
+  # Check for input type MAE or list
+  if (toString(class(data_blocks)) == "MultiAssayExperiment") {
+    data_blocks_mae <- data_blocks
+
+    data_blocks <- assays(data_blocks)@listData
+    data_blocks <- lapply(data_blocks, t) # need samples x features
+    data_blocks <- lapply(data_blocks, data.frame, check.names = FALSE)
+
+    # If no metadata supplied, attempt to extract it from the MAE object
+    if (is.null(metadata)) {
+      # Convert metadata
+      metadata <- data.frame(colData(data_blocks_mae))
+      if (length(metadata) == 0){
+        metadata <- NULL
+      }
+    }
+  }
+  else if (toString(class(data_blocks)) == "list") {
+    # Nothing needs changing
+  }
+  else {
+    stop("Unknown input data format - please use MultiAssayExperiment or a list.")
+  }
+
   num_blocks <- length(data_blocks)
   omics_names <- names(data_blocks)
 
@@ -102,16 +130,6 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     # Error catching for no names - creates default values
     if (is.null(fNames) || nchar(fNames[1]) == 0) {
       fNames <- paste("feature", seq(1, dim(data_blocks[[i]])[[2]]), sep = "_")
-    }
-
-    # Checking if omics names are already at the end of feature names
-    lastchars <- strsplit(fNames[[1]], split = "_")
-    lastchars <- lastchars[[1]][[length(lastchars[[1]])]]
-
-    # If features do not have omics name at end of name, add it
-    if (!tolower(lastchars) == oName && !lastchars == oName) {
-      new_names <- paste(fNames, oName, sep = "_")
-      names(data_blocks[[i]]) <- new_names
     }
   }
 
@@ -164,7 +182,8 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
       if (tolower(deflationMethod) == "block") {
         data_blocks <- mapply(deflate_block_bl,
                               data_blocks,
-                              nipals_result$block_loadings)
+                              nipals_result$block_loadings,
+                              SIMPLIFY = FALSE)
 
       } else if (tolower(deflationMethod) == "global") {
         data_blocks <- lapply(data_blocks,
