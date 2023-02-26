@@ -48,7 +48,8 @@ library(Seurat)
 path_data <- file.path("..", "data")
 
 # recommended location for external data
-path_inst <- file.path("..", "inst", "extdata")
+# path_inst <- file.path("..", "inst", "extdata")
+path_inst <- tempdir()
 ```
 
 ## Data
