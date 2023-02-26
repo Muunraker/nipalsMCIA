@@ -74,6 +74,7 @@
 #' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
 #' @importFrom MultiAssayExperiment experiments metadata colData assays
+#' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'  data(NCI60)
 #'  NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
@@ -90,7 +91,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                               deflationMethod = "block", plots = "all") {
 
   # Check for input type MAE or list
-  if (toString(class(data_blocks)) == "MultiAssayExperiment") {
+  if (is(data_blocks,"MultiAssayExperiment")) {
     data_blocks_mae <- data_blocks
 
     data_blocks <- assays(data_blocks)@listData
@@ -106,7 +107,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
       }
     }
   }
-  else if (toString(class(data_blocks)) == "list") {
+  else if (is(data_blocks, "list")) {
     # Nothing needs changing
   }
   else {
