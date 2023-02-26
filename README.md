@@ -27,7 +27,7 @@ Features include:
 
 Mattesich (2022) A Review of Multi-Block Dimensionality Reduction via
 Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
-University (<http://hdl.handle.net/10427/CZ30Q6773>)
+University (<https://dl.tufts.edu/concern/pdfs/cz30q6773>)
 
 Hanafi et al. (2011) Connections between multiple co-inertia analysis
 and consensus principal component analysis, Chemometrics and Intelligent
