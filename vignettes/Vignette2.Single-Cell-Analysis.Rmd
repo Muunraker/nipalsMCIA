@@ -29,7 +29,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
+![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
 
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
@@ -64,7 +64,7 @@ We have the objects described below available in data files which you can downlo
 
 ```{r data-all-list}
 # list all of the currently available files in the latest release
-pb_list(repo = "Muunraker/nipalsMCIA")
+pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 ```
 
 ```{r data-all-download}
@@ -72,8 +72,6 @@ pb_list(repo = "Muunraker/nipalsMCIA")
 pb_download(file = "metadata_sc.csv", # "Annotations"
             repo = "Muunraker/nipalsMCIA", dest = path_inst)
 pb_download(file = "data_blocks_sc.Rda", # "10x Genomics and Seurat"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "data_sc_sce.Rda", # "Bioconductor"
             repo = "Muunraker/nipalsMCIA", dest = path_inst)
 
 # MCIA results
@@ -199,11 +197,8 @@ head(data_blocks_sc_sce_seurat[[]])
 # X4        <NA> <NA>   <NA>
 # X5        <NA> <NA>   <NA>
 # X6        <NA> <NA>   <NA>
-```
 
-```{r data-bioconductor-save, eval = FALSE}
 # save the data locally if desired
-# these two files can be found as "data_sc_sce.Rda" on piggyback
 save(data_blocks_sc_sce, data_blocks_sc_sce_seurat,
      file = file.path(path_data, "data_sc_sce.Rda"))
 ```
@@ -267,7 +262,7 @@ rownames(obj[["ADT"]])
 # [31] "IgG2a-control-TotalSeqB" "IgG2b-control-TotalSeqB"
 
 # save the data locally if desired
-# saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
+saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 ```
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
@@ -294,9 +289,6 @@ This will run on cells with the top 2000 variable features (as defined in the la
 ```{r mcia-decomp-load-data}
 # load the object setup for running MCIA [10x Genomics & Seurat]
 load(file = file.path(path_inst, "data_blocks_sc.Rda"))
-
-# load the Bioconductor data (both MCIA formatted and the Seurat object) if desired
-# load(file = file.path(path_inst, "data_sc_sce.Rda"))
 ```
 
 ```{r mcia-decomp-run, eval = FALSE}
