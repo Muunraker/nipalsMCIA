@@ -11,7 +11,7 @@
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
 #' @param data_blocks a list of data frames in "sample" x "variable" format,
-#'  or a MultiAssayExperiment class object 
+#'  or a MultiAssayExperiment class object
 #'  (with sample metadata as a dataframe in the colData attribute).
 #'
 #' @param preproc_method an option for the desired column-level data
@@ -70,7 +70,7 @@
 #' \item `none` does not display plots
 #' \item `block_variances` a list of variances of each block AFTER
 #' NORMALIZATION OPTION APPLIED
-#' \item `metadata` the metadata dataframe supplied wuith the `metadata`
+#' \item `metadata` the metadata dataframe supplied with the `metadata`
 #' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
 #' @importFrom MultiAssayExperiment experiments metadata colData assays
@@ -111,7 +111,8 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     # Nothing needs changing
   }
   else {
-    stop("Unknown input data format - please use MultiAssayExperiment or a list.")
+    stop("Unknown input data format -
+         please use MultiAssayExperiment or a list.")
   }
 
   num_blocks <- length(data_blocks)
