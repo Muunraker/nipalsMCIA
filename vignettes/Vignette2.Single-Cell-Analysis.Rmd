@@ -68,25 +68,27 @@ pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 ```
 
 ```{r data-all-download}
-# files for running MCIA
-pb_download(file = "metadata_sc.csv", # "Annotations"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "data_blocks_sc.Rda", # "10x Genomics and Seurat"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+# specify tag = "" to use a different release other than latest
+
+# files needed for running MCIA
+pb_download(file = "metadata_sc.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+pb_download(file = "data_blocks_sc.Rda", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # MCIA results
-pb_download(file = "mcia_results_sc.Rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "mcia_results_sc.Rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # marker genes for cell type annotation with Seurat
-pb_download(file = "marker_genes.csv",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "marker_genes.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # Seurat objects in different stages of processing
-pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 ```
 
 ### Bioconductor
@@ -169,15 +171,18 @@ summary(data_blocks_sc_sce)
 # adt  5247   data.frame list
 
 # convert to Seurat
-data_blocks_sc_sce_seurat <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna,
-                                                row.names = rownames(data_blocks_sc_sce$mrna)) # default assay (RNA)
-data_blocks_sc_sce_seurat[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
+data_blocks_sc_sce_seurat <- # default assay (RNA)
+  CreateSeuratObject(counts = data_blocks_sc_sce$mrna,
+                     row.names = rownames(data_blocks_sc_sce$mrna))
+data_blocks_sc_sce_seurat[["ADT"]] <- 
+  CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # add metadata
 # rownames(obj[[]]) <- rownames(GetAssayData(obj, slot = "counts")))
-data_blocks_sc_sce_seurat <- AddMetaData(data_blocks_sc_sce_seurat,
-                                         as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k),
-                                                       row.names = rownames(obj)))
+data_blocks_sc_sce_seurat <- 
+  AddMetaData(data_blocks_sc_sce_seurat,
+              as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k),
+                            row.names = rownames(obj)))
 
 # the metadata will be different than from the Seurat processing
 # e.g. 5297 rows vs. 4193 rows
@@ -292,7 +297,8 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 ```
 
 ```{r mcia-decomp-run, eval = FALSE}
-# "largest_sv" results in a more balanced contribution from the blocks than the default "unit_var"
+# "largest_sv" results in a more balanced contribution
+# from the blocks than the default "unit_var"
 mcia_results_sc <- nipals_multiblock(data_blocks_sc,
                                      preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
@@ -802,7 +808,7 @@ DefaultAssay(obj) <- "ADT"
 
 FeaturePlot(obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB",
                               "CD19-TotalSeqB", "CD27-TotalSeqB"),
-            label = TRUE, label.size = 2, ncol = 2, raster = FALSE)
+            label = TRUE, label.size = 4, ncol = 2, raster = FALSE)
 
 DefaultAssay(obj) <- "RNA"
 ```
@@ -821,7 +827,9 @@ VlnPlot(object = obj,
 
 ### Save for MCIA
 
-The file has to be structured in the form of a (large) list, with each omic saved as an element within it. If you would like to append the type of omic to the end of your features, uncomment the commented lines.
+The file has to be structured in the form of a (large) list, with each omic
+saved as an element within it. If you would like to append the type of omic to
+the end of your features, uncomment the commented lines.
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
