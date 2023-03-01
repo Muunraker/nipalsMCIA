@@ -19,38 +19,38 @@
 #' preprocessed_dataframe <- CCpreproc(df)
 #' @export
 CCpreproc <- function(df) {
-  temp_df <- as.matrix(df)
+    temp_df <- as.matrix(df)
 
-  # Making data non-negative
-  min_val <- min(temp_df)
-  if (min_val < 0) {
-    offset <- floor(min_val)
-    temp_df <- temp_df + abs(offset)
-  }
+    # Making data non-negative
+    min_val <- min(temp_df)
+    if (min_val < 0) {
+        offset <- floor(min_val)
+        temp_df <- temp_df + abs(offset)
+    }
 
-  # Generating centered column profiles:
-  totsum <- sum(temp_df)
-  colsums <- colSums(temp_df)
-  row_contribs <- rowSums(temp_df) / totsum
+    # Generating centered column profiles:
+    totsum <- sum(temp_df)
+    colsums <- colSums(temp_df)
+    row_contribs <- rowSums(temp_df) / totsum
 
-  # Dividing by column sums
-  nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
-  temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
+    # Dividing by column sums
+    nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
+    temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
 
-  # Subtracting row contributions
-  temp_df <- temp_df - row_contribs
+    # Subtracting row contributions
+    temp_df <- temp_df - row_contribs
 
-  # Applying feature weighting ("multiplication by feature metrics")
-  temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
+    # Applying feature weighting ("multiplication by feature metrics")
+    temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
 
-  # Weighting block to unit variance (block variance computed via Fro norm)
-  block_var <- norm(temp_df, type = "F")^2 / (max(1, nrow(df) - 1))
+    # Weighting block to unit variance (block variance computed via Fro norm)
+    block_var <- norm(temp_df, type = "F")^2 / (max(1, nrow(df) - 1))
 
-  if (block_var != 0) {
-    temp_df <- temp_df * (1 / sqrt(block_var))
-  } else {
-    warning("New data has zero variance.")
-  }
+    if (block_var != 0) {
+        temp_df <- temp_df * (1 / sqrt(block_var))
+    } else {
+        warning("New data has zero variance.")
+    }
 
-  return(temp_df)
+    return(temp_df)
 }

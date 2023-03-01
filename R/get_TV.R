@@ -10,20 +10,20 @@
 #' tot_var <- get_TV(data_blocks)
 #' @export
 get_TV <- function(ds) {
-  ds <- lapply(ds, as.matrix)
+    ds <- lapply(ds, as.matrix)
 
-  # function to calculate variances of each block
-  get_bv <- function(X) {
-    X_cent <- sweep(X, 2, colMeans(X), "-") # comment out for centered matrices
-    n_samp <- dim(X_cent)[1]
-    X_cent_norm <- X_cent
+    # function to calculate variances of each block
+    get_bv <- function(X) {
+        X_cent <- sweep(X, 2, colMeans(X), "-") # comment out for centered matrices
+        n_samp <- dim(X_cent)[1]
+        X_cent_norm <- X_cent
 
-    bv <- (norm(X_cent_norm, type = "F")^2) / max(n_samp - 1, 1)
-    return(bv)
-  }
+        bv <- (norm(X_cent_norm, type = "F")^2) / max(n_samp - 1, 1)
+        return(bv)
+    }
 
-  bv_list <- lapply(ds, get_bv)
-  # tv <- sum(unlist(bv_list))
+    bv_list <- lapply(ds, get_bv)
+    # tv <- sum(unlist(bv_list))
 
-  return(bv_list)
+    return(bv_list)
 }
