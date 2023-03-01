@@ -47,7 +47,7 @@ Suggests:
     rmarkdown,
     rpart,
     Seurat,
-    spatstat.explore
+    spatstat.explore,
     stringr,
     spelling,
     survival,
