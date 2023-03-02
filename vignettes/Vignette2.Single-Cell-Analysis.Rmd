@@ -240,8 +240,8 @@ You will need the *filtered_feature_bc_matrix* directory for the following analy
 data <- Seurat::Read10X(file.path(path_data, "tenx_pbmc5k_CITEseq",
                                   "filtered_feature_bc_matrix"),
                         strip.suffix = TRUE) # remove the "-1"s from barcodes
-# 10X data contains more than one type and is being returned as a
-# list containing matrices of each type.
+## 10X data contains more than one type and is being returned as a list
+## containing matrices of each type.
 
 # set minimum cells and/or features here if you'd like
 obj <- Seurat::CreateSeuratObject(counts = data$`Gene Expression`,
@@ -495,30 +495,114 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 ### Standard Seurat pipeline
 
-You can set `verbose = FALSE` for many of these commands if you don't want to see outputs.
+You can set `verbose = FALSE` for many of these commands if you don't want to
+see outputs.
 
-**These are run on the RNA**.
+**Most of these are run on the RNA**.
 
 ```{r seurat-pipeline, eval = FALSE}
 # standard log normalization for RNA and centered log for ADT
 obj <- NormalizeData(obj, normalization.method = "LogNormalize",
                      scale.factor = 10000, assay = "RNA")
+## Performing log-normalization
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
 obj <- NormalizeData(obj, normalization.method = "CLR",
                      margin = 2, assay = "ADT") # go across cells, not features
+## Normalizing across cells
+##   |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s
 
 # highly variable features
 obj <- FindVariableFeatures(obj, selection.method = "vst", nfeatures = 2000)
+## Calculating gene variances
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## Calculating feature variances of standardized and clipped values
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
 
 # scaling so the average expression is 0 and the variance is 1
 obj <- ScaleData(obj, features = rownames(obj))
+## Centering and scaling data matrix
+##   |===============================================================================================| 100%
 
 # dimensionality reduction
 obj <- RunPCA(obj)
+## PC_ 1
+## Positive:  LYZ, FCN1, CST3, MNDA, CTSS, PSAP, S100A9, FGL2, AIF1, GRN
+## 	   NCF2, LST1, CD68, TYMP, SERPINA1, CYBB, CLEC12A, CSTA, SPI1, TNFAIP2
+## 	   CPVL, VCAN, MPEG1, TYROBP, KLF4, FTL, S100A8, IGSF6, CD14, MS4A6A
+## Negative:  CD3D, TRAC, LTB, TRBC2, IL32, CD3G, IL7R, CD69, CD247, TRBC1
+## 	   CD2, CD7, CD27, ARL4C, ISG20, HIST1H4C, SYNE2, GZMM, ITM2A, CCR7
+## 	   RORA, MAL, CXCR4, LEF1, TRAT1, CTSW, GZMA, KLRB1, TRABD2A, CCL5
+## PC_ 2
+## Positive:  CD79A, MS4A1, IGHM, BANK1, HLA-DQA1, CD79B, IGKC, LINC00926, RALGPS2, TNFRSF13C
+## 	   VPREB3, IGHD, SPIB, CD22, FCRL1, HLA-DQB1, BLK, FAM129C, FCRLA, TCL1A
+## 	   GNG7, TCF4, COBLL1, PAX5, SWAP70, CD40, BCL11A, P2RX5, TSPAN13, ADAM28
+## Negative:  NKG7, CST7, GZMA, PRF1, KLRD1, CTSW, FGFBP2, GNLY, GZMH, CCL5
+## 	   GZMM, CD247, KLRF1, HOPX, SPON2, ADGRG1, TRDC, MATK, GZMB, FCGR3A
+## 	   S100A4, CCL4, CLIC3, KLRB1, IL2RB, TBX21, TTC38, ANXA1, PTGDR, PLEKHF1
+## PC_ 3
+## Positive:  GZMB, NKG7, GNLY, CLIC3, PRF1, KLRD1, FGFBP2, KLRF1, SPON2, CST7
+## 	   GZMH, FCGR3A, ADGRG1, GZMA, HOPX, CTSW, TRDC, CCL4, HLA-DPB1, C12orf75
+## 	   PLAC8, TTC38, PLEK, APOBEC3G, TBX21, PRSS23, CYBA, MATK, SYNGR1, CXXC5
+## Negative:  IL7R, MAL, LEF1, TRABD2A, TRAC, CCR7, LTB, CD27, FOS, LRRN3
+## 	   FHIT, TRAT1, RGCC, CAMK4, CD3D, RGS10, CD40LG, FOSB, AQP3, SOCS3
+## 	   FLT3LG, CD3G, SLC2A3, TSHZ2, VIM, S100A12, S100A8, CD28, PLK3, VCAN
+## PC_ 4
+## Positive:  FCER1A, PLD4, SERPINF1, IL3RA, CLEC10A, GAS6, LILRA4, TPM2, CLEC4C, ENHO
+## 	   FLT3, SMPD3, ITM2C, LGMN, CD1C, P2RY14, PPP1R14B, SCT, PROC, LAMP5
+## 	   RUNX2, AC119428.2, PACSIN1, DNASE1L3, PTCRA, RGS10, UGCG, CLIC2, PPM1J, P2RY6
+## Negative:  MS4A1, CD79A, LINC00926, BANK1, TNFRSF13C, VPREB3, CD79B, RALGPS2, IGHD, FCRL1
+## 	   BLK, IGHM, CD22, PAX5, ARHGAP24, CD24, P2RX5, NCF1, S100A12, CD19
+## 	   SWAP70, FCRLA, VNN2, TNFRSF13B, FCER2, IGKC, FCRL2, RBP7, CD40, S100A8
+## PC_ 5
+## Positive:  BATF3, C1QA, TCF7L2, CTSL, CDKN1C, HLA-DQB1, HES4, SIGLEC10, CLEC10A, ABI3
+## 	   HLA-DQA1, RHOC, CSF1R, ENHO, CAMK1, MTSS1, IFITM3, CD1C, LY6E, FCGR3A
+## 	   HLA-DPA1, CLIC2, HLA-DPB1, YBX1, RRAS, AC064805.1, NR4A1, GBP1, ZNF703, CXCL16
+## Negative:  LILRA4, TPM2, CLEC4C, SMPD3, IL3RA, SERPINF1, DERL3, MZB1, SCT, JCHAIN
+## 	   PACSIN1, PROC, S100A12, PTCRA, LINC00996, PADI4, ASIP, KCNK17, ITM2C, EPHB1
+## 	   ALOX5AP, LAMP5, DNASE1L3, MAP1A, S100A8, APP, CYP1B1, VNN2, UGCG, ZFAT
 
 # clustering (adjust dimensions and resolutions as desired)
 obj <- FindNeighbors(obj, reduction = "pca", dims = 1:20)
+## Computing nearest neighbor graph
+## Computing SNN
 obj <- FindClusters(obj, resolution = 0.4)
+## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
+## 
+## Number of nodes: 4193
+## Number of edges: 154360
+## 
+## Running Louvain algorithm...
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## Maximum modularity in 10 random starts: 0.9097
+## Number of communities: 10
+## Elapsed time: 0 seconds
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:20)
+## 14:44:35 UMAP embedding parameters a = 0.9922 b = 1.112
+## 14:44:35 Read 4193 rows and found 20 numeric columns
+## 14:44:35 Using Annoy for neighbor search, n_neighbors = 30
+## 14:44:35 Building Annoy index with metric = cosine, n_trees = 50
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## 14:44:36 Writing NN index file to temp file /tmp/RtmpHhoQAU/filec346711dd9f93
+## 14:44:36 Searching Annoy index using 1 thread, search_k = 3000
+## 14:44:37 Annoy recall = 100%
+## 14:44:38 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+## 14:44:39 Initializing from normalized Laplacian + noise (using RSpectra)
+## 14:44:39 Commencing optimization for 500 epochs, with 174318 positive edges
+## Using method 'umap'
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## 14:44:44 Optimization finished
 ```
 
 ### Dimensionality reduction

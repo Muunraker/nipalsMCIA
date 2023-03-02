@@ -18,7 +18,7 @@ Description: Computes Multiple Co-Inertia Analysis (MCIA), a
     options for row- and table-level preprocessing, and speeds up
     computation of variance explained. Vignettes detail application to
     bulk- and single cell- multi-omics studies.
-License: GPL (>= 3)
+License: GPL-3
 URL: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
