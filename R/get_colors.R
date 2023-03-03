@@ -15,7 +15,7 @@
 #' @importFrom methods is
 #' @export
 get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
-                                             color_pal_params = list(option = "D")) {
+                       color_pal_params = list(option = "D")) {
     omic_list <- names(mcia_results$block_loadings)
 
     if (is(color_pal, "function")) {
