@@ -51,10 +51,12 @@ Suggests:
     stringr,
     spelling,
     survival,
-    tidyverse
+    tidyverse,
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 biocViews: Software, Clustering, Classification, MultipleComparison,
     Normalization, Preprocessing, SingleCell
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3
