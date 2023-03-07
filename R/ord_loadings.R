@@ -8,14 +8,14 @@
 #' @param absolute whether to rank by absolute value
 #' @param descending whether to rank in descending or ascending order
 #' @param factor choose a factor (numeric value from 1 to number of factors
-#'         in mcia_out)
+#'               in mcia_out)
 #' @return ranked dataframe
 #' @examples
 #' data(NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#' num_PCs = 10, plots = "none", tol = 1e-12)
+#'                                   num_PCs = 10, plots = "none", tol = 1e-12)
 #' all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-#'     absolute = FALSE, descending = TRUE, factor = 1)
+#'                           absolute = FALSE, descending = TRUE, factor = 1)
 #' @export
 
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,

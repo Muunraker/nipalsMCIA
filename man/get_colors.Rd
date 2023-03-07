@@ -26,6 +26,6 @@ Creates a list of omics and associated colors for plotting
 \examples{
 data(NCI60)
 mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-num_PCs = 10, plots = "none", tol = 1e-12)
+                                  num_PCs = 10, plots = "none", tol = 1e-12)
 colors_omics <- get_colors(mcia_results)
 }

@@ -8,11 +8,11 @@
 #' @param projection of plot, with the following options
 #'         \itemize{
 #'         \item `all` - scatter plot of two orders of global and block
-#'                 scores (aka factors).
+#'                       scores (aka factors).
 #'         \item `global` - scatter plot of two orders of global scores
-#'                 only (aka factors).
+#'                          only (aka factors).
 #'         \item `block` - scatter plot of two orders of block scores
-#'                 only (aka factors) for    given block.
+#'                         only (aka factors) for given block.
 #'         }
 #' @param block_name of the block if projection = "block"
 #'
@@ -37,9 +37,9 @@
 #' @examples
 #' data(NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#'                                                             num_PCs = 10, plots = "none", tol=1e-12)
+#'                                   num_PCs = 10, plots = "none", tol = 1e-12)
 #' projection_plot(mcia_results, projection = "all", orders = c(1,2),
-#'     color_col = "cancerType", legend_loc = "bottomright")
+#'                 color_col = "cancerType", legend_loc = "bottomright")
 #' @return Displays the desired plots
 #' @importFrom graphics grid legend points segments
 #' @importFrom stats var
