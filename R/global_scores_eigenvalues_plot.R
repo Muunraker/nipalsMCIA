@@ -9,7 +9,7 @@
 #' @examples
 #' data(NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#'                                                             num_PCs = 10, plots = "none", tol=1e-12)
+#'                                   num_PCs = 10, plots = "none", tol=1e-12)
 #' global_scores_eigenvalues_plot(mcia_results)
 #' @return Displays the contribution plot using eigenvalues
 #' @importFrom graphics barplot

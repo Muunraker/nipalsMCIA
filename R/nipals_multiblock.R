@@ -94,14 +94,14 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     if (is(data_blocks,"MultiAssayExperiment")) {
         data_blocks_mae <- data_blocks
 
-        data_blocks <- assays(data_blocks)@listData
+        data_blocks <- MultiAssayExperiment::assays(data_blocks)@listData
         data_blocks <- lapply(data_blocks, t) # need samples x features
         data_blocks <- lapply(data_blocks, data.frame, check.names = FALSE)
 
         # If no metadata supplied, attempt to extract it from the MAE object
         if (is.null(metadata)) {
             # Convert metadata
-            metadata <- data.frame(colData(data_blocks_mae))
+            metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
             if (length(metadata) == 0) {
                 metadata <- NULL
             }

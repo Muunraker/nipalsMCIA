@@ -27,7 +27,7 @@ List of metadata columns with assigned colors
 }
 \description{
 Creates a list of metadata columns and associated colors
-  for plotting
+    for plotting
 }
 \examples{
 data(NCI60)
