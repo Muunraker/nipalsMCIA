@@ -1,6 +1,7 @@
-#' Assigning colors to different omics (default: color-blindness friendly)
+#' Assigning colors to different omics
 #'
-#' @description Creates a list of omics and associated colors for plotting
+#' @description Creates a list of omics and associated colors for plotting. The
+#' default palette was chosen to be color-blindness friendly.
 #'
 #' @param mcia_results object returned from nipals_multiblock() function
 #' @param color_pal a function which returns color palettes (e.g. scales)
@@ -15,7 +16,7 @@
 #' @importFrom methods is
 #' @export
 get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
-                       color_pal_params = list(option = "D")) {
+                       color_pal_params = list()) {
     omic_list <- names(mcia_results$block_loadings)
 
     if (is(color_pal, "function")) {
@@ -30,10 +31,9 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
 }
 
 #' Assigning colors to different values of a metadata column
-#' (default: color-blindness friendly)
 #'
 #' @description Creates a list of metadata columns and associated colors
-#'     for plotting
+#' for plotting. The default palette was chosen to be color-blindness friendly.
 #' @param mcia_results object returned from nipals_multiblock() function
 #' @param color_col an integer or string specifying the column that will be
 #'     used for color_col
@@ -43,13 +43,14 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
 #' @examples
 #' data(NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#' num_PCs = 10, plots = "none", tol = 1e-12)
-#' colors_omics <- get_metadata_colors(mcia_results, "cancerType")
+#'                                   num_PCs = 10, plots = "none", tol = 1e-12)
+#' colors_omics <- get_metadata_colors(mcia_results, "cancerType",
+#'                                     color_pal_params = list(option = "E"))
 #' @importFrom scales viridis_pal
 #' @export
 get_metadata_colors <- function(mcia_results, color_col,
                                 color_pal = scales::viridis_pal,
-                                color_pal_params = list(option = "E")) {
+                                color_pal_params = list()) {
     meta_list <- unique(mcia_results$metadata[, color_col])
     meta_list <- sort(meta_list) # alphabetize the metadata
 
