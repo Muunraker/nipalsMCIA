@@ -26,5 +26,5 @@ vignettes/.build.timestamp
 /doc/
 /Meta/
 data/
-inst/doc
+inst/doc/
 inst/extdata/

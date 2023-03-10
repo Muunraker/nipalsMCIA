@@ -1,0 +1,72 @@
+# set up the data
+data("NCI60") # loads in "data_blocks" which has 3 types of omics and metadata
+mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
+                                  preproc_method = "colprofile",
+                                  num_PCs = 2, tol = 1e-12, plots = "none")
+
+test_that("generate omics color palette", {
+    expect_length(get_colors(mcia_results), 3)
+})
+
+# uses the default viridis palette
+test_that("check omics color palette 1", {
+    expect_equal(
+        get_colors(mcia_results), # option = "D"
+        c("mrna" = "#440154FF", "miRNA" = "#21908CFF", "prot" = "#FDE725FF")
+    )
+})
+
+# tries a different type of viridis palette
+test_that("check omics color palette 2", {
+    expect_equal(
+        get_colors(mcia_results, color_pal_params = list(option = "A")),
+        c("mrna" = "#000004FF", "miRNA" = "#B63679FF", "prot" = "#FCFDBFFF")
+    )
+})
+
+# tries a different type of palette
+test_that("check omics color palette 3", {
+    expect_equal(
+        get_colors(mcia_results, color_pal = scales::hue_pal),
+        c("mrna" = "#F8766D", "miRNA" = "#00BA38", "prot" = "#619CFF")
+    )
+})
+
+# tries a different type of palette with a different option
+test_that("check omics color palette 4", {
+    expect_equal(
+        get_colors(mcia_results, color_pal = scales::hue_pal,
+                   color_pal_params = list(h = c(0, 90))),
+        c("mrna" = "#FF6C91", "miRNA" = "#DE8C00", "prot" = "#9DA700")
+    )
+})
+
+test_that("use given omics color palette", {
+    expect_length(get_colors(mcia_results,
+                             color_pal = c("red", "green", "blue")), 3)
+})
+
+
+# uses the default viridis palette
+test_that("generate metadata color palette", {
+    expect_length(get_metadata_colors(mcia_results), 3)
+})
+
+# tries a different type of palette
+test_that("check metadata color palette", {
+    expect_equal(
+        get_metadata_colors(mcia_results, color_pal = scales::brewer_pal,
+                            color_pal_params = list()),
+        c("CNS" = "#DEEBF7", "Leukemia" = "#9ECAE1", "Melanoma" = "#3182BD")
+    )
+})
+
+# tries a different type of palette with a different option
+test_that("check metadata color palette", {
+    expect_equal(
+        get_metadata_colors(mcia_results, color_pal = scales::brewer_pal,
+                            color_pal_params = list(palette = "Greens",
+                                                    direction = -1)),
+        c("CNS" = "#31A354", "Leukemia" = "#A1D99B", "Melanoma" = "#E5F5E0")
+    )
+})
