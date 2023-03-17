@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block data
@@ -46,19 +47,14 @@ datasets, BMC Bioinformatics 2014(15) (https://doi.org/10.1186/1471-2105-15-162)
 ## Installation
 
 This package currently can only be installed using `devtools::install_github()`.
-A CRAN/Bioconductor version is in progress. 
+A Bioconductor version is in progress. 
 
 You can install the development version of nipalsMCIA from [GitHub](https://github.com/) with:
 
 ```{r installation, echo = TRUE, results = 'hide', message = FALSE, eval = FALSE}
-library(devtools)
+# install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
                          force = TRUE, build_vignettes = TRUE)
-```
-
-```{r}
-library(nipalsMCIA)
-set.seed(42)
 ```
 
 ## Basic Example
@@ -69,19 +65,24 @@ of dataframes containing  observations of variables from three omics types
 cell lines. The data file includes a `metadata` data frame containing the cancer
 type associated with each cell line. 
 
+```{r}
+# load the package and set a seed for reproducibility
+library(nipalsMCIA)
+set.seed(42)
+```
+
 ```{r load-data}
 data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
 
+# examine the data and metadata
 summary(data_blocks)
-
 head(metadata_NCI60)
-
 table(metadata_NCI60)
 ```
 
-Note: this dataset is reproduced from the [omicade4 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
+*Note: this dataset is reproduced from the [omicade4 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
 (Meng et. al., 2014). This package assumes all input datasets are in sample by
-feature format.
+feature format.*
 
 The main MCIA function can be called on `data_blocks` and optionally can include
 `metadata_NCI60` for plot coloring by cancer type:

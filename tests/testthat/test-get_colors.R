@@ -1,8 +1,5 @@
-# set up the data
-data("NCI60") # loads in "data_blocks" which has 3 types of omics and metadata
-mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-                                  preproc_method = "colprofile",
-                                  num_PCs = 2, tol = 1e-12, plots = "none")
+# "data_blocks" (loaded with `data(NCI60)` during setup)
+# has 3 types of omics and metadata
 
 test_that("generate omics color palette", {
     expect_length(get_colors(mcia_results), 3)

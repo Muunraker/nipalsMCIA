@@ -40,21 +40,15 @@ multi-omics datasets, BMC Bioinformatics 2014(15)
 ## Installation
 
 This package currently can only be installed using
-`devtools::install_github()`. A CRAN/Bioconductor version is in
-progress.
+`devtools::install_github()`. A Bioconductor version is in progress.
 
 You can install the development version of nipalsMCIA from
 [GitHub](https://github.com/) with:
 
 ``` r
-library(devtools)
+# install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
                          force = TRUE, build_vignettes = TRUE)
-```
-
-``` r
-library(nipalsMCIA)
-set.seed(42)
 ```
 
 ## Basic Example
@@ -66,14 +60,20 @@ the NCI60 cancer cell lines. The data file includes a `metadata` data
 frame containing the cancer type associated with each cell line.
 
 ``` r
+# load the package and set a seed for reproducibility
+library(nipalsMCIA)
+set.seed(42)
+```
+
+``` r
 data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
 
+# examine the data and metadata
 summary(data_blocks)
 #>       Length Class      Mode
 #> mrna  12895  data.frame list
 #> miRNA   537  data.frame list
 #> prot   7016  data.frame list
-
 head(metadata_NCI60)
 #>            cancerType
 #> CNS.SF_268        CNS
@@ -82,17 +82,16 @@ head(metadata_NCI60)
 #> CNS.SNB_19        CNS
 #> CNS.SNB_75        CNS
 #> CNS.U251          CNS
-
 table(metadata_NCI60)
 #> metadata_NCI60
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
 
-Note: this dataset is reproduced from the [omicade4
+*Note: this dataset is reproduced from the [omicade4
 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
 (Meng et. al., 2014). This package assumes all input datasets are in
-sample by feature format.
+sample by feature format.*
 
 The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
