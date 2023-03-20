@@ -8,7 +8,9 @@ header-includes:
 output:
     rmdformats::readthedown:
       code_folding: show
+      dev: 'png'
       df_print: kable
+      fig_retina: 1
       highlight: kate
       toc_depth: 4
 vignette: >
@@ -29,7 +31,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
+![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.1/Vignette-2-Pipeline.png)
 
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
@@ -639,7 +641,8 @@ Examine the top twenty most variable features:
 LabelPoints(plot = VariableFeaturePlot(object = obj),
             points = head(VariableFeatures(object = obj), 20),
             repel = TRUE, xnudge = 0, ynudge = 0) +
-  labs(title = "Top Twenty Variable Features")
+  labs(title = "Top Twenty Variable Features") +
+  theme(legend.position = "bottom")
 ```
 
 #### Elbow plot
@@ -710,112 +713,32 @@ DotPlot(object = obj,
 DefaultAssay(object = obj) <- "RNA"
 ```
 
-#### Feature plots {.tabset}
+#### Feature plots
 
-##### B cells
+If you would like to generate feature plots for a cell type within your markers
+database (if you are using one) e.g. for B cells, you could do `features = (dplyr::filter(markers_all, Cell_Type == "B"))$Marker` in the following command.
+Here we just show a few characteristic markers for different cell types for
+simplicity.
 
-```{r seurat-markers-feature-b, fig.dim = c(16, 24)}
+```{r seurat-markers-feature, fig.dim = c(12, 8)}
 FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "B"))$Marker,
+            features = c("MS4A1", "CD14", # MS4A1 is another name for CD20
+                         "NKG7", "IL3RA", "CD3D", "IL7R"), 
             min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### mDCs
-
-aka myeloid dendritic cells
-
-```{r seurat-markers-feature-mdcs, fig.dim = c(16, 8)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "mDC"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Melanocytes
-
-```{r seurat-markers-feature-melanocytes, fig.dim = c(16, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Melanocytes"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Myocytes
-
-```{r seurat-markers-feature-myocytes, fig.dim = c(16, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Myocytes"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### NKs
-
-aka natural killer cells
-
-```{r seurat-markers-feature-nk, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "NK"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### pDC
-
-aka plasmacytoid dendritic cells
-
-```{r seurat-markers-feature-pdcs, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "pDC"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Plasma cells
-
-```{r seurat-markers-feature-plasma, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Plasma"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Platelets
-
-```{r seurat-markers-feature-platelets, fig.dim = c(12, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Platelets"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### T cells
-
-```{r seurat-markers-feature-t, fig.dim = c(16, 16)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "T"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
+            ncol = 3, raster = FALSE)
 ```
 
 #### Violin plots
 
-##### ADT
+Here the point size is set to zero so that you can just see the violins. We only
+show a few of the cell surface markers here, but you could plot them all with
+`features = rownames(obj[["ADT"]])`. You can also plot the standard GEX markers
+just like for the feature plots (just make sure to remove `assay = "ADT"`).
 
-Here the point size is set to zero so that you can just see the violins.
-
-```{r seurat-markers-violin-adt, fig.dim = c(16, 32)}
-VlnPlot(object = obj, features = rownames(obj[["ADT"]]),
+```{r seurat-markers-violin-adt, fig.dim = c(16, 4)}
+VlnPlot(object = obj,
+        features = c("CD3-TotalSeqB", "CD14-TotalSeqB", "CD20-TotalSeqB",
+                     "CD335-TotalSeqB"),
         pt.size = 0, assay = "ADT", ncol = 4) &
   theme(plot.title = element_text(size = 10),
         axis.text.x = element_text(angle = 0, hjust = 0.5),
@@ -834,6 +757,8 @@ If you would like to further break down these clusters, you can increase the clu
 in the standard pipeline in order to increase the number of clusters.
 
 ```{r seurat-annotations}
+# mDC = myeloid dendritic cells
+# pDC = plasmacytoid dendritic cells
 obj_annotations <- rbind(c("0", "Macrophages/mDCs"), # difficult to separate
                          c("1", "T Cells"),
                          c("2", "T Cells"),
@@ -912,11 +837,13 @@ DefaultAssay(object = obj) <- "RNA"
 
 #### Check the annotations
 
-For example, if you want to visually check your T cell cluster annotations:
+For example, if you want to visually check your T cell cluster annotations (just
+like before, you can also do `features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker`
+to use all of the T cell markers in the markers database):
 
-```{r seurat-check-annotations-t, fig.dim = c(16, 12)}
+```{r seurat-check-annotations, fig.dim = c(16, 4)}
 VlnPlot(object = obj,
-        features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker,
+        features = c("CD3D", "CD4", "IL7R", "TRAC"),
         cols = meta_colors_sc, pt.size = 0.01, ncol = 4) &
   theme(plot.title = element_text(size = 10),
         axis.title.x = element_blank())
