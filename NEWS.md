@@ -1,3 +1,9 @@
+# 0.99.2:
+
+## Major changes
+
+* Shrank the vignettes sizes (especially Vignette 2)
+
 # 0.99.1:
 
 ## Major changes

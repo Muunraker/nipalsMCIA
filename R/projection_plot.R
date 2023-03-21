@@ -236,7 +236,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         block_idx <- as.numeric(block_idx)
 
         # Normalize block scores to unit variance
-        # print(mcia_results$block_scores[[block_idx]])
+        # message(mcia_results$block_scores[[block_idx]])
         bs_norms <- apply(mcia_results$block_scores[[block_idx]], 2,
                           function(x) (sqrt(var(x))))
         bs_normed <- t(t(mcia_results$block_scores[[block_idx]]) / bs_norms)

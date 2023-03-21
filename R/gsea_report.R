@@ -28,7 +28,7 @@ gsea_report <- function(metagenes, path.database, factors = NULL,
 
     # Calculate biological annotation enrichment, for each factor
     for (j in factors) {
-        print(paste0("Running GSEA for Factor", j))
+        message(paste0("Running GSEA for Factor", j))
 
         # Extract a vector of scores for GSEA and set rownams
         # to HUGO symbols

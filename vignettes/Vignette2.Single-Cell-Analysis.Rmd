@@ -8,7 +8,7 @@ header-includes:
 output:
     rmdformats::readthedown:
       code_folding: show
-      dev: 'png'
+      dev: 'jpeg'
       df_print: kable
       fig_retina: 1
       highlight: kate
@@ -542,39 +542,39 @@ obj <- ScaleData(object = obj, features = rownames(obj))
 obj <- RunPCA(object = obj)
 ## PC_ 1
 ## Positive:  LYZ, FCN1, CST3, MNDA, CTSS, PSAP, S100A9, FGL2, AIF1, GRN
-## 	   NCF2, LST1, CD68, TYMP, SERPINA1, CYBB, CLEC12A, CSTA, SPI1, TNFAIP2
-## 	   CPVL, VCAN, MPEG1, TYROBP, KLF4, FTL, S100A8, IGSF6, CD14, MS4A6A
+##     NCF2, LST1, CD68, TYMP, SERPINA1, CYBB, CLEC12A, CSTA, SPI1, TNFAIP2
+##     CPVL, VCAN, MPEG1, TYROBP, KLF4, FTL, S100A8, IGSF6, CD14, MS4A6A
 ## Negative:  CD3D, TRAC, LTB, TRBC2, IL32, CD3G, IL7R, CD69, CD247, TRBC1
-## 	   CD2, CD7, CD27, ARL4C, ISG20, HIST1H4C, SYNE2, GZMM, ITM2A, CCR7
-## 	   RORA, MAL, CXCR4, LEF1, TRAT1, CTSW, GZMA, KLRB1, TRABD2A, CCL5
+##     CD2, CD7, CD27, ARL4C, ISG20, HIST1H4C, SYNE2, GZMM, ITM2A, CCR7
+##     RORA, MAL, CXCR4, LEF1, TRAT1, CTSW, GZMA, KLRB1, TRABD2A, CCL5
 ## PC_ 2
 ## Positive:  CD79A, MS4A1, IGHM, BANK1, HLA-DQA1, CD79B, IGKC, LINC00926, RALGPS2, TNFRSF13C
-## 	   VPREB3, IGHD, SPIB, CD22, FCRL1, HLA-DQB1, BLK, FAM129C, FCRLA, TCL1A
-## 	   GNG7, TCF4, COBLL1, PAX5, SWAP70, CD40, BCL11A, P2RX5, TSPAN13, ADAM28
+##     VPREB3, IGHD, SPIB, CD22, FCRL1, HLA-DQB1, BLK, FAM129C, FCRLA, TCL1A
+##     GNG7, TCF4, COBLL1, PAX5, SWAP70, CD40, BCL11A, P2RX5, TSPAN13, ADAM28
 ## Negative:  NKG7, CST7, GZMA, PRF1, KLRD1, CTSW, FGFBP2, GNLY, GZMH, CCL5
-## 	   GZMM, CD247, KLRF1, HOPX, SPON2, ADGRG1, TRDC, MATK, GZMB, FCGR3A
-## 	   S100A4, CCL4, CLIC3, KLRB1, IL2RB, TBX21, TTC38, ANXA1, PTGDR, PLEKHF1
+##     GZMM, CD247, KLRF1, HOPX, SPON2, ADGRG1, TRDC, MATK, GZMB, FCGR3A
+##     S100A4, CCL4, CLIC3, KLRB1, IL2RB, TBX21, TTC38, ANXA1, PTGDR, PLEKHF1
 ## PC_ 3
 ## Positive:  GZMB, NKG7, GNLY, CLIC3, PRF1, KLRD1, FGFBP2, KLRF1, SPON2, CST7
-## 	   GZMH, FCGR3A, ADGRG1, GZMA, HOPX, CTSW, TRDC, CCL4, HLA-DPB1, C12orf75
-## 	   PLAC8, TTC38, PLEK, APOBEC3G, TBX21, PRSS23, CYBA, MATK, SYNGR1, CXXC5
+##     GZMH, FCGR3A, ADGRG1, GZMA, HOPX, CTSW, TRDC, CCL4, HLA-DPB1, C12orf75
+##     PLAC8, TTC38, PLEK, APOBEC3G, TBX21, PRSS23, CYBA, MATK, SYNGR1, CXXC5
 ## Negative:  IL7R, MAL, LEF1, TRABD2A, TRAC, CCR7, LTB, CD27, FOS, LRRN3
-## 	   FHIT, TRAT1, RGCC, CAMK4, CD3D, RGS10, CD40LG, FOSB, AQP3, SOCS3
-## 	   FLT3LG, CD3G, SLC2A3, TSHZ2, VIM, S100A12, S100A8, CD28, PLK3, VCAN
+##     FHIT, TRAT1, RGCC, CAMK4, CD3D, RGS10, CD40LG, FOSB, AQP3, SOCS3
+##     FLT3LG, CD3G, SLC2A3, TSHZ2, VIM, S100A12, S100A8, CD28, PLK3, VCAN
 ## PC_ 4
 ## Positive:  FCER1A, PLD4, SERPINF1, IL3RA, CLEC10A, GAS6, LILRA4, TPM2, CLEC4C, ENHO
-## 	   FLT3, SMPD3, ITM2C, LGMN, CD1C, P2RY14, PPP1R14B, SCT, PROC, LAMP5
-## 	   RUNX2, AC119428.2, PACSIN1, DNASE1L3, PTCRA, RGS10, UGCG, CLIC2, PPM1J, P2RY6
+##     FLT3, SMPD3, ITM2C, LGMN, CD1C, P2RY14, PPP1R14B, SCT, PROC, LAMP5
+##     RUNX2, AC119428.2, PACSIN1, DNASE1L3, PTCRA, RGS10, UGCG, CLIC2, PPM1J, P2RY6
 ## Negative:  MS4A1, CD79A, LINC00926, BANK1, TNFRSF13C, VPREB3, CD79B, RALGPS2, IGHD, FCRL1
-## 	   BLK, IGHM, CD22, PAX5, ARHGAP24, CD24, P2RX5, NCF1, S100A12, CD19
-## 	   SWAP70, FCRLA, VNN2, TNFRSF13B, FCER2, IGKC, FCRL2, RBP7, CD40, S100A8
+##     BLK, IGHM, CD22, PAX5, ARHGAP24, CD24, P2RX5, NCF1, S100A12, CD19
+##     SWAP70, FCRLA, VNN2, TNFRSF13B, FCER2, IGKC, FCRL2, RBP7, CD40, S100A8
 ## PC_ 5
 ## Positive:  BATF3, C1QA, TCF7L2, CTSL, CDKN1C, HLA-DQB1, HES4, SIGLEC10, CLEC10A, ABI3
-## 	   HLA-DQA1, RHOC, CSF1R, ENHO, CAMK1, MTSS1, IFITM3, CD1C, LY6E, FCGR3A
-## 	   HLA-DPA1, CLIC2, HLA-DPB1, YBX1, RRAS, AC064805.1, NR4A1, GBP1, ZNF703, CXCL16
+##     HLA-DQA1, RHOC, CSF1R, ENHO, CAMK1, MTSS1, IFITM3, CD1C, LY6E, FCGR3A
+##     HLA-DPA1, CLIC2, HLA-DPB1, YBX1, RRAS, AC064805.1, NR4A1, GBP1, ZNF703, CXCL16
 ## Negative:  LILRA4, TPM2, CLEC4C, SMPD3, IL3RA, SERPINF1, DERL3, MZB1, SCT, JCHAIN
-## 	   PACSIN1, PROC, S100A12, PTCRA, LINC00996, PADI4, ASIP, KCNK17, ITM2C, EPHB1
-## 	   ALOX5AP, LAMP5, DNASE1L3, MAP1A, S100A8, APP, CYP1B1, VNN2, UGCG, ZFAT
+##     PACSIN1, PROC, S100A12, PTCRA, LINC00996, PADI4, ASIP, KCNK17, ITM2C, EPHB1
+##     ALOX5AP, LAMP5, DNASE1L3, MAP1A, S100A8, APP, CYP1B1, VNN2, UGCG, ZFAT
 
 # clustering (adjust dimensions and resolutions as desired)
 obj <- FindNeighbors(object = obj, reduction = "pca", dims = 1:20)
@@ -724,7 +724,7 @@ simplicity.
 FeaturePlot(object = obj,
             features = c("MS4A1", "CD14", # MS4A1 is another name for CD20
                          "NKG7", "IL3RA", "CD3D", "IL7R"), 
-            min.cutoff = 0, label = TRUE, label.size = 2,
+            min.cutoff = 0, label = TRUE, label.size = 3,
             ncol = 3, raster = FALSE)
 ```
 
@@ -807,13 +807,14 @@ meta <- data.frame("CellType" = Idents(object = obj))
 
 #### UMAPs
 
-Here we use the selected metadata colors from the [[MCIA]] section, so be sure to
+Here we use the selected metadata colors from the [MCIA] section, so be sure to
 change that (or just remove the `cols = ...` to use the default) if you are running
 this section first.
 
 ```{r seurat-umap-both, fig.dim = c(16, 8)}
 # change colors and themes as desired
-plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 4,
+plot_annotated_clusters <- UMAPPlot(object = obj,
+                                    label = TRUE, label.size = 4,
                                     cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
                              theme(plot.title = element_text(hjust = 0.5),
@@ -823,14 +824,13 @@ plot_annotated_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 4,
 ggarrange(plot_seurat_clusters, plot_annotated_clusters)
 ```
 
-```{r seurat-umap-adt, fig.dim = c(16, 16)}
+```{r seurat-umap-adt, fig.dim = c(4, 4)}
 # plot ADT information on top as an example
 
 DefaultAssay(object = obj) <- "ADT"
 
-FeaturePlot(object = obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB",
-                                       "CD19-TotalSeqB", "CD27-TotalSeqB"),
-            label = TRUE, label.size = 4, ncol = 2, raster = FALSE)
+FeaturePlot(object = obj, features = "CD19-TotalSeqB",
+            label = TRUE, label.size = 3, ncol = 1, raster = FALSE)
 
 DefaultAssay(object = obj) <- "RNA"
 ```

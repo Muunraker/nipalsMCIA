@@ -4,6 +4,7 @@ author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output:
     rmdformats::readthedown:
+      code_folding: show
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
