@@ -9,6 +9,7 @@ output:
     rmdformats::readthedown:
       code_folding: show
       df_print: kable
+      fig.retina: 1
       highlight: kate
       toc_depth: 4
 vignette: >

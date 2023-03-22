@@ -15,8 +15,8 @@ output:
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Single-Cell-Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
@@ -70,7 +70,7 @@ pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 ```
 
 ```{r data-all-download}
-# specify tag = "" to use a different release other than latest
+# specify `tag = ` to use a different release other than latest
 
 # files needed for running MCIA
 pb_download(file = "metadata_sc.csv", dest = path_inst,
@@ -84,6 +84,10 @@ pb_download(file = "mcia_results_sc.Rds", dest = path_inst,
 
 # marker genes for cell type annotation with Seurat
 pb_download(file = "marker_genes.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+
+# the Seurat data's metric summary file from 10x Genomics
+pb_download(file = "5k_pbmc_protein_v3_metrics_summary.csv", dest = path_inst,
             repo = "Muunraker/nipalsMCIA")
 
 # Seurat objects in different stages of processing
@@ -295,7 +299,7 @@ metadata_sc %>% slice_sample(n = 5)
 
 This will run on cells with the top 2000 variable features (as defined in the later analysis).
 
-```{r mcia-decomp-load-data}
+```{r mcia-decomp-load-data, eval = FALSE}
 # load the object setup for running MCIA [10x Genomics & Seurat]
 load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 ```
@@ -372,13 +376,15 @@ projection_plot(mcia_results = mcia_results_sc,
 #### Global scores heatmap
 
 ```{r mcia-plots-heatmap-global, fig.dim = c(8, 6)}
-suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc))
-## The automatically generated colors map from the minus and plus 99^th of the absolute values in the matrix.
-## There are outliers in the matrix whose patterns might be hidden by this color mapping. You can manually
-## set the color to `col` argument.
+suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
+                                       color_col = "CellType",
+                                       color_pal = meta_colors_sc))
 ```
 
 #### Block weights heatmap
+
+The block weights heatmap shows the distribution of the different block score
+weights among the factors.
 
 ```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
 block_weights_heatmap(mcia_results = mcia_results_sc)
@@ -427,23 +433,8 @@ vis_load_ord(gl_f_ord = all_4, omic_name = "all",
              colors_omics = colors_omics_sc, n_feat = 60)
 ```
 
-##### Factor 7
-
-```{r mcia-plots-top-features-factor-7, fig.dim = c(10, 5)}
-# define the loadings
-all_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
-                          absolute = TRUE, descending = TRUE, factor = 7)
-prot_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "mrna",
-                           absolute = TRUE, descending = TRUE, factor = 7)
-
-# visualization
-all_abs_7_vis <- vis_load_ord(gl_f_ord = all_abs_7, omic_name = "all",
-                              colors_omics = colors_omics_sc)
-prot_abs_7_vis <- vis_load_ord(gl_f_ord = prot_abs_7, omic_name = "mrna",
-                               colors_omics = colors_omics_sc)
-
-ggarrange(all_abs_7_vis, prot_abs_7_vis)
-```
+As we saw in the [Block weights heatmap], factor 4 is dominated by the mRNA data
+and not the ADT data.
 
 ## Deep dive: Seurat analysis
 
@@ -465,11 +456,10 @@ obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 
 #### Metrics summary
 
-```{r seurat-qc-metrics-summary, eval = FALSE}
+```{r seurat-qc-metrics-summary}
 # read in the summary table
 (metrics_summary <- read.csv(
-    file = file.path(path_data, "tenx_pbmc5k_CITEseq",
-                     "5k_pbmc_protein_v3_metrics_summary.csv")
+    file = file.path(path_inst, "5k_pbmc_protein_v3_metrics_summary.csv")
 ))
 ```
 
@@ -507,7 +497,7 @@ see outputs.
 
 **Most of these are run on the RNA**.
 
-```{r seurat-pipeline, eval = FALSE}
+```{r seurat-pipeline-1, eval = FALSE}
 # standard log normalization for RNA and centered log for ADT
 obj <- NormalizeData(object = obj, normalization.method = "LogNormalize",
                      scale.factor = 10000, assay = "RNA")
@@ -633,11 +623,31 @@ Idents(object = obj) <- "seurat_clusters"
 obj$annotated_clusters <- c()
 ```
 
-#### Most variable features
+#### PCA
 
-Examine the top twenty most variable features:
+**Typically this section would go in between the `RunPCA()` and `FindNeighbors()` steps above**.
+It has been included here because of how we save and load the objects separately
+for processing speed.
 
-```{r seurat-top-features, fig.dim = c(6, 6), warning = FALSE}
+Now that we've run PCA, we can examine an elbow plot as a simple method for 
+selecting how many PCs to choose when identifying neighbors/clusters.
+
+```{r seurat-elbow, fig.dim = c(8, 4)}
+ElbowPlot(object = obj, ndims = 30)
+```
+
+From the plot, it looked like 20 works as a cut-off for the number of PCs to
+include. We could have also chosen to use 10, but decided to go a little higher.
+
+You can also examine other information which was used for the PCA, such as the
+top twenty most variable features:
+
+```{r seurat-top-features}
+head(VariableFeatures(object = obj), 20)
+```
+
+```{r seurat-top-features-plot, fig.dim = c(6, 6), warning = FALSE, eval = FALSE}
+# these can be plotted if desired
 LabelPoints(plot = VariableFeaturePlot(object = obj),
             points = head(VariableFeatures(object = obj), 20),
             repel = TRUE, xnudge = 0, ynudge = 0) +
@@ -645,14 +655,6 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
   theme(legend.position = "bottom")
 ```
 
-#### Elbow plot
-
-This kind of plot is typically used for selecting how many PCs to choose when
-identifying neighbors/clusters.
-
-```{r seurat-elbow, fig.dim = c(8, 4)}
-ElbowPlot(object = obj)
-```
 
 #### UMAP
 
@@ -683,14 +685,31 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ##### GEX
 
-```{r seurat-markers-dot-gex, fig.dim = c(20, 6), message = FALSE}
-p <- DotPlot(object = obj, features = unique(markers_all$Marker),
+Here we only demonstrate a few of the cell types included within the provided
+markers database. We plot those cell types on top of the dot plot to make it
+easier to see which markers they correspond with, but you can comment that code
+out if you would rather have a simple dot plot.
+
+```{r seurat-markers-dot-gex, fig.dim = c(14, 6), message = FALSE}
+select_cell_types <- c("B", "Macrophages", "mDC", "NK", "T")
+
+# do features = unique(markers_all$Marker) to use all possible features
+p <- DotPlot(object = obj,
+             features = markers_all %>%
+                          dplyr::filter(Cell_Type %in% select_cell_types) %>%
+                          distinct(Marker) %>% pull(),
              cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE)
 
+# add in the cell type information
+# if desired, you could rename the "Cell_Type"s in the original database to be
+# more informative e.g. Natural_Killers instead of NK
 p$data <- left_join(p$data,
-                    markers_all %>% dplyr::rename(features.plot = "Marker"),
-                    by = "features.plot")
+                    markers_all %>%
+                      dplyr::filter(Cell_Type %in% select_cell_types) %>%
+                      dplyr::rename(features.plot = "Marker"),
+                    by = "features.plot", multiple = "all")
 
+# plot
 p +
   facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
   theme(strip.text.x = element_text(size = 10)) + RotatedAxis()
@@ -701,7 +720,8 @@ p +
 The average expression was set to a minimum of zero to better see the
 up-regulated features.
 
-```{r seurat-markers-dot-adt, fig.dim = c(16, 6)}
+```{r seurat-markers-dot-adt, fig.dim = c(14, 6)}
+# you have to change the default assay for the dot plot
 DefaultAssay(object = obj) <- "ADT"
 
 DotPlot(object = obj,
@@ -710,6 +730,7 @@ DotPlot(object = obj,
         cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE) +
   RotatedAxis()
 
+# reset the default
 DefaultAssay(object = obj) <- "RNA"
 ```
 
@@ -735,11 +756,11 @@ show a few of the cell surface markers here, but you could plot them all with
 `features = rownames(obj[["ADT"]])`. You can also plot the standard GEX markers
 just like for the feature plots (just make sure to remove `assay = "ADT"`).
 
-```{r seurat-markers-violin-adt, fig.dim = c(16, 4)}
+```{r seurat-markers-violin-adt, fig.dim = c(8, 6)}
 VlnPlot(object = obj,
         features = c("CD3-TotalSeqB", "CD14-TotalSeqB", "CD20-TotalSeqB",
                      "CD335-TotalSeqB"),
-        pt.size = 0, assay = "ADT", ncol = 4) &
+        pt.size = 0, assay = "ADT", ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.text.x = element_text(angle = 0, hjust = 0.5),
         axis.title.x = element_blank())
@@ -824,15 +845,14 @@ plot_annotated_clusters <- UMAPPlot(object = obj,
 ggarrange(plot_seurat_clusters, plot_annotated_clusters)
 ```
 
+You should change the `DefaultAssay` to/from `ADT` like in [ADT] if you don't
+want to specify "adt_" before the feature name.
+
 ```{r seurat-umap-adt, fig.dim = c(4, 4)}
 # plot ADT information on top as an example
 
-DefaultAssay(object = obj) <- "ADT"
-
-FeaturePlot(object = obj, features = "CD19-TotalSeqB",
+FeaturePlot(object = obj, features = "adt_CD19-TotalSeqB",
             label = TRUE, label.size = 3, ncol = 1, raster = FALSE)
-
-DefaultAssay(object = obj) <- "RNA"
 ```
 
 #### Check the annotations
@@ -841,10 +861,10 @@ For example, if you want to visually check your T cell cluster annotations (just
 like before, you can also do `features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker`
 to use all of the T cell markers in the markers database):
 
-```{r seurat-check-annotations, fig.dim = c(16, 4)}
+```{r seurat-check-annotations, fig.dim = c(8, 6)}
 VlnPlot(object = obj,
         features = c("CD3D", "CD4", "IL7R", "TRAC"),
-        cols = meta_colors_sc, pt.size = 0.01, ncol = 4) &
+        cols = meta_colors_sc, pt.size = 0.01, ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.title.x = element_blank())
 ```

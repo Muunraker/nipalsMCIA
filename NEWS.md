@@ -4,6 +4,11 @@
 
 * Shrank the vignettes sizes (especially Vignette 2)
 
+## Minor improvements and bug fixes
+
+* Restructured Vignette 2 to be more streamlined and have more explanations
+* Add an additional single cell data file to the repository with `piggyback`
+
 # 0.99.1:
 
 ## Major changes
@@ -17,4 +22,4 @@
 
 # 0.0.1 (2022-10-23):
 
-* Added single cell data to repository using `piggyback`
+* Added single cell data to the repository using `piggyback`
