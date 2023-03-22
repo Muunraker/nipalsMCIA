@@ -1,16 +1,25 @@
-# test if # PCs generated matches # PCs specified
+# test dimension of global loadings (two omics with equal features)
 test_that("Number of block score weights correct", {
+  # test data with 3 samples, 2 omics, 5 features per omic
   test_data<-list(omic1=data.frame((rand(3,5))),omic2=data.frame((rand(3,5))))
-  test <- nipals_multiblock(test_data,plots = 'none',num_PCs = 10, tol=1e-9)
-  expect_equal(2,dim(test$block_score_weights)[1])
+  test <- nipals_multiblock(test_data,plots = 'none',num_PCs = 4, tol=1e-9)
+  expect_equal(c(10,4),dim(test$global_loadings))
+  
+  # test with NCI60 data
+  expect_equal(c(20448, 2),dim(mcia_results$global_loadings))
 })
 
-# test if dimensions of block/global loadings are correct
+# testing magnitude of top three eigenvalues of NCI60 dataset
+test_that("Top eigenvalues correct", {
+  expect_equal(all(mcia_results3$eigvals > 0.21), TRUE); 
+})
 
-# test if works in edge case: # samples = # variables
+# expect error if number of samples is wrong
+test_that("Mismatched samples should throw error", {
+  test_data<-list(omic1=data.frame((rand(2,5))),omic2=data.frame((rand(3,5))))
+  expect_error(nipals_multiblock(test_data,plots = 'none',num_PCs = 4, tol=1e-9)); 
+})
 
-# test if output works for # samples > # variables
 
-# test if output expected for one block(?) 
 
 
