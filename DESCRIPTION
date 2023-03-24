@@ -34,6 +34,7 @@ Imports:
     MultiAssayExperiment,
     pracma,
     rlang,
+    rmdformats,
     RSpectra,
     scales,
     stats
