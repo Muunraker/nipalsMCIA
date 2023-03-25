@@ -20,10 +20,7 @@ export(predict_gs)
 export(projection_plot)
 export(vis_load_ord)
 export(vis_load_plot)
-<<<<<<< HEAD
 importClassesFrom(MultiAssayExperiment,MultiAssayExperiment)
-=======
->>>>>>> upstream/devel
 importFrom(MultiAssayExperiment,assays)
 importFrom(MultiAssayExperiment,colData)
 importFrom(MultiAssayExperiment,experiments)
