@@ -5,7 +5,7 @@ date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output:
     rmdformats::readthedown:
       code_folding: show
-      fig.retina: 1
+      fig_retina: 1
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
