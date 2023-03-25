@@ -27,9 +27,9 @@ Projects the new observations onto each block loadings vector, then
 weights the projection according to the corresponding block weights.
 }
 \examples{
- data(NCI60)
- mcia_results <- nipals_multiblock(data_blocks, num_PCs = 2)
- new_data <- data_blocks # should update with a truly new dataset
- preds <- predict_gs(mcia_results, new_data)
+   data(NCI60)
+   mcia_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+   new_data <- data_blocks # should update with a truly new dataset
+   preds <- predict_gs(mcia_results, new_data)
 
 }

@@ -26,42 +26,40 @@
 #' preprocessed_dataframe <- col_preproc(df, col_preproc_method = 'colprofile')
 #' @export
 col_preproc <- function(df, col_preproc_method) {
-  temp_df <- as.matrix(df)
-  col_preproc_method <- tolower(col_preproc_method)
+    temp_df <- as.matrix(df)
+    col_preproc_method <- tolower(col_preproc_method)
 
-  if (col_preproc_method == "colprofile") {
-    # Making data non-negative
-    min_val <- min(temp_df)
-    if (min_val < 0) {
-      offset <- floor(min_val)
-      temp_df <- temp_df + abs(offset)
+    if (col_preproc_method == "colprofile") {
+        # Making data non-negative
+        min_val <- min(temp_df)
+        if (min_val < 0) {
+            offset <- floor(min_val)
+            temp_df <- temp_df + abs(offset)
+        }
+
+        # Generating centered column profiles:
+        totsum <- sum(temp_df)
+        colsums <- colSums(temp_df)
+        row_contribs <- rowSums(temp_df) / totsum
+
+        # Dividing by column sums
+        nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
+        temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
+
+        # Subtracting row contributions
+        temp_df <- temp_df - row_contribs
+
+        # Applying feature weighting by proportion of variance
+        temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
+
+    } else if (col_preproc_method == "standardized") {
+        temp_df <- scale(temp_df)
+    } else if (col_preproc_method == "centered_only") {
+        temp_df <- scale(temp_df, center = TRUE, scale = FALSE)
+    } else {
+        stop("Column preprocessing method not recognized ",
+                 "- pick from available options")
     }
 
-    # Generating centered column profiles:
-    totsum <- sum(temp_df)
-    colsums <- colSums(temp_df)
-    row_contribs <- rowSums(temp_df) / totsum
-
-    # Dividing by column sums
-    nz_cols <- which(colsums != 0) # excluding zero columns to avoid NaNs
-    temp_df[, nz_cols] <- t(t(temp_df[, nz_cols]) / colsums[nz_cols])
-
-    # Subtracting row contributions
-    temp_df <- temp_df - row_contribs
-
-    # Applying feature weighting by proportion of variance
-    temp_df <- t(t(temp_df) * sqrt(colsums / totsum))
-
-  } else if (col_preproc_method == "standardized") {
-    temp_df <- scale(temp_df)
-
-  } else if (col_preproc_method == "centered_only") {
-    temp_df <- scale(temp_df, center = TRUE, scale = FALSE)
-
-  } else {
-    stop("Column preprocessing method not recognized ",
-         "- pick from available options")
-  }
-
-  return(temp_df)
+    return(temp_df)
 }

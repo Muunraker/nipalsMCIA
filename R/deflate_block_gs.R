@@ -16,7 +16,7 @@
 #'
 #' @export
 deflate_block_gs <- function(df, gs) {
-  normed_gs <- gs / norm(gs, type = "2")
-  df <- df - tcrossprod(normed_gs) %*% as.matrix(df)
-  return(df)
+    normed_gs <- gs / norm(gs, type = "2")
+    df <- df - tcrossprod(normed_gs) %*% as.matrix(df)
+    return(df)
 }

@@ -21,6 +21,6 @@ Plotting function for eigenvalues of scores up to num_PCs
 \examples{
 data(NCI60)
 mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-                              num_PCs = 10, plots = "none", tol=1e-12)
+                                  num_PCs = 10, plots = "none", tol=1e-12)
 global_scores_eigenvalues_plot(mcia_results)
 }

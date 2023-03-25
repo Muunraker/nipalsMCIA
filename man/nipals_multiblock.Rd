@@ -19,7 +19,7 @@ nipals_multiblock(
 }
 \arguments{
 \item{data_blocks}{a list of data frames in "sample" x "variable" format,
-or a MultiAssayExperiment class object 
+or a MultiAssayExperiment class object
 (with sample metadata as a dataframe in the colData attribute).}
 
 \item{preproc_method}{an option for the desired column-level data
@@ -70,7 +70,7 @@ plot
 \item `none` does not display plots
 \item `block_variances` a list of variances of each block AFTER
 NORMALIZATION OPTION APPLIED
-\item `metadata` the metadata dataframe supplied wuith the `metadata`
+\item `metadata` the metadata dataframe supplied with the `metadata`
 argument. Note: overrides metadata present in any MAE class object.}}
 }
 \value{
@@ -103,11 +103,11 @@ the desired deflation method.
 This process is repeated up to the desired maximum order of scores/loadings.
 }
 \examples{
- data(NCI60)
- NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
- max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
- MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
- CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
- deflationMethod = 'global')
+   data(NCI60)
+   NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
+   max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
+   MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+   CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
+   deflationMethod = 'global')
 
 }

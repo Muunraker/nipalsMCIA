@@ -7,6 +7,7 @@
 *.Rproj
 *.Rproj.user
 *.Ruserdata
+*.Rapp.history
 
 # other file extensions
 *.html
@@ -26,5 +27,5 @@ vignettes/.build.timestamp
 /doc/
 /Meta/
 data/
-inst/doc
+inst/doc/
 inst/extdata/

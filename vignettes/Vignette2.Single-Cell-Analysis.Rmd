@@ -8,13 +8,15 @@ header-includes:
 output:
     rmdformats::readthedown:
       code_folding: show
+      dev: 'jpeg'
       df_print: kable
+      fig_retina: 1
       highlight: kate
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Single-Cell-Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
@@ -29,7 +31,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Flow Chart](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.0.1/Vignette-2-Pipeline.png)
+![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.2/Vignette-2-Pipeline.png)
 
 ```{r load-packages, echo = TRUE, include = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
@@ -64,31 +66,35 @@ We have the objects described below available in data files which you can downlo
 
 ```{r data-all-list}
 # list all of the currently available files in the latest release
-pb_list(repo = "Muunraker/nipalsMCIA")
+pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 ```
 
 ```{r data-all-download}
-# files for running MCIA
-pb_download(file = "metadata_sc.csv", # "Annotations"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "data_blocks_sc.Rda", # "10x Genomics and Seurat"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "data_sc_sce.Rda", # "Bioconductor"
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+# specify `tag = ` to use a different release other than latest
+
+# files needed for running MCIA
+pb_download(file = "metadata_sc.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+pb_download(file = "data_blocks_sc.Rda", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # MCIA results
-pb_download(file = "mcia_results_sc.Rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "mcia_results_sc.Rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # marker genes for cell type annotation with Seurat
-pb_download(file = "marker_genes.csv",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "marker_genes.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+
+# the Seurat data's metric summary file from 10x Genomics
+pb_download(file = "5k_pbmc_protein_v3_metrics_summary.csv", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 
 # Seurat objects in different stages of processing
-pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
-pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
-            repo = "Muunraker/nipalsMCIA", dest = path_inst)
+pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
+pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds", dest = path_inst,
+            repo = "Muunraker/nipalsMCIA")
 ```
 
 ### Bioconductor
@@ -104,54 +110,54 @@ tenx_pbmc3k <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
 
 # examine the data:
 counts(tenx_pbmc3k)
-# <33538 x 5247> sparse matrix of class DelayedMatrix and type "integer":
-#                    [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
-# ENSG00000243485       0       0       0       0   .       0       0       0       0
-# ENSG00000237613       0       0       0       0   .       0       0       0       0
-# ENSG00000186092       0       0       0       0   .       0       0       0       0
-# ENSG00000238009       0       0       0       0   .       0       0       0       0
-# ENSG00000239945       0       0       0       0   .       0       0       0       0
-#             ...       .       .       .       .   .       .       .       .       .
-# ENSG00000277856       0       0       0       0   .       0       0       0       0
-# ENSG00000275063       0       0       0       0   .       0       0       0       0
-# ENSG00000271254       0       0       0       0   .       0       0       0       0
-# ENSG00000277475       0       0       0       0   .       0       0       0       0
-# ENSG00000268674       0       0       0       0   .       0       0       0       0
+## <33538 x 5247> sparse matrix of class DelayedMatrix and type "integer":
+##                    [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
+## ENSG00000243485       0       0       0       0   .       0       0       0       0
+## ENSG00000237613       0       0       0       0   .       0       0       0       0
+## ENSG00000186092       0       0       0       0   .       0       0       0       0
+## ENSG00000238009       0       0       0       0   .       0       0       0       0
+## ENSG00000239945       0       0       0       0   .       0       0       0       0
+##             ...       .       .       .       .   .       .       .       .       .
+## ENSG00000277856       0       0       0       0   .       0       0       0       0
+## ENSG00000275063       0       0       0       0   .       0       0       0       0
+## ENSG00000271254       0       0       0       0   .       0       0       0       0
+## ENSG00000277475       0       0       0       0   .       0       0       0       0
+## ENSG00000268674       0       0       0       0   .       0       0       0       0
 
 counts(altExp(tenx_pbmc3k))
-# <32 x 5247> sparse matrix of class DelayedMatrix and type "integer":
-#           [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
-#    CD3      25     959     942     802   .     402     401       6    1773
-#    CD4     164     720    1647    1666   .    1417       1      46    1903
-#   CD8a      16       8      21       5   .       8     222       3       9
-#  CD11b    3011      12      11      11   .      15       7    1027       9
-#   CD14     696      12      13       9   .       9      17     382       8
-#    ...       .       .       .       .   .       .       .       .       .
-# HLA-DR     573      15      11      19   .       6      40     184      32
-#  TIGIT      10       3       3       3   .       2      15       1      12
-#   IgG1       4       4       2       4   .       1       0       2       4
-#  IgG2a       1       3       0       6   .       4       0       4       2
-#  IgG2b       6       2       4       8   .       0       0       2       5
+## <32 x 5247> sparse matrix of class DelayedMatrix and type "integer":
+##           [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
+##    CD3      25     959     942     802   .     402     401       6    1773
+##    CD4     164     720    1647    1666   .    1417       1      46    1903
+##   CD8a      16       8      21       5   .       8     222       3       9
+##  CD11b    3011      12      11      11   .      15       7    1027       9
+##   CD14     696      12      13       9   .       9      17     382       8
+##    ...       .       .       .       .   .       .       .       .       .
+## HLA-DR     573      15      11      19   .       6      40     184      32
+##  TIGIT      10       3       3       3   .       2      15       1      12
+##   IgG1       4       4       2       4   .       1       0       2       4
+##  IgG2a       1       3       0       6   .       4       0       4       2
+##  IgG2b       6       2       4       8   .       0       0       2       5
 
 # examine the metadata:
 head(colData(tenx_pbmc3k))
-# DataFrame with 6 rows and 11 columns
-#           Sample            Barcode         Sequence   Library Cell_ranger_version Tissue_status Barcode_type
-#      <character>        <character>      <character> <integer>         <character>   <character>  <character>
-# 1 pbmc5k-CITEseq AAACCCAAGAGACAAG-1 AAACCCAAGAGACAAG         1              v3.0.2            NA     Chromium
-# 2 pbmc5k-CITEseq AAACCCAAGGCCTAGA-1 AAACCCAAGGCCTAGA         1              v3.0.2            NA     Chromium
-# 3 pbmc5k-CITEseq AAACCCAGTCGTGCCA-1 AAACCCAGTCGTGCCA         1              v3.0.2            NA     Chromium
-# 4 pbmc5k-CITEseq AAACCCATCGTGCATA-1 AAACCCATCGTGCATA         1              v3.0.2            NA     Chromium
-# 5 pbmc5k-CITEseq AAACGAAAGACAAGCC-1 AAACGAAAGACAAGCC         1              v3.0.2            NA     Chromium
-# 6 pbmc5k-CITEseq AAACGAAAGAGTGACC-1 AAACGAAAGAGTGACC         1              v3.0.2            NA     Chromium
-#     Chemistry Sequence_platform   Individual Date_published
-#   <character>       <character>  <character>    <character>
-# 1 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-# 2 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-# 3 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-# 4 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-# 5 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-# 6 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## DataFrame with 6 rows and 11 columns
+##           Sample            Barcode         Sequence   Library Cell_ranger_version Tissue_status Barcode_type
+##      <character>        <character>      <character> <integer>         <character>   <character>  <character>
+## 1 pbmc5k-CITEseq AAACCCAAGAGACAAG-1 AAACCCAAGAGACAAG         1              v3.0.2            NA     Chromium
+## 2 pbmc5k-CITEseq AAACCCAAGGCCTAGA-1 AAACCCAAGGCCTAGA         1              v3.0.2            NA     Chromium
+## 3 pbmc5k-CITEseq AAACCCAGTCGTGCCA-1 AAACCCAGTCGTGCCA         1              v3.0.2            NA     Chromium
+## 4 pbmc5k-CITEseq AAACCCATCGTGCATA-1 AAACCCATCGTGCATA         1              v3.0.2            NA     Chromium
+## 5 pbmc5k-CITEseq AAACGAAAGACAAGCC-1 AAACGAAAGACAAGCC         1              v3.0.2            NA     Chromium
+## 6 pbmc5k-CITEseq AAACGAAAGAGTGACC-1 AAACGAAAGAGTGACC         1              v3.0.2            NA     Chromium
+##     Chemistry Sequence_platform   Individual Date_published
+##   <character>       <character>  <character>    <character>
+## 1 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## 2 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## 3 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## 4 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## 5 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
+## 6 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 
 metadata(tenx_pbmc3k)
 # list()
@@ -166,44 +172,45 @@ data_blocks_sc_sce$mrna <- data.frame(as.matrix(counts(tenx_pbmc3k)))
 data_blocks_sc_sce$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc3k))))
 
 summary(data_blocks_sc_sce)
-#      Length Class      Mode
-# mrna 5247   data.frame list
-# adt  5247   data.frame list
+##      Length Class      Mode
+## mrna 5247   data.frame list
+## adt  5247   data.frame list
 
 # convert to Seurat
-data_blocks_sc_sce_seurat <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna,
-                                                row.names = rownames(data_blocks_sc_sce$mrna)) # default assay (RNA)
-data_blocks_sc_sce_seurat[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
+data_blocks_sc_sce_seurat <- # default assay (RNA)
+  CreateSeuratObject(counts = data_blocks_sc_sce$mrna,
+                     row.names = rownames(data_blocks_sc_sce$mrna))
+data_blocks_sc_sce_seurat[["ADT"]] <-
+  CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # add metadata
 # rownames(obj[[]]) <- rownames(GetAssayData(obj, slot = "counts")))
-data_blocks_sc_sce_seurat <- AddMetaData(data_blocks_sc_sce_seurat,
-                                         as.data.frame(SingleCellExperiment::rowData(tenx_pbmc3k),
-                                                       row.names = rownames(obj)))
+data_blocks_sc_sce_seurat <-
+  AddMetaData(object = data_blocks_sc_sce_seurat,
+              metadata = as.data.frame(rowData(tenx_pbmc3k),
+                                       row.names = rownames(tenx_pbmc3k)))
+# rownames(data_blocks_sc_sce_seurat[[]]) <- rownames(data_blocks_sc_sce_seurat)
 
 # the metadata will be different than from the Seurat processing
 # e.g. 5297 rows vs. 4193 rows
 
 head(data_blocks_sc_sce_seurat[[]])
-#       orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT ENSEMBL_ID
-# X1 SeuratProject       7375         2363       5178           31       <NA>
-# X2 SeuratProject       3772         1259       2893           29       <NA>
-# X3 SeuratProject       4902         1578       3635           29       <NA>
-# X4 SeuratProject       6704         1908       3700           31       <NA>
-# X5 SeuratProject       3900         1589       3423           28       <NA>
-# X6 SeuratProject      11781         3136       4665           30       <NA>
-#    Symbol_TENx Type Symbol
-# X1        <NA> <NA>   <NA>
-# X2        <NA> <NA>   <NA>
-# X3        <NA> <NA>   <NA>
-# X4        <NA> <NA>   <NA>
-# X5        <NA> <NA>   <NA>
-# X6        <NA> <NA>   <NA>
-```
+##       orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT ENSEMBL_ID
+## X1 SeuratProject       7375         2363       5178           31       <NA>
+## X2 SeuratProject       3772         1259       2893           29       <NA>
+## X3 SeuratProject       4902         1578       3635           29       <NA>
+## X4 SeuratProject       6704         1908       3700           31       <NA>
+## X5 SeuratProject       3900         1589       3423           28       <NA>
+## X6 SeuratProject      11781         3136       4665           30       <NA>
+##    Symbol_TENx Type Symbol
+## X1        <NA> <NA>   <NA>
+## X2        <NA> <NA>   <NA>
+## X3        <NA> <NA>   <NA>
+## X4        <NA> <NA>   <NA>
+## X5        <NA> <NA>   <NA>
+## X6        <NA> <NA>   <NA>
 
-```{r data-bioconductor-save, eval = FALSE}
 # save the data locally if desired
-# these two files can be found as "data_sc_sce.Rda" on piggyback
 save(data_blocks_sc_sce, data_blocks_sc_sce_seurat,
      file = file.path(path_data, "data_sc_sce.Rda"))
 ```
@@ -237,37 +244,38 @@ You will need the *filtered_feature_bc_matrix* directory for the following analy
 
 ```{r data-10x-object, eval = FALSE}
 # load the data (change the file path as needed)
-data <- Seurat::Read10X(file.path(path_data, "tenx_pbmc5k_CITEseq",
-                                  "filtered_feature_bc_matrix"),
+data <- Seurat::Read10X(data.dir = file.path(path_data, "tenx_pbmc5k_CITEseq",
+                                             "filtered_feature_bc_matrix"),
                         strip.suffix = TRUE) # remove the "-1"s from barcodes
-# 10X data contains more than one type and is being returned as a list containing matrices of each type.
+## 10X data contains more than one type and is being returned as a list
+## containing matrices of each type.
 
 # set minimum cells and/or features here if you'd like
 obj <- Seurat::CreateSeuratObject(counts = data$`Gene Expression`,
                                   project = "pbmc5k_CITEseq")
 obj[["ADT"]] <- Seurat::CreateAssayObject(counts = data$`Antibody Capture`)
-# Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
+## Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
 
 # check the assays
-Seurat::Assays(obj)
-# "RNA" "ADT"
+Seurat::Assays(object = obj)
+## "RNA" "ADT"
 
 # list out the CITE-Seq surface protein markers
 rownames(obj[["ADT"]])
-# [1] "CD3-TotalSeqB"            "CD4-TotalSeqB"           "CD8a-TotalSeqB"
-# [4] "CD11b-TotalSeqB"          "CD14-TotalSeqB"          "CD15-TotalSeqB"
-# [7] "CD16-TotalSeqB"           "CD19-TotalSeqB"          "CD20-TotalSeqB"
-# [10] "CD25-TotalSeqB"          "CD27-TotalSeqB"          "CD28-TotalSeqB"
-# [13] "CD34-TotalSeqB"          "CD45RA-TotalSeqB"        "CD45RO-TotalSeqB"
-# [16] "CD56-TotalSeqB"          "CD62L-TotalSeqB"         "CD69-TotalSeqB"
-# [19] "CD80-TotalSeqB"          "CD86-TotalSeqB"          "CD127-TotalSeqB"
-# [22] "CD137-TotalSeqB"         "CD197-TotalSeqB"         "CD274-TotalSeqB"
-# [25] "CD278-TotalSeqB"         "CD335-TotalSeqB"         "PD-1-TotalSeqB"
-# [28] "HLA-DR-TotalSeqB"        "TIGIT-TotalSeqB"         "IgG1-control-TotalSeqB"
-# [31] "IgG2a-control-TotalSeqB" "IgG2b-control-TotalSeqB"
+## [1] "CD3-TotalSeqB"            "CD4-TotalSeqB"           "CD8a-TotalSeqB"
+## [4] "CD11b-TotalSeqB"          "CD14-TotalSeqB"          "CD15-TotalSeqB"
+## [7] "CD16-TotalSeqB"           "CD19-TotalSeqB"          "CD20-TotalSeqB"
+## [10] "CD25-TotalSeqB"          "CD27-TotalSeqB"          "CD28-TotalSeqB"
+## [13] "CD34-TotalSeqB"          "CD45RA-TotalSeqB"        "CD45RO-TotalSeqB"
+## [16] "CD56-TotalSeqB"          "CD62L-TotalSeqB"         "CD69-TotalSeqB"
+## [19] "CD80-TotalSeqB"          "CD86-TotalSeqB"          "CD127-TotalSeqB"
+## [22] "CD137-TotalSeqB"         "CD197-TotalSeqB"         "CD274-TotalSeqB"
+## [25] "CD278-TotalSeqB"         "CD335-TotalSeqB"         "PD-1-TotalSeqB"
+## [28] "HLA-DR-TotalSeqB"        "TIGIT-TotalSeqB"         "IgG1-control-TotalSeqB"
+## [31] "IgG2a-control-TotalSeqB" "IgG2b-control-TotalSeqB"
 
 # save the data locally if desired
-# saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
+saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 ```
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
@@ -280,7 +288,7 @@ Note that the "-1"s have been removed from the cell barcodes.
 
 ```{r mcia-metadata}
 # read in the annotated cells
-metadata_sc <- read.csv(file.path(path_inst, "metadata_sc.csv"),
+metadata_sc <- read.csv(file = file.path(path_inst, "metadata_sc.csv"),
                         header = TRUE, row.names = 1)
 
 # examples
@@ -291,37 +299,35 @@ metadata_sc %>% slice_sample(n = 5)
 
 This will run on cells with the top 2000 variable features (as defined in the later analysis).
 
-```{r mcia-decomp-load-data}
+```{r mcia-decomp-load-data, eval = FALSE}
 # load the object setup for running MCIA [10x Genomics & Seurat]
 load(file = file.path(path_inst, "data_blocks_sc.Rda"))
-
-# load the Bioconductor data (both MCIA formatted and the Seurat object) if desired
-# load(file = file.path(path_inst, "data_sc_sce.Rda"))
 ```
 
 ```{r mcia-decomp-run, eval = FALSE}
-# "largest_sv" results in a more balanced contribution from the blocks than the default "unit_var"
-mcia_results_sc <- nipals_multiblock(data_blocks_sc,
+# "largest_sv" results in a more balanced contribution
+# from the blocks than the default "unit_var"
+mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
                                      preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
                                      num_PCs = 10, tol = 1e-9,
                                      metadata = metadata_sc,
                                      deflationMethod = "global",
                                      plots = "none")
-# Performing column-level pre-processing...
-# Column pre-processing completed.
-# Performing block-level preprocessing...
-# Block pre-processing completed.
-# Computing order 1 scores
-# Computing order 2 scores
-# Computing order 3 scores
-# Computing order 4 scores
-# Computing order 5 scores
-# Computing order 6 scores
-# Computing order 7 scores
-# Computing order 8 scores
-# Computing order 9 scores
-# Computing order 10 scores
+## Performing column-level pre-processing...
+## Column pre-processing completed.
+## Performing block-level preprocessing...
+## Block pre-processing completed.
+## Computing order 1 scores
+## Computing order 2 scores
+## Computing order 3 scores
+## Computing order 4 scores
+## Computing order 5 scores
+## Computing order 6 scores
+## Computing order 7 scores
+## Computing order 8 scores
+## Computing order 9 scores
+## Computing order 10 scores
 
 # saveRDS(mcia_results_sc, file = file.path(path_data, "mcia_results_sc.Rds"))
 ```
@@ -349,18 +355,18 @@ meta_colors_sc <- get_metadata_colors(mcia_results = mcia_results_sc,
                                       color_pal_params = list(option = "D"))
 
 # for other plots
-colors_omics_sc <- get_colors(mcia_results_sc)
+colors_omics_sc <- get_colors(mcia_results = mcia_results_sc)
 ```
 
 #### Eigenvalue scree plot
 
-```{r mcia-plots-eigenvalue-scree, fig.dim = c(8, 6)}
-global_scores_eigenvalues_plot(mcia_results_sc)
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 3),fig.align='center'}
+global_scores_eigenvalues_plot(mcia_results = mcia_results_sc)
 ```
 
 #### Projection plot
 
-```{r mcia-plots-projection, fig.dim = c(8, 8)}
+```{r mcia-plots-projection, fig.dim = c(5, 5), fig.align='center'}
 projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", orders = c(1, 2),
                 color_col = "CellType", color_pal = meta_colors_sc,
@@ -369,23 +375,26 @@ projection_plot(mcia_results = mcia_results_sc,
 
 #### Global scores heatmap
 
-```{r mcia-plots-heatmap-global, fig.dim = c(8, 6)}
-suppressMessages(global_scores_heatmap(mcia_results_sc))
-# The automatically generated colors map from the minus and plus 99^th of the absolute values in the matrix.
-# There are outliers in the matrix whose patterns might be hidden by this color mapping. You can manually
-# set the color to `col` argument.
+```{r mcia-plots-heatmap-global, fig.dim = c(7, 5), fig.align='center'}
+suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
+                                       color_col = "CellType",
+                                       color_pal = meta_colors_sc))
 ```
 
 #### Block weights heatmap
 
-```{r mcia-plots-heatmap-block, fig.dim = c(8, 6)}
-block_weights_heatmap(mcia_results_sc)
+The block weights heatmap shows the distribution of the different block score
+weights among the factors.
+
+```{r mcia-plots-heatmap-block, fig.dim = c(4, 2.5), fig.align='center'}
+block_weights_heatmap(mcia_results = mcia_results_sc)
 ```
 
 #### Loadings
 
-```{r mcia-plots-loadings, fig.dim = c(8, 6)}
-vis_load_plot(mcia_results_sc, axes = c(1, 4), colors_omics = colors_omics_sc)
+```{r mcia-plots-loadings, fig.dim = c(6,4.5), fig.align='center'}
+vis_load_plot(mcia_out = mcia_results_sc,
+              axes = c(1, 4), colors_omics = colors_omics_sc)
 ```
 
 #### Top features
@@ -394,7 +403,7 @@ In a few factors of interest:
 
 ##### Factor 1
 
-```{r mcia-plots-top-features-factor-1, fig.dim = c(10, 5)}
+```{r mcia-plots-top-features-factor-1, fig.dim = c(10, 4)}
 # define the loadings
 all_pos_1 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
                           absolute = FALSE, descending = TRUE, factor = 1)
@@ -424,23 +433,8 @@ vis_load_ord(gl_f_ord = all_4, omic_name = "all",
              colors_omics = colors_omics_sc, n_feat = 60)
 ```
 
-##### Factor 7
-
-```{r mcia-plots-top-features-factor-7, fig.dim = c(10, 5)}
-# define the loadings
-all_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
-                          absolute = TRUE, descending = TRUE, factor = 7)
-prot_abs_7 <- ord_loadings(mcia_out = mcia_results_sc, omic = "mrna",
-                           absolute = TRUE, descending = TRUE, factor = 7)
-
-# visualization
-all_abs_7_vis <- vis_load_ord(gl_f_ord = all_abs_7, omic_name = "all",
-                              colors_omics = colors_omics_sc)
-prot_abs_7_vis <- vis_load_ord(gl_f_ord = prot_abs_7, omic_name = "mrna",
-                               colors_omics = colors_omics_sc)
-
-ggarrange(all_abs_7_vis, prot_abs_7_vis)
-```
+As we saw in the [Block weights heatmap], factor 4 is dominated by the mRNA data
+and not the ADT data.
 
 ## Deep dive: Seurat analysis
 
@@ -455,18 +449,18 @@ This section demonstrates how to take in raw data (in this case, the output of C
 obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_raw.rds"))
 
 # add useful metadata
-obj[["percent.mt"]] <- PercentageFeatureSet(obj, pattern = "^MT-")
+obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 ```
 
 ### Quality control
 
 #### Metrics summary
 
-```{r seurat-qc-metrics-summary, eval = FALSE}
+```{r seurat-qc-metrics-summary}
 # read in the summary table
-metrics_summary <- read.csv(file.path(path_data, "tenx_pbmc5k_CITEseq",
-                                      "5k_pbmc_protein_v3_metrics_summary.csv"))
-metrics_summary
+(metrics_summary <- read.csv(
+    file = file.path(path_inst, "5k_pbmc_protein_v3_metrics_summary.csv")
+))
 ```
 
 #### GEX QC metrics
@@ -474,7 +468,8 @@ metrics_summary
 ##### Before filtering
 
 ```{r seurat-qc-pre-filter, fig.dim = c(8, 5)}
-VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
+VlnPlot(object = obj,
+        features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
         pt.size = 0.01, ncol = 3) &
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
         axis.title.x = element_blank())
@@ -486,9 +481,10 @@ Based on the previous plots, a minimum of 200 features and a maximum of 20% mito
 
 ```{r seurat-qc-post-filter, fig.dim = c(8, 5)}
 # adjust cutoffs as desired
-obj <- subset(obj, subset = nFeature_RNA > 200 & percent.mt < 20)
+obj <- subset(x = obj, subset = nFeature_RNA > 200 & percent.mt < 20)
 
-VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
+VlnPlot(object = obj,
+        features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
         pt.size = 0.01, ncol = 3) &
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
         axis.title.x = element_blank())
@@ -496,30 +492,118 @@ VlnPlot(obj, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 
 ### Standard Seurat pipeline
 
-You can set `verbose = FALSE` for many of these commands if you don't want to see outputs.
+You can set `verbose = FALSE` for many of these commands if you don't want to
+see outputs.
 
-**These are run on the RNA**.
+**Most of these are run on the RNA**.
 
-```{r seurat-pipeline, eval = FALSE}
+```{r seurat-pipeline-1, eval = FALSE}
 # standard log normalization for RNA and centered log for ADT
-obj <- NormalizeData(obj, normalization.method = "LogNormalize",
+obj <- NormalizeData(object = obj, normalization.method = "LogNormalize",
                      scale.factor = 10000, assay = "RNA")
-obj <- NormalizeData(obj, normalization.method = "CLR",
+## Performing log-normalization
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+
+obj <- NormalizeData(object = obj, normalization.method = "CLR",
                      margin = 2, assay = "ADT") # go across cells, not features
+## Normalizing across cells
+##   |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s
 
 # highly variable features
-obj <- FindVariableFeatures(obj, selection.method = "vst", nfeatures = 2000)
+obj <- FindVariableFeatures(object = obj, selection.method = "vst",
+                            nfeatures = 2000)
+## Calculating gene variances
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## Calculating feature variances of standardized and clipped values
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
 
 # scaling so the average expression is 0 and the variance is 1
-obj <- ScaleData(obj, features = rownames(obj))
+obj <- ScaleData(object = obj, features = rownames(obj))
+## Centering and scaling data matrix
+##   |===============================================================================================| 100%
 
 # dimensionality reduction
-obj <- RunPCA(obj)
+obj <- RunPCA(object = obj)
+## PC_ 1
+## Positive:  LYZ, FCN1, CST3, MNDA, CTSS, PSAP, S100A9, FGL2, AIF1, GRN
+##     NCF2, LST1, CD68, TYMP, SERPINA1, CYBB, CLEC12A, CSTA, SPI1, TNFAIP2
+##     CPVL, VCAN, MPEG1, TYROBP, KLF4, FTL, S100A8, IGSF6, CD14, MS4A6A
+## Negative:  CD3D, TRAC, LTB, TRBC2, IL32, CD3G, IL7R, CD69, CD247, TRBC1
+##     CD2, CD7, CD27, ARL4C, ISG20, HIST1H4C, SYNE2, GZMM, ITM2A, CCR7
+##     RORA, MAL, CXCR4, LEF1, TRAT1, CTSW, GZMA, KLRB1, TRABD2A, CCL5
+## PC_ 2
+## Positive:  CD79A, MS4A1, IGHM, BANK1, HLA-DQA1, CD79B, IGKC, LINC00926, RALGPS2, TNFRSF13C
+##     VPREB3, IGHD, SPIB, CD22, FCRL1, HLA-DQB1, BLK, FAM129C, FCRLA, TCL1A
+##     GNG7, TCF4, COBLL1, PAX5, SWAP70, CD40, BCL11A, P2RX5, TSPAN13, ADAM28
+## Negative:  NKG7, CST7, GZMA, PRF1, KLRD1, CTSW, FGFBP2, GNLY, GZMH, CCL5
+##     GZMM, CD247, KLRF1, HOPX, SPON2, ADGRG1, TRDC, MATK, GZMB, FCGR3A
+##     S100A4, CCL4, CLIC3, KLRB1, IL2RB, TBX21, TTC38, ANXA1, PTGDR, PLEKHF1
+## PC_ 3
+## Positive:  GZMB, NKG7, GNLY, CLIC3, PRF1, KLRD1, FGFBP2, KLRF1, SPON2, CST7
+##     GZMH, FCGR3A, ADGRG1, GZMA, HOPX, CTSW, TRDC, CCL4, HLA-DPB1, C12orf75
+##     PLAC8, TTC38, PLEK, APOBEC3G, TBX21, PRSS23, CYBA, MATK, SYNGR1, CXXC5
+## Negative:  IL7R, MAL, LEF1, TRABD2A, TRAC, CCR7, LTB, CD27, FOS, LRRN3
+##     FHIT, TRAT1, RGCC, CAMK4, CD3D, RGS10, CD40LG, FOSB, AQP3, SOCS3
+##     FLT3LG, CD3G, SLC2A3, TSHZ2, VIM, S100A12, S100A8, CD28, PLK3, VCAN
+## PC_ 4
+## Positive:  FCER1A, PLD4, SERPINF1, IL3RA, CLEC10A, GAS6, LILRA4, TPM2, CLEC4C, ENHO
+##     FLT3, SMPD3, ITM2C, LGMN, CD1C, P2RY14, PPP1R14B, SCT, PROC, LAMP5
+##     RUNX2, AC119428.2, PACSIN1, DNASE1L3, PTCRA, RGS10, UGCG, CLIC2, PPM1J, P2RY6
+## Negative:  MS4A1, CD79A, LINC00926, BANK1, TNFRSF13C, VPREB3, CD79B, RALGPS2, IGHD, FCRL1
+##     BLK, IGHM, CD22, PAX5, ARHGAP24, CD24, P2RX5, NCF1, S100A12, CD19
+##     SWAP70, FCRLA, VNN2, TNFRSF13B, FCER2, IGKC, FCRL2, RBP7, CD40, S100A8
+## PC_ 5
+## Positive:  BATF3, C1QA, TCF7L2, CTSL, CDKN1C, HLA-DQB1, HES4, SIGLEC10, CLEC10A, ABI3
+##     HLA-DQA1, RHOC, CSF1R, ENHO, CAMK1, MTSS1, IFITM3, CD1C, LY6E, FCGR3A
+##     HLA-DPA1, CLIC2, HLA-DPB1, YBX1, RRAS, AC064805.1, NR4A1, GBP1, ZNF703, CXCL16
+## Negative:  LILRA4, TPM2, CLEC4C, SMPD3, IL3RA, SERPINF1, DERL3, MZB1, SCT, JCHAIN
+##     PACSIN1, PROC, S100A12, PTCRA, LINC00996, PADI4, ASIP, KCNK17, ITM2C, EPHB1
+##     ALOX5AP, LAMP5, DNASE1L3, MAP1A, S100A8, APP, CYP1B1, VNN2, UGCG, ZFAT
 
 # clustering (adjust dimensions and resolutions as desired)
-obj <- FindNeighbors(obj, reduction = "pca", dims = 1:20)
-obj <- FindClusters(obj, resolution = 0.4)
-obj <- RunUMAP(obj, reduction = "pca", dims = 1:20)
+obj <- FindNeighbors(object = obj, reduction = "pca", dims = 1:20)
+## Computing nearest neighbor graph
+## Computing SNN
+
+obj <- FindClusters(object = obj, resolution = 0.4)
+## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
+## 
+## Number of nodes: 4193
+## Number of edges: 154360
+## 
+## Running Louvain algorithm...
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## Maximum modularity in 10 random starts: 0.9097
+## Number of communities: 10
+## Elapsed time: 0 seconds
+
+obj <- RunUMAP(object = obj, reduction = "pca", dims = 1:20)
+## 14:44:35 UMAP embedding parameters a = 0.9922 b = 1.112
+## 14:44:35 Read 4193 rows and found 20 numeric columns
+## 14:44:35 Using Annoy for neighbor search, n_neighbors = 30
+## 14:44:35 Building Annoy index with metric = cosine, n_trees = 50
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## 14:44:36 Writing NN index file to temp file /tmp/RtmpHhoQAU/filec346711dd9f93
+## 14:44:36 Searching Annoy index using 1 thread, search_k = 3000
+## 14:44:37 Annoy recall = 100%
+## 14:44:38 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+## 14:44:39 Initializing from normalized Laplacian + noise (using RSpectra)
+## 14:44:39 Commencing optimization for 500 epochs, with 174318 positive edges
+## Using method 'umap'
+## 0%   10   20   30   40   50   60   70   80   90   100%
+## [----|----|----|----|----|----|----|----|----|----|
+## **************************************************|
+## 14:44:44 Optimization finished
 ```
 
 ### Dimensionality reduction
@@ -527,42 +611,56 @@ obj <- RunUMAP(obj, reduction = "pca", dims = 1:20)
 #### Load in the processed object
 
 To avoid having to save multiple large objects, this file already includes the
-annotations defined in a later section, so we will clear them out here to proceed
-as normal.
+annotations defined in a later section, so we will clear them out here to
+proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
+obj <- readRDS(file = file.path(path_inst,
+                                "tenx_pbmc5k_CITEseq_annotated.rds"))
 
 # reset to baseline
-Idents(obj) <- "seurat_clusters"
+Idents(object = obj) <- "seurat_clusters"
 obj$annotated_clusters <- c()
 ```
 
-#### Most variable features
+#### PCA
 
-Examine the top twenty most variable features:
+**Typically this section would go in between the `RunPCA()` and `FindNeighbors()` steps above**.
+It has been included here because of how we save and load the objects separately
+for processing speed.
 
-```{r seurat-top-features, fig.dim = c(6, 6), warning = FALSE}
-LabelPoints(plot = VariableFeaturePlot(obj),
-            points = head(VariableFeatures(obj), 20),
+Now that we've run PCA, we can examine an elbow plot as a simple method for 
+selecting how many PCs to choose when identifying neighbors/clusters.
+
+```{r seurat-elbow, fig.dim = c(6, 3),fig.align='center'}
+ElbowPlot(object = obj, ndims = 30)
+```
+
+From the plot, it looked like 20 works as a cut-off for the number of PCs to
+include. We could have also chosen to use 10, but decided to go a little higher.
+
+You can also examine other information which was used for the PCA, such as the
+top twenty most variable features:
+
+```{r seurat-top-features}
+head(VariableFeatures(object = obj), 20)
+```
+
+```{r seurat-top-features-plot, fig.dim = c(6, 6), warning = FALSE, eval = FALSE}
+# these can be plotted if desired
+LabelPoints(plot = VariableFeaturePlot(object = obj),
+            points = head(VariableFeatures(object = obj), 20),
             repel = TRUE, xnudge = 0, ynudge = 0) +
-  labs(title = "Top Twenty Variable Features")
+  labs(title = "Top Twenty Variable Features") +
+  theme(legend.position = "bottom")
 ```
 
-#### Elbow plot
-
-This kind of plot is typically used for selecting how many PCs to choose when 
-identifying neighbors/clusters.
-
-```{r seurat-elbow, fig.dim = c(8, 4)}
-ElbowPlot(obj)
-```
 
 #### UMAP
 
-```{r seurat-umap-initial, fig.dim = c(8, 8)}
+```{r seurat-umap-initial, fig.dim = c(8, 8),fig.align='center'}
 # you can also use the LabelClusters function to help label individual clusters
-plot_seurat_clusters <- UMAPPlot(obj, label = TRUE, label.size = 5) +
+plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 5) +
                           labs(title = "Initial Clusters") +
                           theme(plot.title = element_text(hjust = 0.5),
                                 axis.text = element_blank(),
@@ -579,7 +677,7 @@ They are included as examples of some of the cell types you could look for.
 
 ```{r seurat-markers-load}
 # sort by Cell_Type and Marker if not already sorted
-markers_all <- read.csv(file.path(path_inst, "marker_genes.csv"))
+markers_all <- read.csv(file = file.path(path_inst, "marker_genes.csv"))
 markers_all %>% slice_sample(n = 10) # example markers
 ```
 
@@ -587,14 +685,31 @@ markers_all %>% slice_sample(n = 10) # example markers
 
 ##### GEX
 
-```{r seurat-markers-dot-gex, fig.dim = c(20, 6), message = FALSE}
-p <- DotPlot(obj, features = unique(markers_all$Marker),
+Here we only demonstrate a few of the cell types included within the provided
+markers database. We plot those cell types on top of the dot plot to make it
+easier to see which markers they correspond with, but you can comment that code
+out if you would rather have a simple dot plot.
+
+```{r seurat-markers-dot-gex, fig.dim = c(14, 6), message = FALSE}
+select_cell_types <- c("B", "Macrophages", "mDC", "NK", "T")
+
+# do features = unique(markers_all$Marker) to use all possible features
+p <- DotPlot(object = obj,
+             features = markers_all %>%
+                          dplyr::filter(Cell_Type %in% select_cell_types) %>%
+                          distinct(Marker) %>% pull(),
              cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE)
 
-p$data <- left_join(p$data, 
-                    markers_all %>% dplyr::rename(features.plot = "Marker"), 
-                    by = "features.plot")
+# add in the cell type information
+# if desired, you could rename the "Cell_Type"s in the original database to be
+# more informative e.g. Natural_Killers instead of NK
+p$data <- left_join(p$data,
+                    markers_all %>%
+                      dplyr::filter(Cell_Type %in% select_cell_types) %>%
+                      dplyr::rename(features.plot = "Marker"),
+                    by = "features.plot", multiple = "all")
 
+# plot
 p +
   facet_grid(cols = vars(Cell_Type), scales = "free_x", space = "free") +
   theme(strip.text.x = element_text(size = 10)) + RotatedAxis()
@@ -602,126 +717,50 @@ p +
 
 ##### ADT
 
-The average expression was set to a minimum of zero to better see the up-regulated features.
+The average expression was set to a minimum of zero to better see the
+up-regulated features.
 
-```{r seurat-markers-dot-adt, fig.dim = c(16, 6)}
-DefaultAssay(obj) <- "ADT"
+```{r seurat-markers-dot-adt, fig.dim = c(14, 6)}
+# you have to change the default assay for the dot plot
+DefaultAssay(object = obj) <- "ADT"
 
-DotPlot(obj, features = rownames(GetAssayData(obj,
-                                              assay = "ADT", slot = "counts")),
+DotPlot(object = obj,
+        features = rownames(GetAssayData(object = obj, assay = "ADT",
+                                         slot = "counts")),
         cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE) +
   RotatedAxis()
 
-DefaultAssay(obj) <- "RNA"
+# reset the default
+DefaultAssay(object = obj) <- "RNA"
 ```
 
-#### Feature plots {.tabset}
+#### Feature plots
 
-##### B cells
+If you would like to generate feature plots for a cell type within your markers
+database (if you are using one) e.g. for B cells, you could do `features = (dplyr::filter(markers_all, Cell_Type == "B"))$Marker` in the following command.
+Here we just show a few characteristic markers for different cell types for
+simplicity.
 
-```{r seurat-markers-feature-b, fig.dim = c(16, 24)}
+```{r seurat-markers-feature, fig.dim = c(12, 8)}
 FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "B"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### mDCs
-
-aka myeloid dendritic cells
-
-```{r seurat-markers-feature-mdcs, fig.dim = c(16, 8)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "mDC"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Melanocytes
-
-```{r seurat-markers-feature-melanocytes, fig.dim = c(16, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Melanocytes"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Myocytes
-
-```{r seurat-markers-feature-myocytes, fig.dim = c(16, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Myocytes"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### NKs
-
-aka natural killer cells
-
-```{r seurat-markers-feature-nk, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "NK"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### pDC
-
-aka plasmacytoid dendritic cells
-
-```{r seurat-markers-feature-pdcs, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "pDC"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Plasma cells
-
-```{r seurat-markers-feature-plasma, fig.dim = c(16, 12)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Plasma"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### Platelets
-
-```{r seurat-markers-feature-platelets, fig.dim = c(12, 4)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "Platelets"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
-```
-
-##### T cells
-
-```{r seurat-markers-feature-t, fig.dim = c(16, 16)}
-FeaturePlot(object = obj,
-            features = (dplyr::filter(markers_all,
-                                      Cell_Type == "T"))$Marker,
-            min.cutoff = 0, label = TRUE, label.size = 2,
-            ncol = 4, raster = FALSE)
+            features = c("MS4A1", "CD14", # MS4A1 is another name for CD20
+                         "NKG7", "IL3RA", "CD3D", "IL7R"), 
+            min.cutoff = 0, label = TRUE, label.size = 3,
+            ncol = 3, raster = FALSE)
 ```
 
 #### Violin plots
 
-##### ADT
+Here the point size is set to zero so that you can just see the violins. We only
+show a few of the cell surface markers here, but you could plot them all with
+`features = rownames(obj[["ADT"]])`. You can also plot the standard GEX markers
+just like for the feature plots (just make sure to remove `assay = "ADT"`).
 
-Here the point size is set to zero so that you can just see the violins.
-
-```{r seurat-markers-violin-adt, fig.dim = c(16, 32)}
-VlnPlot(obj, features = rownames(obj[["ADT"]]),
-        pt.size = 0, assay = "ADT", ncol = 4) &
+```{r seurat-markers-violin-adt, fig.dim = c(8, 6)}
+VlnPlot(object = obj,
+        features = c("CD3-TotalSeqB", "CD14-TotalSeqB", "CD20-TotalSeqB",
+                     "CD335-TotalSeqB"),
+        pt.size = 0, assay = "ADT", ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.text.x = element_text(angle = 0, hjust = 0.5),
         axis.title.x = element_blank())
@@ -739,6 +778,8 @@ If you would like to further break down these clusters, you can increase the clu
 in the standard pipeline in order to increase the number of clusters.
 
 ```{r seurat-annotations}
+# mDC = myeloid dendritic cells
+# pDC = plasmacytoid dendritic cells
 obj_annotations <- rbind(c("0", "Macrophages/mDCs"), # difficult to separate
                          c("1", "T Cells"),
                          c("2", "T Cells"),
@@ -760,13 +801,13 @@ annotations <- setNames(obj_annotations$CellType, obj_annotations$Cluster)
 
 # relabel the Seurat clusters
 # Idents(obj) <- "seurat_clusters"
-obj <- RenameIdents(obj, annotations)
+obj <- RenameIdents(object = obj, annotations)
 
 # alphabetize the cell types
-Idents(obj) <- factor(Idents(obj), levels = sort(levels(obj)))
+Idents(obj) <- factor(Idents(object = obj), levels = sort(levels(obj)))
 
 # useful metadata (e.g. if you want to have multiple annotation sets)
-obj[["annotated_clusters"]] <- Idents(obj)
+obj[["annotated_clusters"]] <- Idents(object = obj)
 
 # save the processed and annotated Seurat object
 # saveRDS(obj, file = file.path(path_data, "tenx_pbmc5k_CITEseq_annotated.rds"))
@@ -779,7 +820,7 @@ obj_annotations %>%
   arrange(CellType)
 
 # metadata file for MCIA
-meta <- data.frame("CellType" = Idents(obj))
+meta <- data.frame("CellType" = Idents(object = obj))
 
 # save the metadata file for MCIA
 # write.csv(meta, file = file.path(path_data, "metadata_sc.csv"))
@@ -787,13 +828,14 @@ meta <- data.frame("CellType" = Idents(obj))
 
 #### UMAPs
 
-Here we use the selected metadata colors from the [[MCIA]] section, so be sure to 
+Here we use the selected metadata colors from the [MCIA] section, so be sure to
 change that (or just remove the `cols = ...` to use the default) if you are running
 this section first.
 
 ```{r seurat-umap-both, fig.dim = c(16, 8)}
 # change colors and themes as desired
-plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4,
+plot_annotated_clusters <- UMAPPlot(object = obj,
+                                    label = TRUE, label.size = 4,
                                     cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
                              theme(plot.title = element_text(hjust = 0.5),
@@ -803,44 +845,47 @@ plot_annotated_clusters <- UMAPPlot(obj, label = TRUE, label.size = 4,
 ggarrange(plot_seurat_clusters, plot_annotated_clusters)
 ```
 
-```{r seurat-umap-adt, fig.dim = c(16, 16)}
+You should change the `DefaultAssay` to/from `ADT` like in [ADT] if you don't
+want to specify "adt_" before the feature name.
+
+```{r seurat-umap-adt, fig.dim = c(4, 4)}
 # plot ADT information on top as an example
 
-DefaultAssay(obj) <- "ADT"
-
-FeaturePlot(obj, features = c("CD3-TotalSeqB", "CD4-TotalSeqB",
-                              "CD19-TotalSeqB", "CD27-TotalSeqB"),
-            label = TRUE, label.size = 2, ncol = 2, raster = FALSE)
-
-DefaultAssay(obj) <- "RNA"
+FeaturePlot(object = obj, features = "adt_CD19-TotalSeqB",
+            label = TRUE, label.size = 3, ncol = 1, raster = FALSE)
 ```
 
 #### Check the annotations
 
-For example, if you want to visually check your T cell cluster annotations:
+For example, if you want to visually check your T cell cluster annotations (just
+like before, you can also do `features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker`
+to use all of the T cell markers in the markers database):
 
-```{r seurat-check-annotations-t, fig.dim = c(16, 12)}
+```{r seurat-check-annotations, fig.dim = c(8, 6)}
 VlnPlot(object = obj,
-        features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker,
-        cols = meta_colors_sc, pt.size = 0.01, ncol = 4) &
+        features = c("CD3D", "CD4", "IL7R", "TRAC"),
+        cols = meta_colors_sc, pt.size = 0.01, ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.title.x = element_blank())
 ```
 
 ### Save for MCIA
 
-The file has to be structured in the form of a (large) list, with each omic saved as an element within it. If you would like to append the type of omic to the end of your features, uncomment the commented lines.
+The file has to be structured in the form of a (large) list, with each omic
+saved as an element within it. If you would like to append the type of omic to
+the end of your features, uncomment the commented lines.
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
-data_rna <- GetAssayData(obj, slot = "data", assay = "RNA")[VariableFeatures(obj), ]
+data_rna <- GetAssayData(object = obj, slot = "data",
+                         assay = "RNA")[VariableFeatures(object = obj), ]
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
 # colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
 data_rna <- log2(data_rna + 1) # log-transform because the data is heavy tailed
 
 # adt
-data_adt <- GetAssayData(obj, slot = "data", assay = "ADT")
+data_adt <- GetAssayData(object = obj, slot = "data", assay = "ADT")
 data_adt <- as.matrix(data_adt)
 data_adt <- t(data_adt) # switch the rows
 # colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")

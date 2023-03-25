@@ -2,12 +2,12 @@
 % Please edit documentation in R/get_colors.R
 \name{get_colors}
 \alias{get_colors}
-\title{Assigning colors to different omics (default: color-blindness friendly)}
+\title{Assigning colors to different omics}
 \usage{
 get_colors(
   mcia_results,
   color_pal = scales::viridis_pal,
-  color_pal_params = list(option = "D")
+  color_pal_params = list()
 )
 }
 \arguments{
@@ -21,11 +21,12 @@ get_colors(
 List of omics with assigned colors
 }
 \description{
-Creates a list of omics and associated colors for plotting
+Creates a list of omics and associated colors for plotting. The
+default palette was chosen to be color-blindness friendly.
 }
 \examples{
 data(NCI60)
 mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-num_PCs = 10, plots = "none", tol = 1e-12)
+                                  num_PCs = 10, plots = "none", tol = 1e-12)
 colors_omics <- get_colors(mcia_results)
 }

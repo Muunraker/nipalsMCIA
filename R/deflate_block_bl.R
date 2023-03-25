@@ -16,6 +16,6 @@
 #'
 #' @export
 deflate_block_bl <- function(df, bl) {
-  df <- df - tcrossprod(as.matrix(df) %*% bl, bl)
-  return(df)
+    df <- df - tcrossprod(as.matrix(df) %*% bl, bl)
+    return(df)
 }

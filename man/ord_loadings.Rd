@@ -34,7 +34,7 @@ Creates a dataframe with ranked loadings for a given factor
 \examples{
 data(NCI60)
 mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-num_PCs = 10, plots = "none", tol = 1e-12)
+                                  num_PCs = 10, plots = "none", tol = 1e-12)
 all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-  absolute = FALSE, descending = TRUE, factor = 1)
+                          absolute = FALSE, descending = TRUE, factor = 1)
 }

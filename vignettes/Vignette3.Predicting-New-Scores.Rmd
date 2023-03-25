@@ -4,6 +4,8 @@ author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
 date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
 output:
     rmdformats::readthedown:
+      code_folding: show
+      fig_retina: 1
       toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
@@ -47,7 +49,7 @@ for (i in seq_along(data_blocks)) {
 ### Run NIPALS-MCIA on training data
 
 ```{r computing-MCIA-on-training-data, message = FALSE, fig.show = "hide"}
-MCIA_train <- nipals_multiblock(data_blocks_train,
+MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
                                 preproc_method = "colprofile", num_PCs = 10,
                                 plots = "none", tol = 1e-9)
 ```
@@ -58,7 +60,8 @@ MCIA_train <- nipals_multiblock(data_blocks_train,
 MCIA_train$metadata <- data.frame(metadata_NCI60[train_samples, ],
                                   row.names = rownames(data_blocks_train$mrna))
 colnames(MCIA_train$metadata) <- c("cancerType")
-meta_colors <- get_metadata_colors(MCIA_train, 1)
+meta_colors <- get_metadata_colors(mcia_results = MCIA_train, color_col = 1,
+                                   color_pal_params = list(option = "E"))
 
 MCIA_out <- data.frame(MCIA_train$global_scores[, 1:2])
 MCIA_out$cancerType <- MCIA_train$metadata[, 1]
@@ -66,9 +69,9 @@ colnames(MCIA_out) <- c("Factor.1", "Factor.2", "cancerType")
 
 ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   geom_point(size = 3) +
+  labs(title = "MCIA for NCI60 training data") +
   theme_bw() +
-  scale_color_manual(values = meta_colors) +
-  ggtitle("MCIA for NCI60 training data")
+  scale_color_manual(values = meta_colors)
 ```
 
 ### Generate factor scores for test data using the MCIA_train model
@@ -77,7 +80,8 @@ We use the \verb+predict_gs+ function to generate new factor scores on the test
 data set using the MCIA_train model above
 
 ```{r generate-new-scores, message = FALSE}
-MCIA_test_scores <- predict_gs(MCIA_train, data_blocks_test)
+MCIA_test_scores <- predict_gs(mcia_results = MCIA_train,
+                               df = data_blocks_test)
 ```
 
 ### Visualize new scores with old
@@ -98,9 +102,9 @@ rownames(MCIA_out_full) <- NULL
 ggplot(data = MCIA_out_full, aes(x = Factor.1, y = Factor.2,
                                  color = cancerType, shape = set)) +
   geom_point(size = 3) +
+  labs(title = "MCIA for NCI60 training and test data") +
   theme_bw() +
-  scale_color_manual(values = meta_colors) +
-  ggtitle("MCIA for NCI60 training and test data")
+  scale_color_manual(values = meta_colors)
 ```
 
 ## Session Info
