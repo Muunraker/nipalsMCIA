@@ -1,6 +1,6 @@
 Package: nipalsMCIA
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: c(
     person("Maximilian", "Mattessich",
             email = "maximilian.mattessich@northwestern.edu",
@@ -34,7 +34,6 @@ Imports:
     MultiAssayExperiment,
     pracma,
     rlang,
-    rmdformats,
     RSpectra,
     scales,
     stats
@@ -46,6 +45,7 @@ Suggests:
     piggyback,
     reshape2,
     rmarkdown,
+    rmdformats,
     rpart,
     Seurat,
     spatstat.explore,
@@ -53,7 +53,7 @@ Suggests:
     spelling,
     survival,
     tidyverse,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
 VignetteBuilder: 
     knitr
 biocViews: Software, Clustering, Classification, MultipleComparison,
