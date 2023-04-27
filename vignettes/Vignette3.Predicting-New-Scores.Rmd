@@ -22,17 +22,35 @@ knitr::opts_chunk$set(echo = TRUE)
 It may be of interest to use the embedding that is calculated on a training
 sample set to predict scores on a test set (or, equivalently, on new data).
 
-After loading the nipalsMCIA library, we randomly split the NCI60 cancer cell line data into
-training and test sets.
+After loading the `nipalsMCIA` library, we randomly split the NCI60 cancer cell
+line data into training and test sets.
 
-```{r load-packages}
+### Installation
+
+```{r installation-github, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+                         force = TRUE, build_vignettes = TRUE)
+```
+
+```{r installation-bioconductor, eval = FALSE}
+# after acceptance
+# install.packages("BiocManager")
+BiocManager::install("nipalsMCIA")
+```
+
+```{r load-packages, echo = FALSE, include = FALSE}
 library(ggplot2)
 library(nipalsMCIA)
+
+# NIPALS starts with a random vector
+set.seed(8)
 ```
+
+### Split the data
 
 ```{r split-data}
 data(NCI60)
-set.seed(8)
 
 num_samples <- dim(data_blocks[[1]])[1]
 num_train <- round(num_samples * 0.7, 0)
@@ -46,7 +64,7 @@ for (i in seq_along(data_blocks)) {
 }
 ```
 
-### Run NIPALS-MCIA on training data
+### Run nipalsMCIA on training data
 
 ```{r computing-MCIA-on-training-data, message = FALSE, fig.show = "hide"}
 MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
@@ -99,8 +117,8 @@ MCIA_out$set <- "train"
 MCIA_out_full <- rbind(MCIA_out, MCIA_out_test)
 rownames(MCIA_out_full) <- NULL
 
-ggplot(data = MCIA_out_full, aes(x = Factor.1, y = Factor.2,
-                                 color = cancerType, shape = set)) +
+ggplot(data = MCIA_out_full,
+       aes(x = Factor.1, y = Factor.2, color = cancerType, shape = set)) +
   geom_point(size = 3) +
   labs(title = "MCIA for NCI60 training and test data") +
   theme_bw() +

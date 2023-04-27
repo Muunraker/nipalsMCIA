@@ -22,19 +22,8 @@ vignette: >
 \newcommand{\var}{\text{var}}
 \newcommand{\cov}{\text{cov}}
 
-```{r setup-merger, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-set.seed(42) # NIPALS starts with a random vector
-```
-
-```{r libraries, echo = FALSE, include = FALSE}
-library(ComplexHeatmap)
-library(dplyr)
-library(fgsea)
-library(ggplot2)
-library(ggpubr)
-library(nipalsMCIA)
-library(stringr)
 ```
 
 ## Introduction
@@ -54,11 +43,12 @@ relationships between different blocks or under-appreciates signals which are
 specific to one block.
 
 The `nipals_multiblock` function can also accept as input a [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html)
-(MAE) object. Such objects represent a sophisticated approach to organizing multi-omics
-data in which each assay can be stored as an individual experiment alongside any
-relevant metadata for the experiment as a whole. *The function will automatically
-detect whether your data is in the form of a list or a MAE.*  (Note that sample metadata
-must be supplied as a dataframe in the colData attribute of the MAE object).
+(MAE) object. Such objects represent a sophisticated approach to organizing
+multi-omics data in which each assay can be stored as an individual experiment
+alongside any relevant metadata for the experiment as a whole. *The function
+will automatically detect whether your data is in the form of a list or a MAE.* 
+(Note that sample metadata must be supplied as a dataframe in the colData
+attribute of the MAE object).
 
 In the context of the NCI60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and
@@ -66,7 +56,34 @@ proteins. More specifically, we will show you how to interpret the global
 factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings
 in [Part 2: Interpreting Global Loadings].
 
-**Preview of the NCI60 dataset**
+### Installation
+
+```{r installation-github, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+                         force = TRUE, build_vignettes = TRUE)
+```
+
+```{r installation-bioconductor, eval = FALSE}
+# after acceptance
+# install.packages("BiocManager")
+BiocManager::install("nipalsMCIA")
+```
+
+```{r load-packages, echo = FALSE, include = FALSE}
+library(ComplexHeatmap)
+library(dplyr)
+library(fgsea)
+library(ggplot2)
+library(ggpubr)
+library(nipalsMCIA)
+library(stringr)
+
+# NIPALS starts with a random vector
+set.seed(42)
+```
+
+### Preview of the NCI60 dataset
 
 The NCI60 data set has been included with the `nipalsMCIA` package and is
 easily available as shown below:
@@ -81,7 +98,7 @@ data_blocks$mrna[1:5, 1:3]
 data_blocks$prot[1:5, 1:3]
 ```
 
-**Running and reviewing the MCIA output**
+### Running and reviewing the MCIA output
 
 We can compute the MCIA decomposition for any number of global factors with the
 specific constraint that $r$ is (much) less than the number of features in the
@@ -107,7 +124,7 @@ used and `metadata` to any sample meta-data that has been passed. More details
 on each of the matrices are covered as part of the math mini-lecture, however we
 will briefly review the `global_scores` and `global_loadings`.
 
-**Brief overview of the Global Scores Matrix F**
+### Brief overview of the Global Scores Matrix F
 
 The `global_scores` matrix is represented by $\mb F$ with dimensions
 $n \times r$, where $n$ is the number of samples and $r$ is the number of
@@ -126,7 +143,7 @@ This matrix encodes a low-dimensional representation of the data set, with the
 $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th
 sample.
 
-**Brief overview of the Global Loadings Matrix A**
+### Brief overview of the Global Loadings Matrix A
 
 The `global_loadings` matrix is represented by $\mb A$ that is $p \times r$,
 where $p$ is the number of features across all omics and $r$ is as before.
@@ -160,8 +177,6 @@ decomposition. Here we will re-run `nipals_multiblock()` and omit the `plots`
 parameter (default=all):
 
 ```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4), fig.align = 'center'}
-set.seed(42)
-
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12)
 ```
@@ -216,8 +231,6 @@ part of the `metadata` argument of `nipals_multiblock()` or added directly to
 `mcia_results`:
 
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
-set.seed(42)
-
 # adding metadata as part of the nipals_multiblock() function
 mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
                                   metadata = metadata_NCI60, plots = "none",
