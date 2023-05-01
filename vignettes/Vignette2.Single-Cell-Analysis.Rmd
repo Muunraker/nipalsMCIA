@@ -32,6 +32,8 @@ as metadata for exploring the decomposition results.
 
 ![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.2/Vignette-2-Pipeline.png)
 
+*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
+
 ### Installation
 
 ```{r installation-github, eval = FALSE}
@@ -123,7 +125,20 @@ Note that the CITE-Seq information is being stored as an "[alternative experimen
 # read in the data as a SingleCellExperiment object
 tenx_pbmc3k <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
 
-# examine the data:
+# examine the data
+tenx_pbmc3k
+## class: SingleCellExperiment 
+## dim: 33538 5247 
+## metadata(0):
+## assays(1): counts
+## rownames(33538): ENSG00000243485 ENSG00000237613 ... ENSG00000277475 ENSG00000268674
+## rowData names(4): ENSEMBL_ID Symbol_TENx Type Symbol
+## colnames: NULL
+## colData names(11): Sample Barcode ... Individual Date_published
+## reducedDimNames(0):
+## mainExpName: Gene Expression
+## altExpNames(1): Antibody Capture
+
 counts(tenx_pbmc3k)
 ## <33538 x 5247> sparse matrix of class DelayedMatrix and type "integer":
 ##                    [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
@@ -174,8 +189,22 @@ head(colData(tenx_pbmc3k))
 ## 5 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 ## 6 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 
+head(rowData(tenx_pbmc3k))
+## DataFrame with 6 rows and 4 columns
+##                      ENSEMBL_ID Symbol_TENx            Type       Symbol
+##                     <character> <character>     <character>  <character>
+## ENSG00000243485 ENSG00000243485 MIR1302-2HG Gene Expression           NA
+## ENSG00000237613 ENSG00000237613     FAM138A Gene Expression      FAM138A
+## ENSG00000186092 ENSG00000186092       OR4F5 Gene Expression        OR4F5
+## ENSG00000238009 ENSG00000238009  AL627309.1 Gene Expression LOC100996442
+## ENSG00000239945 ENSG00000239945  AL627309.3 Gene Expression           NA
+## ENSG00000239906 ENSG00000239906  AL627309.2 Gene Expression           NA
+
 metadata(tenx_pbmc3k)
-# list()
+## list()
+
+# change the gene names from Ensembl IDs to the 10x genes
+rownames(tenx_pbmc3k) <- rowData(tenx_pbmc3k)$Symbol_TENx
 ```
 
 In order to run MCIA, the format of this data must be slightly modified:
@@ -191,42 +220,48 @@ summary(data_blocks_sc_sce)
 ## mrna 5247   data.frame list
 ## adt  5247   data.frame list
 
-# convert to Seurat
-data_blocks_sc_sce_seurat <- # default assay (RNA)
-  CreateSeuratObject(counts = data_blocks_sc_sce$mrna,
-                     row.names = rownames(data_blocks_sc_sce$mrna))
-data_blocks_sc_sce_seurat[["ADT"]] <-
-  CreateAssayObject(counts = data_blocks_sc_sce$adt)
+# convert to a Seurat object (using `as.Seurat` won't work here)
+obj_sce <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna, # assay = "RNA"
+                              project = "pbmc5k_CITEseq")
+obj_sce[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
-# add metadata
-# rownames(obj[[]]) <- rownames(GetAssayData(obj, slot = "counts")))
-data_blocks_sc_sce_seurat <-
-  AddMetaData(object = data_blocks_sc_sce_seurat,
-              metadata = as.data.frame(rowData(tenx_pbmc3k),
-                                       row.names = rownames(tenx_pbmc3k)))
-# rownames(data_blocks_sc_sce_seurat[[]]) <- rownames(data_blocks_sc_sce_seurat)
+# name the cells with their barcodes
+obj_sce = RenameCells(object = obj_sce,
+                      new.names = colData(tenx_pbmc3k)$Sequence)
 
-# the metadata will be different than from the Seurat processing
-# e.g. 5297 rows vs. 4193 rows
+# add metadata from the SingleCellExperiment object
+obj_sce = AddMetaData(object = obj_sce,
+                      metadata = as.data.frame(colData(tenx_pbmc3k),
+                                               row.names = Cells(obj_sce)))
 
-head(data_blocks_sc_sce_seurat[[]])
-##       orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT ENSEMBL_ID
-## X1 SeuratProject       7375         2363       5178           31       <NA>
-## X2 SeuratProject       3772         1259       2893           29       <NA>
-## X3 SeuratProject       4902         1578       3635           29       <NA>
-## X4 SeuratProject       6704         1908       3700           31       <NA>
-## X5 SeuratProject       3900         1589       3423           28       <NA>
-## X6 SeuratProject      11781         3136       4665           30       <NA>
-##    Symbol_TENx Type Symbol
-## X1        <NA> <NA>   <NA>
-## X2        <NA> <NA>   <NA>
-## X3        <NA> <NA>   <NA>
-## X4        <NA> <NA>   <NA>
-## X5        <NA> <NA>   <NA>
-## X6        <NA> <NA>   <NA>
+# this object will be slightly different than from the Seurat one down below
+# e.g. 5297 rows vs. 4193 rows (since QC wasn't done) and different metadata
+
+head(obj_sce[[]])
+##                     orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT         Sample            Barcode
+## AAACCCAAGAGACAAG SeuratProject       7375         2363       5178           31 pbmc5k-CITEseq AAACCCAAGAGACAAG-1
+## AAACCCAAGGCCTAGA SeuratProject       3772         1259       2893           29 pbmc5k-CITEseq AAACCCAAGGCCTAGA-1
+## AAACCCAGTCGTGCCA SeuratProject       4902         1578       3635           29 pbmc5k-CITEseq AAACCCAGTCGTGCCA-1
+## AAACCCATCGTGCATA SeuratProject       6704         1908       3700           31 pbmc5k-CITEseq AAACCCATCGTGCATA-1
+## AAACGAAAGACAAGCC SeuratProject       3900         1589       3423           28 pbmc5k-CITEseq AAACGAAAGACAAGCC-1
+## AAACGAAAGAGTGACC SeuratProject      11781         3136       4665           30 pbmc5k-CITEseq AAACGAAAGAGTGACC-1
+##                          Sequence Library Cell_ranger_version Tissue_status Barcode_type   Chemistry Sequence_platform
+## AAACCCAAGAGACAAG AAACCCAAGAGACAAG       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+## AAACCCAAGGCCTAGA AAACCCAAGGCCTAGA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+## AAACCCAGTCGTGCCA AAACCCAGTCGTGCCA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+## AAACCCATCGTGCATA AAACCCATCGTGCATA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+## AAACGAAAGACAAGCC AAACGAAAGACAAGCC       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+## AAACGAAAGAGTGACC AAACGAAAGAGTGACC       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
+##                    Individual Date_published
+## AAACCCAAGAGACAAG HealthyDonor     2019-05-29
+## AAACCCAAGGCCTAGA HealthyDonor     2019-05-29
+## AAACCCAGTCGTGCCA HealthyDonor     2019-05-29
+## AAACCCATCGTGCATA HealthyDonor     2019-05-29
+## AAACGAAAGACAAGCC HealthyDonor     2019-05-29
+## AAACGAAAGAGTGACC HealthyDonor     2019-05-29
 
 # save the data locally if desired
-save(data_blocks_sc_sce, data_blocks_sc_sce_seurat,
+save(data_blocks_sc_sce, obj_sce,
      file = file.path(path_data, "data_sc_sce.Rda"))
 ```
 
