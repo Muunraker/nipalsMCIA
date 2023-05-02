@@ -117,10 +117,11 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
     num_blocks <- length(data_blocks)
     omics_names <- names(data_blocks)
-    
+
     # Check number of samples are the same across all omics
     if(length(unique(lapply(data_blocks,nrow))) > 1){
-        stop("Each omics/data block must have the same number of rows (i.e. samples).")
+        stop("Each omics/data block must have the samenumber of rows
+             (i.e. samples).")
     }
 
     # Check for omics names and assign generic name if null

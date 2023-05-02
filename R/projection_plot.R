@@ -207,7 +207,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                 names(plot_colors))
                 leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
                                 rep(16, length(plot_colors))) - 1
-                leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
+                leg_colors <- c(rep("black",
+                                    length(mcia_results$block_loadings)),
                                 unname(unlist(plot_colors)))
 
                 legend(legend_loc, legend = leg_labels,
@@ -298,7 +299,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                 names(plot_colors))
                 leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
                                 rep(16, length(plot_colors))) - 1
-                leg_colors <- c(rep("black", length(mcia_results$block_loadings)),
+                leg_colors <- c(rep("black",
+                                    length(mcia_results$block_loadings)),
                                 unname(unlist(plot_colors)))
                 legend(legend_loc, legend = leg_labels,
                        pch = leg_shapes, col = leg_colors, cex = cex)

@@ -19,7 +19,7 @@
 #' @export
 
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
-                                                 descending = TRUE, factor = 1) {
+                         descending = TRUE, factor = 1) {
     # list of omics plus 'all'
     omics_names <- names(mcia_out$block_loadings)
     omics_names <- c(omics_names, "all")
