@@ -1,19 +1,23 @@
 ---
 title: "Predicting New MCIA scores"
 author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
-date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
+date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
-    rmdformats::readthedown:
-      code_folding: show
-      fig_retina: 1
-      toc_depth: 4
+  BiocStyle::html_document:
+    code_folding: show
+    dev: 'jpeg'
+    fig_retina: 1
+    highlight: kate
+    number_sections: FALSE
+    toc_depth: 4
+    toc_float: TRUE
 vignette: >
   %\VignetteIndexEntry{Predicting-New-Scores}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup-v2, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 

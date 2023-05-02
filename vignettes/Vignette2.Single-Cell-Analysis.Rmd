@@ -1,29 +1,32 @@
 ---
 title: "Single Cell Analysis"
-author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
-date: "Compiled: `r format(Sys.time(), '%d %B %Y')`"
-header-includes:
-   - \usepackage{amsmath}
-   - \usepackage{amsfonts}
+author:
+- Max Mattessich
+- Joaquin Reyna
+- Edel Aron
+- Anna Konstorum
+date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
-    rmdformats::readthedown:
-      code_folding: show
-      dev: 'jpeg'
-      df_print: kable
-      fig_retina: 1
-      highlight: kate
-      toc_depth: 4
+  BiocStyle::html_document:
+    code_folding: show
+    dev: 'jpeg'
+    df_print: kable
+    fig_retina: 1
+    highlight: kate
+    number_sections: FALSE
+    toc_depth: 4
+    toc_float: TRUE
 vignette: >
   %\VignetteIndexEntry{Single-Cell-Analysis}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introduction
+# Introduction
 
 In this vignette, we will cover some of the possible sources for publicly
 available single-cell data, how to format it for and process it with MCIA and
@@ -34,7 +37,7 @@ as metadata for exploring the decomposition results.
 
 *The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
 
-### Installation
+## Installation
 
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
@@ -71,13 +74,13 @@ path_data <- file.path("..", "data")
 path_inst <- tempdir()
 ```
 
-## Data
+# Data
 
 We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes along with 32 cell surface markers. We chose this dataset due to it containing both gene expression (GEX) and cell surface protein (ADT) data as well as being relatively recent, publicly available and from a widely used platform.
 
 The following code details several ways in which to load in this dataset. You may prefer to use data from other sources outside of 10x Genomics, in which case you will have to format it to work with nipalsMCIA.
 
-### All Sources
+## All Sources
 
 We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **These files includes the processed object that you will need in order to run MCIA (data_blocks_sc.Rda).**
 
@@ -114,7 +117,7 @@ piggyback::pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
 ```
 
-### Bioconductor
+## Bioconductor
 
 There are several Bioconductor packages which provide single-cell data for users
 as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics (stored as [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) classes), including the one that we will be analyzing.
@@ -127,8 +130,8 @@ tenx_pbmc3k <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
 
 # examine the data
 tenx_pbmc3k
-## class: SingleCellExperiment 
-## dim: 33538 5247 
+## class: SingleCellExperiment
+## dim: 33538 5247
 ## metadata(0):
 ## assays(1): counts
 ## rownames(33538): ENSG00000243485 ENSG00000237613 ... ENSG00000277475 ENSG00000268674
@@ -226,13 +229,13 @@ obj_sce <- CreateSeuratObject(counts = data_blocks_sc_sce$mrna, # assay = "RNA"
 obj_sce[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # name the cells with their barcodes
-obj_sce = RenameCells(object = obj_sce,
-                      new.names = colData(tenx_pbmc3k)$Sequence)
+obj_sce <- RenameCells(object = obj_sce,
+                       new.names = colData(tenx_pbmc3k)$Sequence)
 
 # add metadata from the SingleCellExperiment object
-obj_sce = AddMetaData(object = obj_sce,
-                      metadata = as.data.frame(colData(tenx_pbmc3k),
-                                               row.names = Cells(obj_sce)))
+obj_sce <- AddMetaData(object = obj_sce,
+                       metadata = as.data.frame(colData(tenx_pbmc3k),
+                                                row.names = Cells(obj_sce)))
 
 # this object will be slightly different than from the Seurat one down below
 # e.g. 5297 rows vs. 4193 rows (since QC wasn't done) and different metadata
@@ -265,7 +268,7 @@ save(data_blocks_sc_sce, obj_sce,
      file = file.path(path_data, "data_sc_sce.Rda"))
 ```
 
-### 10x Genomics and Seurat
+## 10x Genomics and Seurat
 
 The original dataset can be found on the [10x Genomics Datasets website](https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.2/5k_pbmc_protein_v3) and an explanation of the file types for this version can be found [here](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/3.0/output/overview). You can download them all to a directory of your choosing with their suggested terminal commands:
 
@@ -330,9 +333,9 @@ saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
 
-## MCIA
+# MCIA
 
-### Metadata
+## Metadata
 
 Note that the "-1"s have been removed from the cell barcodes.
 
@@ -345,7 +348,7 @@ metadata_sc <- read.csv(file = file.path(path_inst, "metadata_sc.csv"),
 metadata_sc %>% slice_sample(n = 5)
 ```
 
-### Running the decomposition
+## Running the decomposition
 
 This will run on cells with the top 2000 variable features (as defined in the later analysis).
 
@@ -388,12 +391,12 @@ mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
 names(mcia_results_sc)
 ```
 
-### Visualization
+## Visualization
 
 This data comes from only one subject, so we will use the annotated cell types for
 the metadata (see the [Deep dive: Seurat analysis] section for details on their origin).
 
-#### Define colors
+### Define colors
 
 ```{r mcia-plots-colors}
 # for the projection plot
@@ -408,13 +411,13 @@ meta_colors_sc <- get_metadata_colors(mcia_results = mcia_results_sc,
 colors_omics_sc <- get_colors(mcia_results = mcia_results_sc)
 ```
 
-#### Eigenvalue scree plot
+### Eigenvalue scree plot
 
 ```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 3),fig.align='center'}
 global_scores_eigenvalues_plot(mcia_results = mcia_results_sc)
 ```
 
-#### Projection plot
+### Projection plot
 
 ```{r mcia-plots-projection, fig.dim = c(5, 5), fig.align='center'}
 projection_plot(mcia_results = mcia_results_sc,
@@ -423,7 +426,7 @@ projection_plot(mcia_results = mcia_results_sc,
                 legend_loc = "bottomright")
 ```
 
-#### Global scores heatmap
+### Global scores heatmap
 
 ```{r mcia-plots-heatmap-global, fig.dim = c(7, 5), fig.align='center'}
 suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
@@ -431,7 +434,7 @@ suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
                                        color_pal = meta_colors_sc))
 ```
 
-#### Block weights heatmap
+### Block weights heatmap
 
 The block weights heatmap shows the distribution of the different block score
 weights among the factors.
@@ -440,18 +443,18 @@ weights among the factors.
 block_weights_heatmap(mcia_results = mcia_results_sc)
 ```
 
-#### Loadings
+### Loadings
 
 ```{r mcia-plots-loadings, fig.dim = c(6,4.5), fig.align='center'}
 vis_load_plot(mcia_out = mcia_results_sc,
               axes = c(1, 4), colors_omics = colors_omics_sc)
 ```
 
-#### Top features
+### Top features
 
 In a few factors of interest:
 
-##### Factor 1
+#### Factor 1
 
 ```{r mcia-plots-top-features-factor-1, fig.dim = c(10, 4)}
 # define the loadings
@@ -469,7 +472,7 @@ mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
 ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-##### Factor 4
+#### Factor 4
 
 If you don't want to rank by the absolute value and see a large number of features:
 
@@ -486,13 +489,13 @@ vis_load_ord(gl_f_ord = all_4, omic_name = "all",
 As we saw in the [Block weights heatmap], factor 4 is dominated by the mRNA data
 and not the ADT data.
 
-## Deep dive: Seurat analysis
+# Deep dive: Seurat analysis
 
 This section demonstrates how to take in raw data (in this case, the output of Cell Ranger v3.0) and go through a popular analysis pipeline to ultimately cluster and annotate the data. Some people prefer to use Cell Ranger's built-in dimension reduction and clustering analysis and to view the results with [Loupe Cell Browser](https://support.10xgenomics.com/single-cell-gene-expression/software/visualization/latest/what-is-loupe-cell-browser).
 
 *Credit to Seurat ([RNA](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html) and [multi-modal](https://satijalab.org/seurat/articles/multimodal_vignette.html#setup-a-seurat-object-add-the-rna-and-protein-data)) for the general steps.*
 
-### Read in and process the data
+## Read in and process the data
 
 ```{r seurat-load-data, message = FALSE}
 # load the data
@@ -502,9 +505,9 @@ obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_raw.rds"))
 obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 ```
 
-### Quality control
+## Quality control
 
-#### Metrics summary
+### Metrics summary
 
 ```{r seurat-qc-metrics-summary}
 # read in the summary table
@@ -513,9 +516,9 @@ obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 ))
 ```
 
-#### GEX QC metrics
+### GEX QC metrics
 
-##### Before filtering
+#### Before filtering
 
 ```{r seurat-qc-pre-filter, fig.dim = c(8, 5)}
 VlnPlot(object = obj,
@@ -525,7 +528,7 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-##### After filtering
+#### After filtering
 
 Based on the previous plots, a minimum of 200 features and a maximum of 20% mitochondrial seemed like good cutoffs.
 
@@ -540,7 +543,7 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-### Standard Seurat pipeline
+## Standard Seurat pipeline
 
 You can set `verbose = FALSE` for many of these commands if you don't want to
 see outputs.
@@ -623,10 +626,10 @@ obj <- FindNeighbors(object = obj, reduction = "pca", dims = 1:20)
 
 obj <- FindClusters(object = obj, resolution = 0.4)
 ## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
-## 
+##
 ## Number of nodes: 4193
 ## Number of edges: 154360
-## 
+##
 ## Running Louvain algorithm...
 ## 0%   10   20   30   40   50   60   70   80   90   100%
 ## [----|----|----|----|----|----|----|----|----|----|
@@ -656,9 +659,9 @@ obj <- RunUMAP(object = obj, reduction = "pca", dims = 1:20)
 ## 14:44:44 Optimization finished
 ```
 
-### Dimensionality reduction
+## Dimensionality reduction
 
-#### Load in the processed object
+### Load in the processed object
 
 To avoid having to save multiple large objects, this file already includes the
 annotations defined in a later section, so we will clear them out here to
@@ -673,13 +676,13 @@ Idents(object = obj) <- "seurat_clusters"
 obj$annotated_clusters <- c()
 ```
 
-#### PCA
+### PCA
 
 **Typically this section would go in between the `RunPCA()` and `FindNeighbors()` steps above**.
 It has been included here because of how we save and load the objects separately
 for processing speed.
 
-Now that we've run PCA, we can examine an elbow plot as a simple method for 
+Now that we've run PCA, we can examine an elbow plot as a simple method for
 selecting how many PCs to choose when identifying neighbors/clusters.
 
 ```{r seurat-elbow, fig.dim = c(6, 3),fig.align='center'}
@@ -706,7 +709,7 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
 ```
 
 
-#### UMAP
+### UMAP
 
 ```{r seurat-umap-initial, fig.dim = c(8, 8),fig.align='center'}
 # you can also use the LabelClusters function to help label individual clusters
@@ -718,12 +721,12 @@ plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 5) +
 plot_seurat_clusters
 ```
 
-### Marker overlays
+## Marker overlays
 
 Note that the following marker genes **are not meant to be an exhaustive list.**
 They are included as examples of some of the cell types you could look for.
 
-#### Load marker genes
+### Load marker genes
 
 ```{r seurat-markers-load}
 # sort by Cell_Type and Marker if not already sorted
@@ -731,9 +734,9 @@ markers_all <- read.csv(file = file.path(path_inst, "marker_genes.csv"))
 markers_all %>% slice_sample(n = 10) # example markers
 ```
 
-#### Dot plots
+### Dot plots
 
-##### GEX
+#### GEX
 
 Here we only demonstrate a few of the cell types included within the provided
 markers database. We plot those cell types on top of the dot plot to make it
@@ -765,7 +768,7 @@ p +
   theme(strip.text.x = element_text(size = 10)) + RotatedAxis()
 ```
 
-##### ADT
+#### ADT
 
 The average expression was set to a minimum of zero to better see the
 up-regulated features.
@@ -784,7 +787,7 @@ DotPlot(object = obj,
 DefaultAssay(object = obj) <- "RNA"
 ```
 
-#### Feature plots
+### Feature plots
 
 If you would like to generate feature plots for a cell type within your markers
 database (if you are using one) e.g. for B cells, you could do `features = (dplyr::filter(markers_all, Cell_Type == "B"))$Marker` in the following command.
@@ -794,12 +797,12 @@ simplicity.
 ```{r seurat-markers-feature, fig.dim = c(12, 8)}
 FeaturePlot(object = obj,
             features = c("MS4A1", "CD14", # MS4A1 is another name for CD20
-                         "NKG7", "IL3RA", "CD3D", "IL7R"), 
+                         "NKG7", "IL3RA", "CD3D", "IL7R"),
             min.cutoff = 0, label = TRUE, label.size = 3,
             ncol = 3, raster = FALSE)
 ```
 
-#### Violin plots
+### Violin plots
 
 Here the point size is set to zero so that you can just see the violins. We only
 show a few of the cell surface markers here, but you could plot them all with
@@ -816,13 +819,13 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-### Annotate cell clusters
+## Annotate cell clusters
 
 These annotations are chosen here more as a proof of general concept instead of a more
 highly refined and verified approach that you would typically see within a single-cell
 publication. There are also [automated methods for annotation](https://www.sciencedirect.com/science/article/pii/S2001037021000192).
 
-#### Annotations
+### Annotations
 
 If you would like to further break down these clusters, you can increase the clustering resolution
 in the standard pipeline in order to increase the number of clusters.
@@ -876,7 +879,7 @@ meta <- data.frame("CellType" = Idents(object = obj))
 # write.csv(meta, file = file.path(path_data, "metadata_sc.csv"))
 ```
 
-#### UMAPs
+### UMAPs
 
 Here we use the selected metadata colors from the [MCIA] section, so be sure to
 change that (or just remove the `cols = ...` to use the default) if you are running
@@ -905,7 +908,7 @@ FeaturePlot(object = obj, features = "adt_CD19-TotalSeqB",
             label = TRUE, label.size = 3, ncol = 1, raster = FALSE)
 ```
 
-#### Check the annotations
+### Check the annotations
 
 For example, if you want to visually check your T cell cluster annotations (just
 like before, you can also do `features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker`
@@ -919,7 +922,7 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-### Save for MCIA
+## Save for MCIA
 
 The file has to be structured in the form of a (large) list, with each omic
 saved as an element within it. If you would like to append the type of omic to
@@ -951,7 +954,7 @@ data.frame(data_blocks_sc$adt[1:5, 1:5])
 # save(data_blocks_sc, file = file.path(path_data, "data_blocks_sc.Rda"))
 ```
 
-## Session Info
+# Session Info
 
 ```{r session-info}
 sessionInfo()

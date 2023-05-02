@@ -38,6 +38,7 @@ Imports:
     scales,
     stats
 Suggests:
+    BiocStyle,
     circlize,
     ggpubr,
     KernSmooth,
