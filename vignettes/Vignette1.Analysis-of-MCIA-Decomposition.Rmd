@@ -1,6 +1,10 @@
 ---
 title: "Analysis of MCIA Decomposition"
-author: "Max Mattessich, Joaquin Reyna, Edel Aron, Anna Konstorum"
+author:
+- Max Mattessich
+- Joaquin Reyna
+- Edel Aron
+- Anna Konstorum
 date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 header-includes:
    - \usepackage{amsmath}

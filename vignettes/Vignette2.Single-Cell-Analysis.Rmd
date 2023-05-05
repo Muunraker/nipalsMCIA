@@ -10,7 +10,7 @@ output:
   BiocStyle::html_document:
     code_folding: show
     dev: 'jpeg'
-    df_print: kable
+    df_print: paged
     fig_retina: 1
     highlight: kate
     number_sections: FALSE
