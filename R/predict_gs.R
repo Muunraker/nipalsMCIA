@@ -40,12 +40,12 @@ predict_gs <- function(mcia_results, df) {
     df <- lapply(df, block_preproc, block_preproc_method)
     message("Pre-processing completed")
 
-    #if (tolower(preproc_method) == "colprofile") {
+    # if (tolower(preproc_method) == "colprofile") {
     #    message("Centered column profile pre-processing detected.")
     #    message("Performing pre-processing on data")
     #    df <- lapply(df, CCpreproc)
     #    message("Pre-processing completed.")
-    #} else {
+    # } else {
     #    message("No pre-processing detected.")
     #    df <- lapply(df, as.matrix)
     # }
@@ -56,6 +56,7 @@ predict_gs <- function(mcia_results, df) {
     if (dim(df[[1]])[[2]] != dim(bl[[1]])[[1]]) {
         stop("Error: mismatched number of features in omic ", 1)
     }
+
     new_gs <- df[[1]] %*% bl[[1]] # block score matrix for 1st omic
     new_gs <- t(t(new_gs) * bw[1, ]) # applying block weight
 
