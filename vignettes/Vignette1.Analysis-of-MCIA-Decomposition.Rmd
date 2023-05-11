@@ -36,7 +36,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Introduction
 
 In this vignette, we will cover the most important functions
-within the nipalsMCIA package as well as downstream analyses that help can
+within the nipalsMCIA package as well as downstream analyses that can help
 interpret the MCIA decomposition. MCIA is applicable to any kind of multi-block
 data.
 
