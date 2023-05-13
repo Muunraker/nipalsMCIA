@@ -6,7 +6,7 @@
 #'
 #' @details Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
 #' For each order of scores/loadings, the vectors are computed via the
-#' `NIPALS_iter` function, then used to deflate the data matrix according to
+#' `nipals_iter` function, then used to deflate the data matrix according to
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
@@ -155,14 +155,14 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
         names(block_vars) <- names(data_blocks)
 
     } else {
-        block_vars <- get_TV(data_blocks)
+        block_vars <- get_tv(data_blocks)
     }
 
     message("Block pre-processing completed.")
 
     # First NIPALS run
     message("Computing order ", 1, " scores")
-    nipals_result <- NIPALS_iter(data_blocks, tol)
+    nipals_result <- nipals_iter(data_blocks, tol)
 
     # Saving result
     # matrix containing global scores as columns
@@ -204,7 +204,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
             }
 
             # Run another NIPALS iteration
-            nipals_result <- NIPALS_iter(data_blocks, tol)
+            nipals_result <- nipals_iter(data_blocks, tol)
 
             # Save results
             global_scores <- cbind(global_scores, nipals_result$global_scores)
