@@ -22,7 +22,7 @@
 #' @importFrom RSpectra svds
 #' @importFrom stats cov var
 #' @export
-NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
+nipals_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
     # Main iteration loop
     stop_crit <- 2 * tol
     cov_squared_old <- 0

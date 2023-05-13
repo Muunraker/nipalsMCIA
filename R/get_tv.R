@@ -9,7 +9,7 @@
 #' data(NCI60)
 #' tot_var <- get_TV(data_blocks)
 #' @export
-get_TV <- function(ds) {
+get_tv <- function(ds) {
     ds <- lapply(ds, as.matrix)
 
     # function to calculate variances of each block

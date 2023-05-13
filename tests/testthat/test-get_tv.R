@@ -18,6 +18,6 @@
 # tv_final <- list(mrna = tv_p1, mirna = tv_p2, prot = tv_p3)
 tv_final <- list(mrna = 10152.24, miRNA = 1071.079, prot = 28843.05)
 
-test_that("get_TV equals standard method", {
-  expect_equal(get_TV(data_blocks), tv_final, tolerance = 1e-4)
+test_that("get_tv equals standard method", {
+  expect_equal(get_tv(data_blocks), tv_final, tolerance = 1e-4)
 })
