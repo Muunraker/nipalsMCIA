@@ -470,10 +470,8 @@ likely contribute to factor 3. This analysis can be repeated as necessary to
 make sense of other gene based factor loadings. 
 
 ```{r part-2-significant}
-# extracting to most significant gene set
+# extracting, REACTOME_CELL_CYCLE, the most significant gene set
 sig_path3 <- factor3_paths[min(factor3_paths$padj) == factor3_paths$padj, ][1, ]
-
-# list of genes in this pathway
 sig_path3$leadingEdge[[1]]
 ```
 
