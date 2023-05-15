@@ -101,7 +101,7 @@ and global scores/loadings with the desired deflation method.
 \details{
 Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
 For each order of scores/loadings, the vectors are computed via the
-`NIPALS_iter` function, then used to deflate the data matrix according to
+`nipals_iter` function, then used to deflate the data matrix according to
 the desired deflation method.
 This process is repeated up to the desired maximum order of scores/loadings.
 }
