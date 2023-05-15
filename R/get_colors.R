@@ -51,7 +51,6 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
 get_metadata_colors <- function(mcia_results, color_col,
                                 color_pal = scales::viridis_pal,
                                 color_pal_params = list()) {
-  
     meta_list <- unique(mcia_results$metadata[, color_col])
     meta_list <- sort(meta_list) # alphabetize the metadata
 

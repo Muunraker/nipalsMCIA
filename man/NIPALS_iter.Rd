@@ -4,7 +4,7 @@
 \alias{NIPALS_iter}
 \title{NIPALS Iteration}
 \usage{
-NIPALS_iter(ds, tol = 1e-12, maxIter = 1000)
+NIPALS_iter(ds, tol = 1e-12, maxIter = 1000, isCentered = FALSE)
 }
 \arguments{
 \item{ds}{a list of data matrices, each in "sample" x "variable" format}
@@ -12,6 +12,8 @@ NIPALS_iter(ds, tol = 1e-12, maxIter = 1000)
 \item{tol}{a number for the tolerance on the stopping criterion for NIPALS}
 
 \item{maxIter}{a number for the maximum number of times NIPALS should iterate}
+
+\item{isCentered}{TRUE if data blocks have feature mean zero, FALSE otherwise}
 }
 \value{
 a list containing the global/block scores, loadings and weights for

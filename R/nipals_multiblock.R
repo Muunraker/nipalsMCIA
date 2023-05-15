@@ -165,6 +165,7 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_metho
     message("Performing column-level pre-processing...")
     data_blocks <- lapply(data_blocks, col_preproc, preproc_method)
     message("Column pre-processing completed.")
+    
 
     # Block-level pre-processing
     message("Performing block-level preprocessing...")
@@ -181,7 +182,7 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_metho
 
     # First NIPALS run
     message("Computing order ", 1, " scores")
-    nipals_result <- NIPALS_iter(data_blocks, tol)
+    nipals_result <- NIPALS_iter(data_blocks, tol, isCentered = TRUE)
 
     # Saving result
     # matrix containing global scores as columns
