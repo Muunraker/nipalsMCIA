@@ -6,6 +6,7 @@
 \usage{
 nipals_multiblock(
   data_blocks,
+  row_format = "samples",
   preproc_method = "colprofile",
   block_preproc_method = "unit_var",
   num_PCs = 10,
@@ -18,9 +19,11 @@ nipals_multiblock(
 )
 }
 \arguments{
-\item{data_blocks}{a list of data frames in "sample" x "variable" format,
-or a MultiAssayExperiment class object
+\item{data_blocks}{a list of data frames or a MultiAssayExperiment class object
 (with sample metadata as a dataframe in the colData attribute).}
+
+\item{row_format}{for lists of data frames, indicates whether rows of datasets 
+denote `samples` (default) or `features`.}
 
 \item{preproc_method}{an option for the desired column-level data
 pre-processing, either:
