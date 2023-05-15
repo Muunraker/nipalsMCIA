@@ -1,5 +1,6 @@
 test_that("projection_plot: checking global figure", {
     dev.new()
+    par(mar = c(2, 2, 2, 2)) 
     expect_no_error(projection_plot(mcia_results,
                     projection = "global",
                     orders = c(1, 2)))
@@ -8,6 +9,7 @@ test_that("projection_plot: checking global figure", {
 
 test_that("projection_plot: checking global figure with colors", {
     dev.new()
+    par(mar = c(2, 2, 2, 2)) 
     expect_no_error(projection_plot(mcia_results, 
                                     projection = "global", 
                                     orders = c(1, 2),
@@ -20,6 +22,7 @@ test_that("projection_plot: checking global figure with colors", {
 
 test_that("projection_plot: checking all figure", {
     dev.new()
+    par(mar = c(2, 2, 2, 2)) 
     expect_no_error(projection_plot(mcia_results,
                                     projection = "all",
                                     orders = c(1, 2)))
@@ -28,6 +31,7 @@ test_that("projection_plot: checking all figure", {
 
 test_that("projection_plot: checking block figure", {
     dev.new()
+    par(mar = c(2, 2, 2, 2)) 
     expect_no_error(projection_plot(mcia_results,
                                     projection = "block",
                                     block_name = "prot",
@@ -37,6 +41,7 @@ test_that("projection_plot: checking block figure", {
 
 test_that("projection_plot: checking block figure - fail", {
     dev.new()
+    par(mar = c(2, 2, 2, 2)) 
     expect_error(projection_plot(mcia_results,
                                     projection = "block",
                                     block_name = "faux-block",
