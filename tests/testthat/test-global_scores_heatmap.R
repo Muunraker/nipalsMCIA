@@ -1,10 +1,10 @@
-test_that("global_scores_heatmap: checking figure", {
+test_that("checking figure", {
     expect_no_error(global_scores_heatmap(mcia_results,
                                          color_col="cancerType")
     )
 })
 
-test_that("global_scores_heatmap: checking figure with custom color palette", {
+test_that("checking figure with custom color palette", {
     expect_no_error(global_scores_heatmap(mcia_results,
                                           color_col="cancerType",
                                           color_pal = meta_colors)
