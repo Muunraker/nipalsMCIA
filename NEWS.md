@@ -1,3 +1,15 @@
+# 0.99.3:
+
+## Major changes
+
+* 
+
+## Minor improvements and bug fixes
+
+* Changed vignette styling from `rmdformats` to `BiocStyle`
+* Removed empty helper.R
+* Added more unit testing
+
 # 0.99.2:
 
 ## Major changes
