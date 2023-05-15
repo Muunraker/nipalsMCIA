@@ -84,7 +84,7 @@
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks, row_format = 'samples', preproc_method = "colprofile",
+nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
@@ -137,7 +137,7 @@ nipals_multiblock <- function(data_blocks, row_format = 'samples', preproc_metho
     
     # Check that metadata sample names match block sample names
     if(!is.null(metadata)){
-      if(any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))){ 
+      if(any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))){
         errmsg = sprintf("Metadata sample names dont match block sample names")
         stop(errmsg)
       }

@@ -89,13 +89,18 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         clust_indexes <- list(seq(1, dim(mcia_results$global_score)[[1]]))
     }
 
-    ### Resolving the cluster colors
-    plot_colors <- get_metadata_colors(mcia_results, color_col = color_col,
-                                       color_pal = color_pal,
-                                       color_pal_params = color_pal_params)
+    ### Resolving the cluster colors IF SPECIFIED 
+
+
     if (is.null(color_col)) {
         plot_colors <- list("black")
+    } else{
+    # only look up color if color_col is specified
+    plot_colors <- get_metadata_colors(mcia_results, color_col = color_col,
+                                           color_pal = color_pal,
+                                           color_pal_params = color_pal_params)
     }
+    
     if (!is.null(color_override)) {
         plot_colors <- list(color_override)
     }
