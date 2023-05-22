@@ -52,7 +52,7 @@ Suggests:
     stringr,
     survival,
     tidyverse,
-    testthat (>= 3.0.0),
+    testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
 biocViews: Software, Clustering, Classification, MultipleComparison,

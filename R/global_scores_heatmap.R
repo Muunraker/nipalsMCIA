@@ -42,11 +42,12 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
         cat_colors_list <- list(ColorType = cat_colors)
 
         # add the colors list to a HeatmapAnnotation obj
-        row_ha <- ComplexHeatmap::HeatmapAnnotation(ColorType = cat_values,
-                                                    col = cat_colors_list,
-                                                    which = "row",
-                                                    show_annotation_name = FALSE,
-                                                    annotation_label = color_col)
+        row_ha <-
+            ComplexHeatmap::HeatmapAnnotation(ColorType = cat_values,
+                                              col = cat_colors_list,
+                                              which = "row",
+                                              show_annotation_name = FALSE,
+                                              annotation_label = color_col)
 
         p <- ComplexHeatmap::Heatmap(matrix = global_scores,
                                      name = "GS Score",

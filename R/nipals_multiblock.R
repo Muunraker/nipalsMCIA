@@ -10,10 +10,10 @@
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames or a MultiAssayExperiment class object
-#' (with sample metadata as a dataframe in the colData attribute).
-#' @param row_format for lists of data frames, indicates whether rows of datasets 
-#' denote `samples` (default) or `features`. 
+#' @param data_blocks a list of data frames or a MultiAssayExperiment class
+#' object (with sample metadata as a dataframe in the colData attribute).
+#' @param row_format for lists of data frames, indicates whether rows of
+#' datasets denote `samples` (default) or `features`.
 #' @param col_preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
@@ -84,7 +84,8 @@
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_method = "colprofile",
+nipals_multiblock <- function(data_blocks, row_format = "samples",
+                              col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
@@ -101,7 +102,8 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_m
         # If no metadata supplied, attempt to extract it from the MAE object
         if (is.null(metadata)) {
             # Convert metadata
-            metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
+            metadata <-
+              data.frame(MultiAssayExperiment::colData(data_blocks_mae))
             if (length(metadata) == 0) {
                 metadata <- NULL
             }
@@ -121,24 +123,24 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_m
     omics_names <- names(data_blocks)
 
     # Check number of samples are the same across all omics
-    if(length(unique(lapply(data_blocks,nrow))) > 1){
+    if (length(unique(lapply(data_blocks,nrow))) > 1) {
         stop("Each omics/data block must have the samenumber of rows (i.e. samples).")
     }
-    
+
     # Check samples are the same (in same order) for each block
     # comparing sequential sample names
-    samplenames <- lapply(data_blocks,rownames)
-    for (i in 1:(length(samplenames)-1)){
-      if(any(tolower(samplenames[[i]]) != tolower(samplenames[[i+1]]))){
-        errmsg = sprintf("Sample names or order in block %d do not match block %d.",i,i+1)
+    samplenames <- lapply(data_blocks, rownames)
+    for (i in seq_len(length(samplenames) - 1)) {
+      if (any(tolower(samplenames[[i]]) != tolower(samplenames[[i + 1]]))) {
+        errmsg <- sprintf("Sample names or order in block %d do not match block %d.", i, i + 1)
         stop(errmsg)
       }
     }
-    
+
     # Check that metadata sample names match block sample names
-    if(!is.null(metadata)){
-      if(any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))){
-        errmsg = sprintf("Metadata sample names dont match block sample names")
+    if (!is.null(metadata)) {
+      if (any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))) {
+        errmsg <- sprintf("Metadata sample names dont match block sample names")
         stop(errmsg)
       }
     }
@@ -163,9 +165,9 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_m
 
     # Pre-processing data
     message("Performing column-level pre-processing...")
-    data_blocks <- lapply(data_blocks, col_preproc,col_preproc_method)
+    data_blocks <- lapply(data_blocks, col_preproc, col_preproc_method)
     message("Column pre-processing completed.")
-    
+
 
     # Block-level pre-processing
     message("Performing block-level preprocessing...")
@@ -248,16 +250,17 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_m
     names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
     results_list <- list(global_scores, global_loadings, block_score_weights,
                          block_scores, block_loadings, eigvals,
-                         tolower(col_preproc_method), tolower(block_preproc_method),
+                         tolower(col_preproc_method),
+                         tolower(block_preproc_method),
                          block_vars)
     names(results_list) <- c("global_scores", "global_loadings",
                              "block_score_weights", "block_scores",
                              "block_loadings", "eigvals",
                              "col_preproc_method",
                              "block_preproc_method", "block_variances")
-    if(is.null(metadata)){
+    if (is.null(metadata)) {
       results_list$metadata <- NA
-    }else{
+    } else{
       results_list$metadata <- metadata
     }
 
