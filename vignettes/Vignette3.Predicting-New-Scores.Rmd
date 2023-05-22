@@ -51,8 +51,6 @@ BiocManager::install("nipalsMCIA")
 library(ggplot2)
 library(nipalsMCIA)
 
-# NIPALS starts with a random vector
-set.seed(8)
 ```
 
 ### Split the data
@@ -60,6 +58,7 @@ set.seed(8)
 ```{r split-data}
 data(NCI60)
 
+set.seed(8)
 num_samples <- dim(data_blocks[[1]])[1]
 num_train <- round(num_samples * 0.7, 0)
 train_samples <- sample.int(num_samples, num_train)
