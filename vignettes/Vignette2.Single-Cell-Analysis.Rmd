@@ -361,7 +361,7 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 # "largest_sv" results in a more balanced contribution
 # from the blocks than the default "unit_var"
 mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
-                                     preproc_method = "colprofile",
+                                     col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
                                      num_PCs = 10, tol = 1e-9,
                                      metadata = metadata_sc,

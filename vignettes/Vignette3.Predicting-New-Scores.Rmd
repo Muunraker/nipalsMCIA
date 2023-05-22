@@ -76,7 +76,7 @@ for (i in seq_along(data_blocks)) {
 
 ```{r computing-MCIA-on-training-data, message = FALSE, fig.show = "hide"}
 MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
-                                preproc_method = "colprofile", num_PCs = 10,
+                                col_preproc_method = "colprofile", num_PCs = 10,
                                 plots = "none", tol = 1e-9)
 ```
 

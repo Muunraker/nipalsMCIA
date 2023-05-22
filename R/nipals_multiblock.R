@@ -14,7 +14,7 @@
 #' (with sample metadata as a dataframe in the colData attribute).
 #' @param row_format for lists of data frames, indicates whether rows of datasets 
 #' denote `samples` (default) or `features`. 
-#' @param preproc_method an option for the desired column-level data
+#' @param col_preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
 #' \item `colprofile` applies column-centering, row and column weighting by
@@ -60,7 +60,7 @@
 #' one block (w/ unit length)
 #' \item `block score weights` a matrix containing weights for each block score
 #' of each order used to construct the global scores.
-#' \item `preproc_method` the preprocessing method used on the data.
+#' \item `col_preproc_method` the column preprocessing method used on the data.
 #' }
 #' @param plots an option to display various plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue
@@ -78,13 +78,13 @@
 #' @examples
 #'    data(NCI60)
 #'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
-#'    max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
-#'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+#'    max_iter = 1000, col_preproc_method = "colprofile", deflationMethod = "block")
+#'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
 #'    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_method = "colprofile",
+nipals_multiblock <- function(data_blocks, row_format = "samples", col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
@@ -163,7 +163,7 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_metho
 
     # Pre-processing data
     message("Performing column-level pre-processing...")
-    data_blocks <- lapply(data_blocks, col_preproc, preproc_method)
+    data_blocks <- lapply(data_blocks, col_preproc,col_preproc_method)
     message("Column pre-processing completed.")
     
 
@@ -248,14 +248,18 @@ nipals_multiblock <- function(data_blocks, row_format = "samples", preproc_metho
     names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
     results_list <- list(global_scores, global_loadings, block_score_weights,
                          block_scores, block_loadings, eigvals,
-                         tolower(preproc_method), tolower(block_preproc_method),
+                         tolower(col_preproc_method), tolower(block_preproc_method),
                          block_vars)
     names(results_list) <- c("global_scores", "global_loadings",
                              "block_score_weights", "block_scores",
                              "block_loadings", "eigvals",
-                             "column_preproc_method",
+                             "col_preproc_method",
                              "block_preproc_method", "block_variances")
-    results_list$metadata <- metadata
+    if(is.null(metadata)){
+      results_list$metadata <- NA
+    }else{
+      results_list$metadata <- metadata
+    }
 
     # Plotting results
     if (tolower(plots) == "all") {

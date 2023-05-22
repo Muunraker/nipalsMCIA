@@ -142,7 +142,7 @@ we take $r=10$.
 
 ```{r intro-mcia, warning = FALSE, message = FALSE}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks, col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
@@ -211,7 +211,7 @@ parameter (default=all):
 
 ```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4), fig.align = 'center'}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks, col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12)
 ```
 
@@ -263,7 +263,7 @@ of `nipals_multiblock()` or added directly to `mcia_results`:
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks, col_preproc_method = "colprofile",
                                   metadata = metadata_NCI60, plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 

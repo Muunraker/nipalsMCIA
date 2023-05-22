@@ -7,7 +7,7 @@
 nipals_multiblock(
   data_blocks,
   row_format = "samples",
-  preproc_method = "colprofile",
+  col_preproc_method = "colprofile",
   block_preproc_method = "unit_var",
   num_PCs = 10,
   tol = 1e-09,
@@ -25,7 +25,7 @@ nipals_multiblock(
 \item{row_format}{for lists of data frames, indicates whether rows of datasets 
 denote `samples` (default) or `features`.}
 
-\item{preproc_method}{an option for the desired column-level data
+\item{col_preproc_method}{an option for the desired column-level data
 pre-processing, either:
 \itemize{
 \item `colprofile` applies column-centering, row and column weighting by
@@ -91,7 +91,7 @@ block
 one block (w/ unit length)
 \item `block score weights` a matrix containing weights for each block score
 of each order used to construct the global scores.
-\item `preproc_method` the preprocessing method used on the data.
+\item `col_preproc_method` the column preprocessing method used on the data.
 }
 }
 \description{
@@ -108,8 +108,8 @@ This process is repeated up to the desired maximum order of scores/loadings.
 \examples{
    data(NCI60)
    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
-   max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
-   MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+   max_iter = 1000, col_preproc_method = "colprofile", deflationMethod = "block")
+   MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
    deflationMethod = 'global')
 
