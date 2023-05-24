@@ -8,10 +8,8 @@ author:
 date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
   BiocStyle::html_document:
-    code_folding: show
     dev: 'jpeg'
     fig_retina: 1
-    highlight: kate
     number_sections: FALSE
     toc_depth: 4
     toc_float: TRUE
@@ -25,7 +23,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Predicting MCIA global (factor) scores for new test samples
+# Predicting MCIA global (factor) scores for new test samples
 
 It may be of interest to use the embedding that is calculated on a training
 sample set to predict scores on a test set (or, equivalently, on new data).
@@ -33,7 +31,7 @@ sample set to predict scores on a test set (or, equivalently, on new data).
 After loading the `nipalsMCIA` library, we randomly split the NCI60 cancer cell
 line data into training and test sets.
 
-### Installation
+## Installation
 
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
@@ -53,7 +51,7 @@ library(nipalsMCIA)
 
 ```
 
-### Split the data
+## Split the data
 
 ```{r split-data}
 data(NCI60)
@@ -71,7 +69,7 @@ for (i in seq_along(data_blocks)) {
 }
 ```
 
-### Run nipalsMCIA on training data
+## Run nipalsMCIA on training data
 
 ```{r computing-MCIA-on-training-data, message = FALSE, fig.show = "hide"}
 MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
@@ -79,9 +77,9 @@ MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
                                 plots = "none", tol = 1e-9)
 ```
 
-### Visualize model on training data using metadata on cancer type
+## Visualize model on training data using metadata on cancer type
 
-```{r visualize-training-model, fig.height = 2.5, fig.align = 'center'}
+```{r visualize-training-model, fig.height = 2.5, fig.align = "center"}
 MCIA_train$metadata <- data.frame(metadata_NCI60[train_samples, ],
                                   row.names = rownames(data_blocks_train$mrna))
 colnames(MCIA_train$metadata) <- c("cancerType")
@@ -99,7 +97,7 @@ ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   scale_color_manual(values = meta_colors)
 ```
 
-### Generate factor scores for test data using the MCIA_train model
+## Generate factor scores for test data using the MCIA_train model
 
 We use the \verb+predict_gs+ function to generate new factor scores on the test
 data set using the MCIA_train model above
@@ -109,12 +107,12 @@ MCIA_test_scores <- predict_gs(mcia_results = MCIA_train,
                                df = data_blocks_test)
 ```
 
-### Visualize new scores with old
+## Visualize new scores with old
 
 We once again plot the top two factor scores for both the training and test
 datasets
 
-```{r visualize-both-models, fig.height = 2.5, fig.align = 'center'}
+```{r visualize-both-models, fig.height = 2.5, fig.align = "center"}
 MCIA_out_test <- data.frame(MCIA_test_scores[, 1:2])
 MCIA_out_test$cancerType <- metadata_NCI60[-train_samples, ]
 
@@ -132,8 +130,13 @@ ggplot(data = MCIA_out_full,
   scale_color_manual(values = meta_colors)
 ```
 
-## Session Info
+# Session Info
 
-```{r session-info, echo = FALSE}
+<details>
+  <summary>**Session Info**</summary>
+  
+```{r session-info}
 sessionInfo()
 ```
+
+</details>

@@ -8,11 +8,9 @@ author:
 date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
   BiocStyle::html_document:
-    code_folding: show
     dev: 'jpeg'
     df_print: paged
     fig_retina: 1
-    highlight: kate
     number_sections: FALSE
     toc_depth: 4
     toc_float: TRUE
@@ -33,7 +31,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipeline](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.2/Vignette-2-Pipeline.png)
+![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.2/Vignette-2-Pipeline.png)
 
 *The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
 
@@ -956,6 +954,11 @@ data.frame(data_blocks_sc$adt[1:5, 1:5])
 
 # Session Info
 
+<details>
+  <summary>**Session Info**</summary>
+  
 ```{r session-info}
 sessionInfo()
 ```
+
+</details>
