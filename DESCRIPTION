@@ -47,7 +47,7 @@ Suggests:
     reshape2,
     rmarkdown,
     rpart,
-    Seurat,
+    Seurat (>= 4.0.0),
     spatstat.explore,
     stringr,
     survival,

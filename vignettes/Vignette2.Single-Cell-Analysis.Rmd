@@ -10,14 +10,14 @@ output:
   BiocStyle::html_document:
     dev: 'jpeg'
     df_print: paged
-    fig_retina: 1
+    fig_retina: 1.5
     number_sections: FALSE
     toc_depth: 4
     toc_float: TRUE
 vignette: >
-  %\VignetteIndexEntry{Single-Cell-Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Single Cell Analysis}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
@@ -40,7 +40,7 @@ as metadata for exploring the decomposition results.
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
-                         force = TRUE, build_vignettes = TRUE)
+                         force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
@@ -411,13 +411,13 @@ colors_omics_sc <- get_colors(mcia_results = mcia_results_sc)
 
 ### Eigenvalue scree plot
 
-```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 3),fig.align='center'}
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 3)}
 global_scores_eigenvalues_plot(mcia_results = mcia_results_sc)
 ```
 
 ### Projection plot
 
-```{r mcia-plots-projection, fig.dim = c(5, 5), fig.align='center'}
+```{r mcia-plots-projection, fig.dim = c(5, 5)}
 projection_plot(mcia_results = mcia_results_sc,
                 projection = "global", orders = c(1, 2),
                 color_col = "CellType", color_pal = meta_colors_sc,
@@ -426,7 +426,7 @@ projection_plot(mcia_results = mcia_results_sc,
 
 ### Global scores heatmap
 
-```{r mcia-plots-heatmap-global, fig.dim = c(7, 5), fig.align='center'}
+```{r mcia-plots-heatmap-global, fig.dim = c(7, 5)}
 suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
                                        color_col = "CellType",
                                        color_pal = meta_colors_sc))
@@ -437,13 +437,13 @@ suppressMessages(global_scores_heatmap(mcia_results = mcia_results_sc,
 The block weights heatmap shows the distribution of the different block score
 weights among the factors.
 
-```{r mcia-plots-heatmap-block, fig.dim = c(4, 2.5), fig.align='center'}
+```{r mcia-plots-heatmap-block, fig.dim = c(4, 2.5)}
 block_weights_heatmap(mcia_results = mcia_results_sc)
 ```
 
 ### Loadings
 
-```{r mcia-plots-loadings, fig.dim = c(6,4.5), fig.align='center'}
+```{r mcia-plots-loadings, fig.dim = c(6, 4.5)}
 vis_load_plot(mcia_out = mcia_results_sc,
               axes = c(1, 4), colors_omics = colors_omics_sc)
 ```
@@ -467,7 +467,7 @@ all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = "all",
 mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
                                colors_omics = colors_omics_sc)
 
-ggarrange(all_pos_1_vis, mrna_pos_1_vis)
+ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis, widths = c(1, 1))
 ```
 
 #### Factor 4
@@ -508,7 +508,7 @@ obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 ### Metrics summary
 
 ```{r seurat-qc-metrics-summary}
-# read in the summary table
+# read in and display the summary table
 (metrics_summary <- read.csv(
     file = file.path(path_inst, "5k_pbmc_protein_v3_metrics_summary.csv")
 ))
@@ -683,7 +683,7 @@ for processing speed.
 Now that we've run PCA, we can examine an elbow plot as a simple method for
 selecting how many PCs to choose when identifying neighbors/clusters.
 
-```{r seurat-elbow, fig.dim = c(6, 3),fig.align='center'}
+```{r seurat-elbow, fig.dim = c(6, 3)}
 ElbowPlot(object = obj, ndims = 30)
 ```
 
@@ -709,7 +709,7 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
 
 ### UMAP
 
-```{r seurat-umap-initial, fig.dim = c(8, 8),fig.align='center'}
+```{r seurat-umap-initial, fig.dim = c(6, 6)}
 # you can also use the LabelClusters function to help label individual clusters
 plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 5) +
                           labs(title = "Initial Clusters") +
@@ -741,7 +741,7 @@ markers database. We plot those cell types on top of the dot plot to make it
 easier to see which markers they correspond with, but you can comment that code
 out if you would rather have a simple dot plot.
 
-```{r seurat-markers-dot-gex, fig.dim = c(14, 6), message = FALSE}
+```{r seurat-markers-dot-gex, fig.dim = c(16, 6), warning = FALSE}
 select_cell_types <- c("B", "Macrophages", "mDC", "NK", "T")
 
 # do features = unique(markers_all$Marker) to use all possible features
@@ -759,6 +759,8 @@ p$data <- left_join(p$data,
                       dplyr::filter(Cell_Type %in% select_cell_types) %>%
                       dplyr::rename(features.plot = "Marker"),
                     by = "features.plot", multiple = "all")
+# depending on your version of dplyr, you can set `relationship = "many-to-many"`
+# to surpress the warning
 
 # plot
 p +
@@ -771,7 +773,7 @@ p +
 The average expression was set to a minimum of zero to better see the
 up-regulated features.
 
-```{r seurat-markers-dot-adt, fig.dim = c(14, 6)}
+```{r seurat-markers-dot-adt, fig.dim = c(16, 6)}
 # you have to change the default assay for the dot plot
 DefaultAssay(object = obj) <- "ADT"
 
@@ -796,7 +798,7 @@ simplicity.
 FeaturePlot(object = obj,
             features = c("MS4A1", "CD14", # MS4A1 is another name for CD20
                          "NKG7", "IL3RA", "CD3D", "IL7R"),
-            min.cutoff = 0, label = TRUE, label.size = 3,
+            min.cutoff = 0, label = TRUE, label.size = 4,
             ncol = 3, raster = FALSE)
 ```
 
@@ -886,24 +888,26 @@ this section first.
 ```{r seurat-umap-both, fig.dim = c(16, 8)}
 # change colors and themes as desired
 plot_annotated_clusters <- UMAPPlot(object = obj,
-                                    label = TRUE, label.size = 4,
+                                    label = TRUE, label.size = 5,
                                     cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
                              theme(plot.title = element_text(hjust = 0.5),
                                    axis.text = element_blank(),
-                                   axis.ticks = element_blank())
+                                   axis.ticks = element_blank()) +
+                            NoLegend() # a legend is not needed here
 
-ggarrange(plot_seurat_clusters, plot_annotated_clusters)
+ggpubr::ggarrange(plot_seurat_clusters + NoLegend(), plot_annotated_clusters,
+                  heights = c(1, 1), widths = c(1, 1))
 ```
 
 You should change the `DefaultAssay` to/from `ADT` like in [ADT] if you don't
 want to specify "adt_" before the feature name.
 
-```{r seurat-umap-adt, fig.dim = c(4, 4)}
+```{r seurat-umap-adt, fig.dim = c(6, 6)}
 # plot ADT information on top as an example
 
 FeaturePlot(object = obj, features = "adt_CD19-TotalSeqB",
-            label = TRUE, label.size = 3, ncol = 1, raster = FALSE)
+            label = TRUE, label.size = 4, ncol = 1, raster = FALSE)
 ```
 
 ### Check the annotations

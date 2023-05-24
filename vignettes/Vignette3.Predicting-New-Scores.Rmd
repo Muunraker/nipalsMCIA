@@ -9,12 +9,12 @@ date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
   BiocStyle::html_document:
     dev: 'jpeg'
-    fig_retina: 1
+    fig_retina: 1.5
     number_sections: FALSE
-    toc_depth: 4
+    toc_depth: 2
     toc_float: TRUE
 vignette: >
-  %\VignetteIndexEntry{Predicting-New-Scores}
+  %\VignetteIndexEntry{Predicting New MCIA scores}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -36,7 +36,7 @@ line data into training and test sets.
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
-                         force = TRUE, build_vignettes = TRUE)
+                         force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
@@ -48,15 +48,14 @@ BiocManager::install("nipalsMCIA")
 ```{r load-packages, echo = FALSE, include = FALSE}
 library(ggplot2)
 library(nipalsMCIA)
-
 ```
 
 ## Split the data
 
 ```{r split-data}
 data(NCI60)
-
 set.seed(8)
+
 num_samples <- dim(data_blocks[[1]])[1]
 num_train <- round(num_samples * 0.7, 0)
 train_samples <- sample.int(num_samples, num_train)
@@ -79,7 +78,7 @@ MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
 
 ## Visualize model on training data using metadata on cancer type
 
-```{r visualize-training-model, fig.height = 2.5, fig.align = "center"}
+```{r visualize-training-model, fig.height = 2.5}
 MCIA_train$metadata <- data.frame(metadata_NCI60[train_samples, ],
                                   row.names = rownames(data_blocks_train$mrna))
 colnames(MCIA_train$metadata) <- c("cancerType")
@@ -90,6 +89,7 @@ MCIA_out <- data.frame(MCIA_train$global_scores[, 1:2])
 MCIA_out$cancerType <- MCIA_train$metadata[, 1]
 colnames(MCIA_out) <- c("Factor.1", "Factor.2", "cancerType")
 
+# plot the results
 ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   geom_point(size = 3) +
   labs(title = "MCIA for NCI60 training data") +
@@ -112,7 +112,7 @@ MCIA_test_scores <- predict_gs(mcia_results = MCIA_train,
 We once again plot the top two factor scores for both the training and test
 datasets
 
-```{r visualize-both-models, fig.height = 2.5, fig.align = "center"}
+```{r visualize-both-models, fig.height = 2.5}
 MCIA_out_test <- data.frame(MCIA_test_scores[, 1:2])
 MCIA_out_test$cancerType <- metadata_NCI60[-train_samples, ]
 
@@ -122,6 +122,7 @@ MCIA_out$set <- "train"
 MCIA_out_full <- rbind(MCIA_out, MCIA_out_test)
 rownames(MCIA_out_full) <- NULL
 
+# plot the results
 ggplot(data = MCIA_out_full,
        aes(x = Factor.1, y = Factor.2, color = cancerType, shape = set)) +
   geom_point(size = 3) +
