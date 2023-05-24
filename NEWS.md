@@ -1,4 +1,4 @@
-# 0.99.3:
+# 0.99.3 (2023-05-26):
 
 ## Major changes
 
@@ -8,11 +8,11 @@
 
 * Changed vignette styling from `rmdformats` to `BiocStyle`
 * Removed empty helper.R
-* Added more unit testing
+* Added significantly more unit testing
 * Fixed bug in `projection_plots()` when metadata was provided but no `color_col` was selected.
 * Added checks for consistency in sample names across data blocks and metadata. 
 
-# 0.99.2:
+# 0.99.2 (2023-03-25):
 
 ## Major changes
 
@@ -21,9 +21,9 @@
 ## Minor improvements and bug fixes
 
 * Restructured Vignette 2 to be more streamlined and have more explanations
-* Add an additional single cell data file to the repository with `piggyback`
+* Add an additional single cell data file to the repository using `piggyback`
 
-# 0.99.1:
+# 0.99.1 (2023-02-26):
 
 ## Major changes
 
@@ -34,6 +34,6 @@
 
 * Made `get_colors()` more flexible for different color palette options
 
-# 0.0.1 (2022-10-23):
+# 0.99.0 (2022-10-21):
 
 * Added single cell data to the repository using `piggyback`

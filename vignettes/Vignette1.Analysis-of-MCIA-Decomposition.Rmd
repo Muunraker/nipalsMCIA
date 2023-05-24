@@ -11,16 +11,14 @@ header-includes:
    - \usepackage{amsfonts}
 output:
   BiocStyle::html_document:
-    code_folding: show
     dev: 'jpeg'
     df_print: kable
-    fig_retina: 1
-    highlight: kate
+    fig_retina: 1.5
     number_sections: FALSE
-    toc_depth: 4
+    toc_depth: 3
     toc_float: TRUE
 vignette: >
-  %\VignetteIndexEntry{Analysis-of-MCIA-Decomposition}
+  %\VignetteIndexEntry{Analysis of MCIA Decomposition}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -33,9 +31,10 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introduction
+# Introduction
 
-### Motivation
+## Motivation
+
 Multiple co-inertia analysis (MCIA) is a member of the family of joint 
 dimensionality reduction (jDR) methods that extend unsupervised dimension reduction 
 techniques such as Principal Components Analysis (PCA) and Non-negative Matrix 
@@ -62,8 +61,8 @@ decomposition as well as a foundation for theoretical and computational
 development of MCIA and related methodology.  A manuscript detailing our 
 implementation is forthcoming.
 
+## Overview
 
-### Overview
 In this vignette, we will cover the most important functions
 within the `nipalsMCIA` package as well as downstream analyses that can help
 interpret the MCIA decomposition using a cancer data set from
@@ -93,12 +92,12 @@ proteins. More specifically, we will show you how to interpret the global
 factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings
 in [Part 2: Interpreting Global Loadings].
 
-### Installation
+## Installation
 
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
-                         force = TRUE, build_vignettes = TRUE)
+                         force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
@@ -120,7 +119,7 @@ library(stringr)
 set.seed(42)
 ```
 
-### Preview of the NCI60 dataset
+## Preview of the NCI60 dataset
 
 The NCI60 data set has been included with the `nipalsMCIA` package and is
 easily available as shown below:
@@ -135,14 +134,15 @@ data_blocks$mrna[1:3, 1:3]
 data_blocks$prot[1:3, 1:3]
 ```
 
-## Running and reviewing the MCIA output
+# Running and reviewing the MCIA output
 
 We can compute the MCIA decomposition for $r$ global factors.  For our example,
 we take $r=10$.
 
 ```{r intro-mcia, warning = FALSE, message = FALSE}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks,
+                                  col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
@@ -157,7 +157,7 @@ in the remainder of the vignette.  For additional details on the decomposition, 
 ([Hanafi, 2011](https://doi.org/10.1016/j.chemolab.2010.05.010), 
 [Mattesich, 2022](http://hdl.handle.net/10427/CZ30Q6773))
 
-### Brief overview of the Global Scores Matrix ($F$)
+## Brief overview of the Global Scores Matrix ($F$)
 
 The `global_scores` matrix is represented by $\mb F$ with dimensions
 $n \times r$, where $n$ is the number of samples and $r$ is the number of
@@ -176,7 +176,7 @@ This matrix encodes a low-dimensional representation of the data set, with the
 $i$-th row representing a set of $r$-dimensional coordinates for the $i$-th
 sample.
 
-### Brief overview of the Global Loadings Matrix ($A$)
+## Brief overview of the Global Loadings Matrix ($A$)
 
 The `global_loadings` matrix is represented by $\mb A$ that is $p \times r$,
 where $p$ is the number of features across all omics and $r$ is as before.
@@ -198,9 +198,9 @@ The remainder of this vignette will be broken down into two sections,
 [Part 1: Interpreting Global Factor Scores] and [Part 2: Interpreting Global Loadings]
 where we show how to interpret $\mb F$ and $\mb A$, respectively.
 
-## Part 1: Interpreting Global Factor Scores
+# Part 1: Interpreting Global Factor Scores
 
-### nipals_multiblock() Generates Basic Visualizations
+## nipals_multiblock() Generates Basic Visualizations
 
 In the introduction we showed how to calculate the MCIA decomposition using
 `nipals_multiblock()` but used the parameter `plots = "none"` to avoid the
@@ -209,9 +209,10 @@ generate two plots which help establish an initial intuition for the MCIA
 decomposition. Here we will re-run `nipals_multiblock()` and omit the `plots`
 parameter (default=all):
 
-```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4), fig.align = 'center'}
+```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4)}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks,
+                                  col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12)
 ```
 
@@ -234,13 +235,13 @@ far from their respective global factor score.
 The second plot is a scree plot of normalized singular values corresponding to 
 the variance explained by each factor.
 
-### Visualizing a Factor Plot with Only Global Factor Scores
+## Visualizing a Factor Plot with Only Global Factor Scores
 
 For clustering, it is useful to look at global factor scores without block
 factor scores. The `projection_plot()` function can be used to generate such a
 plot using `projection = "global"`.
 
-```{r part-1-visualize-clusters, fig.dim = c(5, 5), fig.align = 'center'}
+```{r part-1-visualize-clusters, fig.dim = c(5, 5)}
 projection_plot(mcia_results, projection = "global", orders = c(1, 2))
 ```
 
@@ -263,7 +264,8 @@ of `nipals_multiblock()` or added directly to `mcia_results`:
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = "colprofile",
+mcia_results <- nipals_multiblock(data_blocks,
+                                  col_preproc_method = "colprofile",
                                   metadata = metadata_NCI60, plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 
@@ -277,7 +279,7 @@ case the column is `cancerType`. `color_pal` can then be used with a character
 vector or `scales::<function>` to select the colors which are applied
 alphabetically:
 
-```{r part-1-visualize-clusters-color-col, fig.dim = c(5, 5), fig.align = 'center'}
+```{r part-1-visualize-clusters-color-col, fig.dim = c(5, 5)}
 # meta_colors = c('orange', 'purple', 'pink')
 meta_colors <- get_metadata_colors(mcia_results, color_col = 1,
                                    color_pal_params = list(option = "E"))
@@ -287,7 +289,7 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2),
                 legend_loc = "bottomleft")
 ```
 
-### Visualizing the Clustering of Samples by Factor Scores
+## Visualizing the Clustering of Samples by Factor Scores
 
 A heatmap can be used to cluster the global scores across all factors using
 `global_scores_heatmap()`.  The samples can be colored by the associated metadata 
@@ -295,31 +297,30 @@ using `color_cor` + `color_pal`as shown below.  One can observe that samples
 cluster by cancer type.
 
 
-```{r part-1-global-heatmap-colored, fig.dim = c(6, 4), fig.align = 'center'}
+```{r part-1-global-heatmap-colored, fig.dim = c(6, 4)}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
 
-## Part 2: Interpreting Global Loadings
+# Part 2: Interpreting Global Loadings
 
 In addition to the global scores matrix, MCIA also calculates a global loadings
 matrix $A$ that is $p\times r$.  
 
-### Pseudoeigenvalues Representing the Contribution of Each Omic to the Global Factor Score
+## Pseudoeigenvalues Representing the Contribution of Each Omic to the Global Factor Score
 
 The global loadings matrix is calculated using a weighted sum of the block loadings.
 These weights can be interpreted as the contribution of each omic to the global
 factor score, and can be visualized using the function `block_weights_heatmap()`.
 
-```{r part-2-block-heatmap, fig.dim = c(4.5, 3), fig.align = 'center'}
+```{r part-2-block-heatmap, fig.dim = c(4.5, 3)}
 block_weights_heatmap(mcia_results)
 ```
 
 For example, we can observe that factors 7-9 have the strongest contribution
 from the protein data.
 
-
-### Visualize All Feature Loadings on Two Axes
+## Visualize All Feature Loadings on Two Axes
 
 MCIA returns feature loadings for each factor that can be used to understand
 important contributions of multi-omic features to a given factor.
@@ -328,7 +329,7 @@ each factor, one can plot feature loadings for any two omics using the
 `vis_load_plot` function.  The features that take the most extreme values will
 be the strongest contributors to that factor.
 
-```{r part-2-loadings,fig.align='center',fig.dim=c(6,4)}
+```{r part-2-loadings, fig.dim = c(6, 4)}
 # colors_omics = c('red', 'blue', 'green')
 # colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 colors_omics <- get_colors(mcia_results)
@@ -336,7 +337,7 @@ colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
 
-### Scree Plot: Visualizing the Top Features per Factor
+## Scree Plot: Visualizing the Top Features per Factor
 
 For a given factor, users can return and visualize a ranked list of top
 magnitude features. Features can be ranked based on the users preference:
@@ -345,11 +346,11 @@ features in a given omic can be ranked. The `ord_loadings` function returns a
 ranked list, and `vis_load_ord` allows users to visualize the features loadings
 as a scree plot.
 
-#### Factor 1
+### Factor 1
 
 Here, we return and visualize two ranked lists for Factor 1: using all omics, or just mrna.
 
-```{r part-2-factor-1, fig.dim = c(8, 3), fig.align='center'}
+```{r part-2-factor-1, fig.dim = c(8, 3)}
 # define the loadings
 all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
                           absolute = FALSE, descending = TRUE, factor = 1)
@@ -362,15 +363,15 @@ all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = "all",
 mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
                                colors_omics = colors_omics)
 
-ggarrange(all_pos_1_vis, mrna_pos_1_vis)
+ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-#### Factor 2
+### Factor 2
 
 Here, we return and visualize two ranked lists for Factor 2: using all omics,
 or just protein, this time ranking features by magnitude (absolute value).
 
-```{r part-2-factor-2, fig.dim = c(8, 3),fig.align='center'}
+```{r part-2-factor-2, fig.dim = c(8, 3)}
 # define the loadings
 all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all",
                           absolute = TRUE, descending = TRUE, factor = 2)
@@ -383,16 +384,16 @@ all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_name = "all",
 prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
                                colors_omics = colors_omics)
 
-ggarrange(all_abs_2_vis, prot_abs_2_vis)
+ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
 
-#### Factor 4
+### Factor 4
 
 We return and visualize a ranked list for Factor 4 with the top 60 features.
 One can observe that while miRNA dominate the top features, proteins are also 
 represented.
 
-```{r part-2-factor-4, fig.dim = c(10, 4),fig.align='center'}
+```{r part-2-factor-4, fig.dim = c(10, 4)}
 # define the loadings
 all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
                       descending = TRUE, factor = 4)
@@ -403,7 +404,7 @@ all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
 all_4_plot
 ```
 
-### Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks
+## Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks
 
 The NCI60 data set includes gene expression data, and its corresponding global
 loading matrix is a gene by factor matrix. We can learn more about the pathways
@@ -412,11 +413,9 @@ through a gene set enrichment analysis (GSEA). Here, we look at factors 1 and 3.
 We run `gsea_report()`, which reports on the p-value of the most significant 
 pathway as well as the total number of significant pathways for each factor. 
 
-#### Gather Data and Generate the Report
+### Gather Data and Generate the Report
 
-```{r part-2-pathways, echo=TRUE, message=FALSE, warning=FALSE, results = 'hide'}
-
-
+```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 # extract mRNA global loadings
 mrna_gfscores <- mcia_results$global_loadings
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
@@ -434,7 +433,7 @@ geneset_report <- gsea_report(metagenes = mrna_gfscores, path.database,
                               factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
 ```
 
-#### Investigating the GSEA Summary Table
+### Investigating the GSEA Summary Table
 
 The report comes in the form of a list where the first element is a data frame
 with summary level of the GSEA analysis per factor. Ideally, each factor is
@@ -451,7 +450,7 @@ As just mentioned, Factor 3 contains the most enriched gene set so we can
 re-run GSEA for this factor in order to get a full list of enrichment scores
 across all gene sets:
 
-```{r part-2-gsea-for-factor-3, echo=TRUE, message=FALSE, warning=FALSE, results = 'hide'}
+```{r part-2-gsea-for-factor-3, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 # re-running GSEA
 factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
                                  nPermSimple = 10000, minSize = 15,
@@ -470,13 +469,18 @@ likely contribute to factor 3. This analysis can be repeated as necessary to
 make sense of other gene based factor loadings. 
 
 ```{r part-2-significant}
-# extracting, REACTOME_CELL_CYCLE, the most significant gene set
+# extracting REACTOME_CELL_CYCLE, the most significant gene set
 sig_path3 <- factor3_paths[min(factor3_paths$padj) == factor3_paths$padj, ][1, ]
 sig_path3$leadingEdge[[1]][1:10]
 ```
 
-## Session Info
+# Session Info
 
+<details>
+  <summary>**Session Info**</summary>
+  
 ```{r session-info}
 sessionInfo()
 ```
+
+</details>

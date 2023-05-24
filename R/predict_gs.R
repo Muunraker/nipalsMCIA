@@ -25,7 +25,7 @@
 predict_gs <- function(mcia_results, df) {
     bl <- mcia_results$block_loadings
     bw <- mcia_results$block_score_weights
-    col_preproc_method <- mcia_results$column_preproc_method
+    col_preproc_method <- mcia_results$col_preproc_method
     block_preproc_method <- mcia_results$block_preproc_method
 
     num_omics <- length(bl)

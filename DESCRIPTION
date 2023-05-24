@@ -47,12 +47,12 @@ Suggests:
     reshape2,
     rmarkdown,
     rpart,
-    Seurat,
+    Seurat (>= 4.0.0),
     spatstat.explore,
     stringr,
     survival,
     tidyverse,
-    testthat (>= 3.0.0),
+    testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
 biocViews: Software, Clustering, Classification, MultipleComparison,
