@@ -20,16 +20,16 @@ test_that("color column not in metadata", {
 
 
 test_that("checking the ggplot object with inputs", {
-
+    
     # capture the plotting function
     p <- global_scores_heatmap(mcia_results, color_col="cancerType")
     expect_equal(matrix(p@matrix), matrix(mcia_results$global_scores))
     expect_equal("cancerType", p@right_annotation@anno_list$ColorType@label)
-
+    
 })
 
 
 gs_heatmap <- global_scores_heatmap(mcia_results)
 test_that("Name is correct", {
-  expect_equal(gs_heatmap@name,"GS Score")
+    expect_equal(gs_heatmap@name,"GS Score")
 })

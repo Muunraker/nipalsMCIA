@@ -1,3 +1,5 @@
+# projection_plot uses base R plots
+
 test_that("projection_plot: checking global figure", {
     dev.new()
     par(mar = c(2, 2, 2, 2)) 
