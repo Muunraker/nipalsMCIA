@@ -59,6 +59,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # case ii) yes color_col, clusters/categories were specified
     } else if (is.character(color_col)) {
+        
         # locating the color_col column within metadata
         col_idx <- grep(color_col, names(mcia_results$metadata))
         if (any(length(col_idx) < 1)) {
@@ -105,6 +106,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     ### Plot 1 - projection == all
     if (tolower(projection) == "all") {
+        
         # Normalize global scores to unit variance
         gs_norms <- apply(mcia_results$global_scores, 2,
                                             function(x) (sqrt(var(x))))
@@ -152,7 +154,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              main = "Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[1]],
+             col = plot_colors[[names(clust_indexes)[1]]],
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              cex = cex, pch = 16)
@@ -163,14 +165,14 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             bs_j <- bs_normed[[j]]
             points(bs_j[sample_indexes, orders[[1]]],
                    bs_j[sample_indexes, orders[[2]]],
-                   col = plot_colors[[1]], cex = 1, pch = j - 1)
+                   col = plot_colors[[names(clust_indexes)[1]]], cex = 1, pch = j - 1)
 
             # Line segments joining block scores to central global score:
             segments(bs_j[sample_indexes, orders[[1]]],
                      bs_j[sample_indexes, orders[[2]]],
                      gs_normed[sample_indexes, orders[[1]]],
                      gs_normed[sample_indexes, orders[[2]]],
-                     col = plot_colors[[1]])
+                     col = plot_colors[[names(clust_indexes)[1]]])
         }
 
         # Cluster 2+
@@ -179,18 +181,18 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(gs_normed[sample_indexes, orders[[1]]],
                        gs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[i]], cex = cex, pch = 16)
+                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = 16)
 
                 for (j in seq(1, length(bs_normed))) {
                     bs_j <- bs_normed[[j]]
                     points(bs_j[sample_indexes, orders[[1]]],
                            bs_j[sample_indexes, orders[[2]]],
-                           col = plot_colors[[i]], cex = cex, pch = j - 1)
+                           col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = j - 1)
                     segments(bs_j[sample_indexes, orders[[1]]],
                              bs_j[sample_indexes, orders[[2]]],
                              gs_normed[sample_indexes, orders[[1]]],
                              gs_normed[sample_indexes, orders[[2]]],
-                             col = plot_colors[[i]])
+                             col = plot_colors[[names(clust_indexes)[i]]])
                 }
             }
         }
@@ -273,7 +275,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              main = "Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[1]],
+             col = plot_colors[[names(clust_indexes)[1]]],
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              cex = cex, pch = 16)
@@ -285,7 +287,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(bs_normed[sample_indexes, orders[[1]]],
                        bs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[i]], cex = cex, pch = j - 1)
+                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = j - 1)
             }
         }
 
@@ -330,7 +332,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              main = "Global Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[1]],
+             col = plot_colors[[names(clust_indexes)[1]]],
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              pch = 16,
@@ -343,7 +345,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(gs_normed[sample_indexes, orders[[1]]],
                        gs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[i]], cex = cex, pch = 16)
+                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = 16)
             }
         }
 
