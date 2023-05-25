@@ -29,7 +29,7 @@ nipals_iter <- function(ds, tol = 1e-12, maxIter = 1000, isCentered = FALSE) {
     cov_squared_old <- 0
     iter <- 0
     gs <- pracma::rand(nrow(ds[[1]]), 1) # begin with random global score vector
-    
+
     while (stop_crit > tol && iter <= maxIter) {
         # Computing block loadings
         bl_list <- lapply(ds, function(df, q) {
@@ -37,48 +37,46 @@ nipals_iter <- function(ds, tol = 1e-12, maxIter = 1000, isCentered = FALSE) {
             bl_k <- bl_k / norm(bl_k, type = "2")
             return(bl_k)
         }, q = gs)
-        
+
         # Computing block scores
         bs_list <- mapply(function(df, bl_k) {
             bs_k <- df %*% bl_k
             return(bs_k)
         }, ds, bl_list)
-        
+
         # Computing global weights
         gw <- crossprod(bs_list, gs)
         gw <- gw / norm(gw, type = "2")
         gs <- bs_list %*% gw
-        
+
         # Computing stopping criteria
         cov_list <- vapply(as.data.frame(bs_list), function(bs, gs) {
             gs_norm <- gs / sqrt(drop(var(gs)))
             return(drop(cov(bs, gs_norm))^2)
         }, gs = gs, FUN.VALUE = numeric(1))
-        
+
         stop_crit <- abs(sum(cov_list) - cov_squared_old)
         cov_squared_old <- sum(cov_list)
-        
+
         iter <- iter + 1
     }
-    
+
     if (iter > maxIter) {
         warning("NIPALS iteration did not converge")
     }
-    
-    if(isCentered){
+
+    if (isCentered) {
         # Use fast sv calculation if blocks are centered
         sval <- norm(gs, type = "2")
         eigval <- (sval)^2 / (max(dim(gs)[1] - 1, 1))
-        
-    }else{
+
+    } else {
         # Otherwise use svd
         global_matrix <- do.call(cbind, ds)
         svdres <- RSpectra::svds(global_matrix, 1)
-        eigval <- (svdres$d)^2 / (max(dim(global_matrix)[1] - 1, 1)) 
+        eigval <- (svdres$d)^2 / (max(dim(global_matrix)[1] - 1, 1))
     }
-    
-    
-    
+
     # Computing global loadings at final iteration
     gl <- bl_list[[1]] * gw[1]
     names(gl) <- rownames(bl_list[[1]])
@@ -88,7 +86,7 @@ nipals_iter <- function(ds, tol = 1e-12, maxIter = 1000, isCentered = FALSE) {
         gl <- c(gl, bl_list[[i]] * gw[i])
         names(gl) <- temp_names
     }
-    
+
     # Returning results
     retlist <- list(gs, gl, gw, bs_list, bl_list, eigval)
     names(retlist) <- c("global_scores", "global_loadings",

@@ -77,8 +77,9 @@
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'    data(NCI60)
-#'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
-#'    max_iter = 1000, col_preproc_method = "colprofile", deflationMethod = "block")
+#'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10,
+#'    tol = 1e-12, max_iter = 1000, col_preproc_method = "colprofile",
+#'    deflationMethod = "block")
 #'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
 #'    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
 #'    deflationMethod = 'global')
@@ -108,23 +109,23 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
                 metadata <- NULL
             }
         }
-    }
-    else if (is(data_blocks, "list")) {
+    } else if (is(data_blocks, "list")) {
         # Transpose data blocks if in features x samples format:
-        if(tolower(row_format) == 'features') {
-            data_blocks <- lapply(data_blocks,t)
+        if (tolower(row_format) == "features") {
+            data_blocks <- lapply(data_blocks, t)
         }
-    }
-    else {
-        stop("Unknown input data format - please use MultiAssayExperiment or a list of data blocks.")
+    } else {
+        stop("Unknown input data format -
+             please use MultiAssayExperiment or a list of data blocks.")
     }
 
     num_blocks <- length(data_blocks)
     omics_names <- names(data_blocks)
 
     # Check number of samples are the same across all omics
-    if (length(unique(lapply(data_blocks,nrow))) > 1) {
-        stop("Each omics/data block must have the samenumber of rows (i.e. samples).")
+    if (length(unique(lapply(data_blocks, nrow))) > 1) {
+        stop("Each omics/data block must have the same number of rows
+             (i.e. samples).")
     }
 
     # Check samples are the same (in same order) for each block
@@ -132,7 +133,8 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     samplenames <- lapply(data_blocks, rownames)
     for (i in seq_len(length(samplenames) - 1)) {
       if (any(tolower(samplenames[[i]]) != tolower(samplenames[[i + 1]]))) {
-        errmsg <- sprintf("Sample names or order in block %d do not match block %d.", i, i + 1)
+        errmsg <- sprintf("Sample names or order in block %d do not
+                          match block %d.", i, i + 1)
         stop(errmsg)
       }
     }
@@ -221,7 +223,8 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
                                       gs = nipals_result$global_scores)
 
             } else {
-                stop("Uknown option for deflation step - use 'block' or 'global'")
+                stop("Unknown option for deflation step -
+                     use 'block' or 'global'")
             }
 
             # Run another NIPALS iteration
@@ -259,9 +262,9 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
                              "col_preproc_method",
                              "block_preproc_method", "block_variances")
     if (is.null(metadata)) {
-      results_list$metadata <- NA
-    } else{
-      results_list$metadata <- metadata
+        results_list$metadata <- NA
+    } else {
+        results_list$metadata <- metadata
     }
 
     # Plotting results

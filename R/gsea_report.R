@@ -54,8 +54,7 @@ gsea_report <- function(metagenes, path.database, factors = NULL,
             report_number <- rbind(report_number,
                                    dplyr::n_distinct(curr_sig_paths))
 
-        }
-        else {
+        } else {
             # Report the minimum p-value, assigning NA
             report_min_pval <- rbind(report_min_pval, NA)
 

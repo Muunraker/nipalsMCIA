@@ -459,8 +459,8 @@ factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
 
 ```{r part-2-gsea-for-factor-3-viz}
 # Order by adjusted p value
-factor3_paths <- factor3_paths[order(factor3_paths$padj),]
-head(factor3_paths[,c("pathway","padj")])
+factor3_paths <- factor3_paths[order(factor3_paths$padj), ]
+head(factor3_paths[, c("pathway", "padj")])
 ```
 
 We observe that the most significant gene set is the REACTOME_CELL_CYCLE gene set. 
