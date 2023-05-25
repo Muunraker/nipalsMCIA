@@ -10,7 +10,7 @@ output:
   BiocStyle::html_document:
     dev: 'jpeg'
     df_print: paged
-    fig_retina: 1.5
+    fig_retina: 1
     number_sections: FALSE
     toc_depth: 4
     toc_float: TRUE
@@ -171,35 +171,26 @@ counts(altExp(tenx_pbmc3k))
 ##  IgG2b       6       2       4       8   .       0       0       2       5
 
 # examine the metadata:
-head(colData(tenx_pbmc3k))
+head(colData(tenx_pbmc3k), n = 3)
 ## DataFrame with 6 rows and 11 columns
 ##           Sample            Barcode         Sequence   Library Cell_ranger_version Tissue_status Barcode_type
 ##      <character>        <character>      <character> <integer>         <character>   <character>  <character>
 ## 1 pbmc5k-CITEseq AAACCCAAGAGACAAG-1 AAACCCAAGAGACAAG         1              v3.0.2            NA     Chromium
 ## 2 pbmc5k-CITEseq AAACCCAAGGCCTAGA-1 AAACCCAAGGCCTAGA         1              v3.0.2            NA     Chromium
 ## 3 pbmc5k-CITEseq AAACCCAGTCGTGCCA-1 AAACCCAGTCGTGCCA         1              v3.0.2            NA     Chromium
-## 4 pbmc5k-CITEseq AAACCCATCGTGCATA-1 AAACCCATCGTGCATA         1              v3.0.2            NA     Chromium
-## 5 pbmc5k-CITEseq AAACGAAAGACAAGCC-1 AAACGAAAGACAAGCC         1              v3.0.2            NA     Chromium
-## 6 pbmc5k-CITEseq AAACGAAAGAGTGACC-1 AAACGAAAGAGTGACC         1              v3.0.2            NA     Chromium
 ##     Chemistry Sequence_platform   Individual Date_published
 ##   <character>       <character>  <character>    <character>
 ## 1 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 ## 2 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 ## 3 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-## 4 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-## 5 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
-## 6 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 
-head(rowData(tenx_pbmc3k))
+head(rowData(tenx_pbmc3k), n = 3)
 ## DataFrame with 6 rows and 4 columns
 ##                      ENSEMBL_ID Symbol_TENx            Type       Symbol
 ##                     <character> <character>     <character>  <character>
 ## ENSG00000243485 ENSG00000243485 MIR1302-2HG Gene Expression           NA
 ## ENSG00000237613 ENSG00000237613     FAM138A Gene Expression      FAM138A
 ## ENSG00000186092 ENSG00000186092       OR4F5 Gene Expression        OR4F5
-## ENSG00000238009 ENSG00000238009  AL627309.1 Gene Expression LOC100996442
-## ENSG00000239945 ENSG00000239945  AL627309.3 Gene Expression           NA
-## ENSG00000239906 ENSG00000239906  AL627309.2 Gene Expression           NA
 
 metadata(tenx_pbmc3k)
 ## list()
@@ -238,28 +229,19 @@ obj_sce <- AddMetaData(object = obj_sce,
 # this object will be slightly different than from the Seurat one down below
 # e.g. 5297 rows vs. 4193 rows (since QC wasn't done) and different metadata
 
-head(obj_sce[[]])
+head(obj_sce[[]], n = 3)
 ##                     orig.ident nCount_RNA nFeature_RNA nCount_ADT nFeature_ADT         Sample            Barcode
 ## AAACCCAAGAGACAAG SeuratProject       7375         2363       5178           31 pbmc5k-CITEseq AAACCCAAGAGACAAG-1
 ## AAACCCAAGGCCTAGA SeuratProject       3772         1259       2893           29 pbmc5k-CITEseq AAACCCAAGGCCTAGA-1
 ## AAACCCAGTCGTGCCA SeuratProject       4902         1578       3635           29 pbmc5k-CITEseq AAACCCAGTCGTGCCA-1
-## AAACCCATCGTGCATA SeuratProject       6704         1908       3700           31 pbmc5k-CITEseq AAACCCATCGTGCATA-1
-## AAACGAAAGACAAGCC SeuratProject       3900         1589       3423           28 pbmc5k-CITEseq AAACGAAAGACAAGCC-1
-## AAACGAAAGAGTGACC SeuratProject      11781         3136       4665           30 pbmc5k-CITEseq AAACGAAAGAGTGACC-1
 ##                          Sequence Library Cell_ranger_version Tissue_status Barcode_type   Chemistry Sequence_platform
 ## AAACCCAAGAGACAAG AAACCCAAGAGACAAG       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
 ## AAACCCAAGGCCTAGA AAACCCAAGGCCTAGA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
 ## AAACCCAGTCGTGCCA AAACCCAGTCGTGCCA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
-## AAACCCATCGTGCATA AAACCCATCGTGCATA       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
-## AAACGAAAGACAAGCC AAACGAAAGACAAGCC       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
-## AAACGAAAGAGTGACC AAACGAAAGAGTGACC       1              v3.0.2          <NA>     Chromium Chromium_v3           NovaSeq
 ##                    Individual Date_published
 ## AAACCCAAGAGACAAG HealthyDonor     2019-05-29
 ## AAACCCAAGGCCTAGA HealthyDonor     2019-05-29
 ## AAACCCAGTCGTGCCA HealthyDonor     2019-05-29
-## AAACCCATCGTGCATA HealthyDonor     2019-05-29
-## AAACGAAAGACAAGCC HealthyDonor     2019-05-29
-## AAACGAAAGAGTGACC HealthyDonor     2019-05-29
 
 # save the data locally if desired
 save(data_blocks_sc_sce, obj_sce,
@@ -358,6 +340,7 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 ```{r mcia-decomp-run, eval = FALSE}
 # "largest_sv" results in a more balanced contribution
 # from the blocks than the default "unit_var"
+set.seed(42)
 mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
                                      col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
@@ -411,7 +394,7 @@ colors_omics_sc <- get_colors(mcia_results = mcia_results_sc)
 
 ### Eigenvalue scree plot
 
-```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 3)}
+```{r mcia-plots-eigenvalue-scree, fig.dim = c(5, 4)}
 global_scores_eigenvalues_plot(mcia_results = mcia_results_sc)
 ```
 
@@ -709,10 +692,14 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
 
 ### UMAP
 
-```{r seurat-umap-initial, fig.dim = c(6, 6)}
+```{r seurat-umap-initial, fig.dim = c(6, 6), message = FALSE}
 # you can also use the LabelClusters function to help label individual clusters
-plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 5) +
+plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 4,
+                                 label.box = TRUE) +
                           labs(title = "Initial Clusters") +
+                          scale_fill_manual(
+                               values = rep("white",
+                                            n_distinct(obj$seurat_clusters))) +
                           theme(plot.title = element_text(hjust = 0.5),
                                 axis.text = element_blank(),
                                 axis.ticks = element_blank())
@@ -809,10 +796,10 @@ show a few of the cell surface markers here, but you could plot them all with
 `features = rownames(obj[["ADT"]])`. You can also plot the standard GEX markers
 just like for the feature plots (just make sure to remove `assay = "ADT"`).
 
-```{r seurat-markers-violin-adt, fig.dim = c(8, 6)}
+```{r seurat-markers-violin-adt, fig.dim = c(8, 8)}
 VlnPlot(object = obj,
-        features = c("CD3-TotalSeqB", "CD14-TotalSeqB", "CD20-TotalSeqB",
-                     "CD335-TotalSeqB"),
+        features = c("CD3-TotalSeqB", "CD14-TotalSeqB",
+                     "CD20-TotalSeqB", "CD335-TotalSeqB"),
         pt.size = 0, assay = "ADT", ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.text.x = element_text(angle = 0, hjust = 0.5),
@@ -883,18 +870,22 @@ meta <- data.frame("CellType" = Idents(object = obj))
 
 Here we use the selected metadata colors from the [MCIA] section, so be sure to
 change that (or just remove the `cols = ...` to use the default) if you are running
-this section first.
+this section first. If you don't want the cluster labels to have the white backgrounds,
+remove `label.box` and `scale_fill_manual()`.
 
-```{r seurat-umap-both, fig.dim = c(16, 8)}
+```{r seurat-umap-both, fig.dim = c(16, 8), message = FALSE}
 # change colors and themes as desired
 plot_annotated_clusters <- UMAPPlot(object = obj,
-                                    label = TRUE, label.size = 5,
+                                    label = TRUE, label.size = 4,
+                                    label.box = TRUE,
                                     cols = meta_colors_sc) +
                              labs(title = "Annotated Clusters") +
+                             scale_fill_manual(
+                               values = rep("white", length(meta_colors_sc))) +
                              theme(plot.title = element_text(hjust = 0.5),
                                    axis.text = element_blank(),
                                    axis.ticks = element_blank()) +
-                            NoLegend() # a legend is not needed here
+                             NoLegend() # a legend is not needed here
 
 ggpubr::ggarrange(plot_seurat_clusters + NoLegend(), plot_annotated_clusters,
                   heights = c(1, 1), widths = c(1, 1))
@@ -905,7 +896,6 @@ want to specify "adt_" before the feature name.
 
 ```{r seurat-umap-adt, fig.dim = c(6, 6)}
 # plot ADT information on top as an example
-
 FeaturePlot(object = obj, features = "adt_CD19-TotalSeqB",
             label = TRUE, label.size = 4, ncol = 1, raster = FALSE)
 ```
@@ -916,13 +906,26 @@ For example, if you want to visually check your T cell cluster annotations (just
 like before, you can also do `features = (dplyr::filter(markers_all, Cell_Type == "T"))$Marker`
 to use all of the T cell markers in the markers database):
 
-```{r seurat-check-annotations, fig.dim = c(8, 6)}
+```{r seurat-check-annotations-violin, fig.dim = c(8, 8)}
 VlnPlot(object = obj,
         features = c("CD3D", "CD4", "IL7R", "TRAC"),
         cols = meta_colors_sc, pt.size = 0.01, ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.title.x = element_blank())
 ```
+
+```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
+# examine the total counts
+ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
+  geom_bar() +
+  labs(title = "Cell Type Counts", x = "Cell Type", y = "Count") +
+  scale_fill_manual(values = meta_colors_sc) +
+  theme_bw() +
+  theme(plot.title = element_text(size = 14, hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+```
+
 
 ## Save for MCIA
 

@@ -90,7 +90,6 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     }
 
     ### Resolving the cluster colors IF SPECIFIED
-
     if (is.null(color_col)) {
         plot_colors <- list("black")
     } else {
@@ -149,14 +148,14 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # Plotting global scores
         plot(gs_normed[sample_indexes, orders[[1]]],
-                 gs_normed[sample_indexes, orders[[2]]],
-                 main = "Factor Plot",
-                 xlab = paste("Factor ", orders[[1]]),
-                 ylab = paste("Factor ", orders[[2]]),
-                 col = plot_colors[[1]],
-                 xlim = c(min_x, max_x),
-                 ylim = c(min_y, max_y),
-                 cex = cex, pch = 16)
+             gs_normed[sample_indexes, orders[[2]]],
+             main = "Factor Plot",
+             xlab = paste("Factor ", orders[[1]]),
+             ylab = paste("Factor ", orders[[2]]),
+             col = plot_colors[[1]],
+             xlim = c(min_x, max_x),
+             ylim = c(min_y, max_y),
+             cex = cex, pch = 16)
         grid()
 
         # Plotting block scores (shapes correspond to different blocks)

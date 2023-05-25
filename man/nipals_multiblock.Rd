@@ -107,8 +107,9 @@ This process is repeated up to the desired maximum order of scores/loadings.
 }
 \examples{
    data(NCI60)
-   NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
-   max_iter = 1000, col_preproc_method = "colprofile", deflationMethod = "block")
+   NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10,
+   tol = 1e-12, max_iter = 1000, col_preproc_method = "colprofile",
+   deflationMethod = "block")
    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
    deflationMethod = 'global')

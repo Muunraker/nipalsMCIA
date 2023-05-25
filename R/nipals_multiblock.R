@@ -155,7 +155,6 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
 
     # Formatting feature labels to include omic type
     for (i in seq_along(data_blocks)) {
-        oName <- omics_names[[i]] # omic names
         fNames <- names(data_blocks[[i]]) # feature names
 
         # Error catching for no names - creates default values
@@ -169,7 +168,6 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     message("Performing column-level pre-processing...")
     data_blocks <- lapply(data_blocks, col_preproc, col_preproc_method)
     message("Column pre-processing completed.")
-
 
     # Block-level pre-processing
     message("Performing block-level preprocessing...")

@@ -13,7 +13,7 @@ output:
   BiocStyle::html_document:
     dev: 'jpeg'
     df_print: kable
-    fig_retina: 1.5
+    fig_retina: 1
     number_sections: FALSE
     toc_depth: 3
     toc_float: TRUE

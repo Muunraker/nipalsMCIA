@@ -9,7 +9,7 @@ date: "Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 output:
   BiocStyle::html_document:
     dev: 'jpeg'
-    fig_retina: 1.5
+    fig_retina: 1
     number_sections: FALSE
     toc_depth: 2
     toc_float: TRUE
