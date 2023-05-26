@@ -3,37 +3,40 @@
 ## Major changes
 
 * Changed eigenvalue calculation in `nipals_iter()` to variance of global scores instead of directly computing the singular value.
+* Fixed bug in `projection_plot()` where there was a mismatch between color labels and plotting order.
+* Added parameter to `nipals_multiblock` that specifies whether the samples are in the rows or the columns
 
 ## Minor improvements and bug fixes
 
-* Changed vignette styling from `rmdformats` to `BiocStyle`
+* Changed vignette styling from `rmdformats` to `BiocStyle` and added installation sections to all of the vignettes.
 * Removed empty helper.R
-* Added significantly more unit testing
-* Fixed bug in `projection_plots()` when metadata was provided but no `color_col` was selected.
+* Added significantly more unit testing.
+* Fixed bug in `projection_plot()` when metadata was provided but no `color_col` was selected.
+* Renamed the associated output of `col_preproc_method` in `nipals_multiblock`. The metadata field is also now available in the output independent of whether metadata is provided in the input.
 * Added checks for consistency in sample names across data blocks and metadata. 
 
 # 0.99.2 (2023-03-25):
 
 ## Major changes
 
-* Shrank the vignettes sizes (especially Vignette 2)
+* Shrank the vignettes sizes (especially Vignette 2).
 
 ## Minor improvements and bug fixes
 
-* Restructured Vignette 2 to be more streamlined and have more explanations
-* Add an additional single cell data file to the repository using `piggyback`
+* Restructured Vignette 2 to be more streamlined and have more explanations.
+* Add an additional single cell data file to the repository using `piggyback`.
 
 # 0.99.1 (2023-02-26):
 
 ## Major changes
 
-* Included support for `MultiAssayExperiment` in `nipals_multiblock`
-* Improved access to existing data objects
+* Included support for `MultiAssayExperiment` in `nipals_multiblock`.
+* Improved access to existing data objects.
 
 ## Minor improvements and bug fixes
 
-* Made `get_colors()` more flexible for different color palette options
+* Made `get_colors()` more flexible for different color palette options.
 
 # 0.99.0 (2022-10-21):
 
-* Added single cell data to the repository using `piggyback`
+* Added single cell data to the repository using `piggyback`.
