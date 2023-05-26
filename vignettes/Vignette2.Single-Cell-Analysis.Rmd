@@ -914,6 +914,8 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
+You can also obtain the following bar plot using the output of `nipals_multiblock` e.g. with `ggplot(data.frame(table(mcia_results_sc$metadata)), aes(x = CellType, y = Freq, fill = CellType)) + geom_bar(stat = "identity")` (for the base plot).
+
 ```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
 # examine the total counts
 ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
@@ -925,7 +927,6 @@ ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
         axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none")
 ```
-
 
 ## Save for MCIA
 

@@ -59,7 +59,6 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # case ii) yes color_col, clusters/categories were specified
     } else if (is.character(color_col)) {
-        
         # locating the color_col column within metadata
         col_idx <- grep(color_col, names(mcia_results$metadata))
         if (any(length(col_idx) < 1)) {
@@ -106,7 +105,6 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     ### Plot 1 - projection == all
     if (tolower(projection) == "all") {
-        
         # Normalize global scores to unit variance
         gs_norms <- apply(mcia_results$global_scores, 2,
                                             function(x) (sqrt(var(x))))
@@ -147,12 +145,12 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # Cluster 1
         sample_indexes <- clust_indexes[[1]]
-        
+
         # catching error for one color
-        if(is.null(color_col)){
-          plotCol = plot_colors[[1]]
-        }else{
-          plotCol = plot_colors[[names(clust_indexes)[1]]]
+        if (is.null(color_col)) {
+          plotCol <- plot_colors[[1]]
+        } else {
+          plotCol <- plot_colors[[names(clust_indexes)[1]]]
         }
 
         # Plotting global scores
@@ -164,7 +162,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
-             cex = cex, pch = 16)
+             pch = 16, cex = cex)
         grid()
 
         # Plotting block scores (shapes correspond to different blocks)
@@ -172,7 +170,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             bs_j <- bs_normed[[j]]
             points(bs_j[sample_indexes, orders[[1]]],
                    bs_j[sample_indexes, orders[[2]]],
-                   col = plotCol, cex = 1, pch = j - 1)
+                   col = plotCol, pch = j - 1, cex = 1)
 
             # Line segments joining block scores to central global score:
             segments(bs_j[sample_indexes, orders[[1]]],
@@ -188,13 +186,15 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(gs_normed[sample_indexes, orders[[1]]],
                        gs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = 16)
+                       col = plot_colors[[names(clust_indexes)[i]]],
+                       pch = 16, cex = cex)
 
                 for (j in seq(1, length(bs_normed))) {
                     bs_j <- bs_normed[[j]]
                     points(bs_j[sample_indexes, orders[[1]]],
                            bs_j[sample_indexes, orders[[2]]],
-                           col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = j - 1)
+                           col = plot_colors[[names(clust_indexes)[i]]],
+                           pch = j - 1, cex = cex)
                     segments(bs_j[sample_indexes, orders[[1]]],
                              bs_j[sample_indexes, orders[[2]]],
                              gs_normed[sample_indexes, orders[[1]]],
@@ -210,8 +210,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             if (length(plot_colors) == 1) {
                 legend(legend_loc,
                        legend = c(names(mcia_results$block_loadings)),
-                       pch = 0:length(mcia_results$block_loadings),
-                       cex = cex)
+                       pch = 0:length(mcia_results$block_loadings), cex = cex)
 
             # plotting legend for clusters/categories
             } else {
@@ -224,7 +223,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                 unname(unlist(plot_colors)))
 
                 legend(legend_loc, legend = leg_labels,
-                       pch = leg_shapes, col = leg_colors, cex = cex)
+                       col = leg_colors, pch = leg_shapes, cex = cex)
             }
         }
 
@@ -275,14 +274,13 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # Cluster 1
         sample_indexes <- clust_indexes[[1]]
-        
+
         # catching error for one color
-        if(is.null(color_col)){
-          plotCol = plot_colors[[1]]
-        }else{
-          plotCol = plot_colors[[names(clust_indexes)[1]]]
+        if (is.null(color_col)) {
+          plotCol <- plot_colors[[1]]
+        } else {
+          plotCol <- plot_colors[[names(clust_indexes)[1]]]
         }
-        
 
         # Plotting block scores
         plot(bs_normed[sample_indexes, orders[[1]]],
@@ -293,7 +291,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
-             cex = cex, pch = 16)
+             pch = 16, cex = cex)
         grid()
 
         # Cluster 2+
@@ -302,7 +300,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(bs_normed[sample_indexes, orders[[1]]],
                        bs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = j - 1)
+                       col = plot_colors[[names(clust_indexes)[i]]],
+                       pch = j - 1, cex = cex)
             }
         }
 
@@ -323,7 +322,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                                     length(mcia_results$block_loadings)),
                                 unname(unlist(plot_colors)))
                 legend(legend_loc, legend = leg_labels,
-                       pch = leg_shapes, col = leg_colors, cex = cex)
+                       col = leg_colors, pch = leg_shapes, cex = cex)
             }
         }
 
@@ -341,11 +340,11 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         max_y <- max(gs_normed[, orders[[2]]]) # maximum y coordinate in plot
 
         sample_indexes <- clust_indexes[[1]]
-        
+
         # catching error for one color
-        if(is.null(color_col)){
+        if (is.null(color_col)) {
           plotCol = plot_colors[[1]]
-        }else{
+        } else {
           plotCol = plot_colors[[names(clust_indexes)[1]]]
         }
 
@@ -367,7 +366,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
                 sample_indexes <- clust_indexes[[i]]
                 points(gs_normed[sample_indexes, orders[[1]]],
                        gs_normed[sample_indexes, orders[[2]]],
-                       col = plot_colors[[names(clust_indexes)[i]]], cex = cex, pch = 16)
+                       col = plot_colors[[names(clust_indexes)[i]]],
+                       pch = 16, cex = cex)
             }
         }
 
@@ -378,7 +378,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             leg_shapes <- c(rep(16, length(plot_colors)))
             leg_colors <- c(unname(unlist(plot_colors)))
             legend(legend_loc, legend = leg_labels,
-                   pch = leg_shapes, col = leg_colors, cex = cex)
+                   col = leg_colors, pch = leg_shapes, cex = cex)
         }
     }
 }
