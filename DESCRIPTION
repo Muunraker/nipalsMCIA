@@ -27,7 +27,7 @@ Imports:
     ComplexHeatmap,
     dplyr,
     fgsea,
-    ggplot2,
+    ggplot2 (>= 3.0.0),
     graphics,
     grid,
     methods,

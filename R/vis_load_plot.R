@@ -42,9 +42,9 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
 
     # plot data
     p <- ggplot(data = gl_f,
-                aes_string(x = colnames(gl_f)[1],
-                           y = colnames(gl_f)[2],
-                           color = "omic")) +
+                aes(x = .data[[colnames(gl_f)[1]]],
+                    y = .data[[colnames(gl_f)[2]]],
+                    color = omic)) +
                 geom_point(alpha = 0.3) +
                 labs(x = paste0("Axis ", axes[1]),
                      y = paste0("Axis ", axes[2])) +
