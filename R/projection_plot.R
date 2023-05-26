@@ -147,6 +147,13 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # Cluster 1
         sample_indexes <- clust_indexes[[1]]
+        
+        # catching error for one color
+        if(is.null(color_col)){
+          plotCol = plot_colors[[1]]
+        }else{
+          plotCol = plot_colors[[names(clust_indexes)[1]]]
+        }
 
         # Plotting global scores
         plot(gs_normed[sample_indexes, orders[[1]]],
@@ -154,7 +161,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              main = "Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[names(clust_indexes)[1]]],
+             col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              cex = cex, pch = 16)
@@ -165,14 +172,14 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             bs_j <- bs_normed[[j]]
             points(bs_j[sample_indexes, orders[[1]]],
                    bs_j[sample_indexes, orders[[2]]],
-                   col = plot_colors[[names(clust_indexes)[1]]], cex = 1, pch = j - 1)
+                   col = plotCol, cex = 1, pch = j - 1)
 
             # Line segments joining block scores to central global score:
             segments(bs_j[sample_indexes, orders[[1]]],
                      bs_j[sample_indexes, orders[[2]]],
                      gs_normed[sample_indexes, orders[[1]]],
                      gs_normed[sample_indexes, orders[[2]]],
-                     col = plot_colors[[names(clust_indexes)[1]]])
+                     col = plotCol)
         }
 
         # Cluster 2+
@@ -268,6 +275,14 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # Cluster 1
         sample_indexes <- clust_indexes[[1]]
+        
+        # catching error for one color
+        if(is.null(color_col)){
+          plotCol = plot_colors[[1]]
+        }else{
+          plotCol = plot_colors[[names(clust_indexes)[1]]]
+        }
+        
 
         # Plotting block scores
         plot(bs_normed[sample_indexes, orders[[1]]],
@@ -275,7 +290,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
              main = "Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[names(clust_indexes)[1]]],
+             col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              cex = cex, pch = 16)
@@ -326,13 +341,20 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         max_y <- max(gs_normed[, orders[[2]]]) # maximum y coordinate in plot
 
         sample_indexes <- clust_indexes[[1]]
+        
+        # catching error for one color
+        if(is.null(color_col)){
+          plotCol = plot_colors[[1]]
+        }else{
+          plotCol = plot_colors[[names(clust_indexes)[1]]]
+        }
 
         plot(gs_normed[sample_indexes, orders[[1]]],
              gs_normed[sample_indexes, orders[[2]]],
              main = "Global Factor Plot",
              xlab = paste("Factor ", orders[[1]]),
              ylab = paste("Factor ", orders[[2]]),
-             col = plot_colors[[names(clust_indexes)[1]]],
+             col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
              pch = 16,
