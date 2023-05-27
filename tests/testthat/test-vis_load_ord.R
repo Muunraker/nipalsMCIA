@@ -12,9 +12,6 @@ test_that("factor is correct", {
 })
 
 test_that("no errors produced", {
-  dev.new()
-  par(mar = c(2, 2, 2, 2))
   expect_no_error(vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
                                colors_omics = colors_omics))
-  dev.off()
 })

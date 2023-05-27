@@ -7,7 +7,7 @@
 #' @return the total variance of the dataset (i.e. sum of block variances)
 #' @examples
 #' data(NCI60)
-#' tot_var <- get_TV(data_blocks)
+#' tot_var <- get_tv(data_blocks)
 #' @export
 get_tv <- function(ds) {
     ds <- lapply(ds, as.matrix)
