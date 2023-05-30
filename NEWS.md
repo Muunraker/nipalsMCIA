@@ -2,7 +2,7 @@
 
 ## Major changes
 
-* Changed eigenvalue calculation in `nipals_iter()` to variance of global scores instead of directly computing the singular value.
+* Changed the eigenvalue calculation in `nipals_iter()` to compute the variance of the global score at each deflation step. Prior versions used an SVD method to compute the singular values of the deflated data matrix directly.  
 * Fixed bug in `projection_plot()` where there was a mismatch between color labels and plotting order.
 * Added parameter to `nipals_multiblock` that specifies whether the samples are in the rows or the columns
 
