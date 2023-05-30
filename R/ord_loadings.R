@@ -26,7 +26,7 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
 
     # Return error if omic not chosen from omics_names list
     if (!(omic %in% omics_names)) {
-        stop("Error: choose appropriate omic")
+        stop("Choose an appropriate omic")
     }
 
     # Get global loadings and list of omics

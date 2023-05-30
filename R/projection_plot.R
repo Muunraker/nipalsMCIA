@@ -343,9 +343,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # catching error for one color
         if (is.null(color_col)) {
-          plotCol = plot_colors[[1]]
+          plotCol <- plot_colors[[1]]
         } else {
-          plotCol = plot_colors[[names(clust_indexes)[1]]]
+          plotCol <- plot_colors[[names(clust_indexes)[1]]]
         }
 
         plot(gs_normed[sample_indexes, orders[[1]]],

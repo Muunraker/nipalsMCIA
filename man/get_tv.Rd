@@ -19,5 +19,5 @@ multi-omics dataset, intended for datasets that do not use `CCpreproc`
 }
 \examples{
 data(NCI60)
-tot_var <- get_TV(data_blocks)
+tot_var <- get_tv(data_blocks)
 }

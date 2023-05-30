@@ -54,7 +54,7 @@ predict_gs <- function(mcia_results, df) {
     bl <- lapply(bl, as.matrix)
 
     if (dim(df[[1]])[[2]] != dim(bl[[1]])[[1]]) {
-        stop("Error: mismatched number of features in omic ", 1)
+        stop("Mismatched number of features in omic ", 1)
     }
 
     new_gs <- df[[1]] %*% bl[[1]] # block score matrix for 1st omic
@@ -64,7 +64,7 @@ predict_gs <- function(mcia_results, df) {
     if (num_omics > 1) {
         for (i in 2:num_omics) {
             if (dim(df[[i]])[[2]] != dim(bl[[i]])[[1]]) {
-                stop("Error: mismatched number of features in omic ", i)
+                stop("Mismatched number of features in omic ", i)
             }
 
             new_gs_i <- df[[i]] %*% bl[[i]] # block score matrix for ith omic
