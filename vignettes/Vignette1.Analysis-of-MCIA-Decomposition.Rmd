@@ -106,7 +106,7 @@ devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
 BiocManager::install("nipalsMCIA")
 ```
 
-```{r load-packages, echo = FALSE, include = FALSE}
+```{r load-packages, message = FALSE}
 library(ComplexHeatmap)
 library(dplyr)
 library(fgsea)

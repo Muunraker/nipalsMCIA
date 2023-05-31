@@ -49,7 +49,7 @@ devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
 BiocManager::install("nipalsMCIA")
 ```
 
-```{r load-packages, echo = TRUE, include = FALSE}
+```{r load-packages, message = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
 # decide to pull data from another source or use our provided objects
 
