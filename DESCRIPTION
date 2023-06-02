@@ -22,12 +22,12 @@ License: GPL-3
 URL: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.2.0)
 Imports:
     ComplexHeatmap,
     dplyr,
     fgsea,
-    ggplot2,
+    ggplot2 (>= 3.0.0),
     graphics,
     grid,
     methods,
@@ -38,6 +38,7 @@ Imports:
     scales,
     stats
 Suggests:
+    BiocStyle,
     circlize,
     ggpubr,
     KernSmooth,
@@ -45,16 +46,14 @@ Suggests:
     piggyback,
     reshape2,
     rmarkdown,
-    rmdformats,
     rpart,
-    Seurat,
+    Seurat (>= 4.0.0),
     spatstat.explore,
     stringr,
-    spelling,
     survival,
     tidyverse,
-    testthat (>= 3.0.0),
-VignetteBuilder: 
+    testthat (>= 3.0.0)
+VignetteBuilder:
     knitr
 biocViews: Software, Clustering, Classification, MultipleComparison,
     Normalization, Preprocessing, SingleCell

@@ -21,10 +21,7 @@
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
     # extracting global loadings
     gl <- mcia_out$global_loadings
-
-    # parsing data
-    #omic_name <- gsub("^.*_", "", rownames(gl))
-
+    
     omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
     omics_labels <- names(mcia_out$block_loadings)
@@ -38,18 +35,18 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
     gl_f$omic <- omic_type
     gl_f$omic <- as.factor(gl_f$omic)
     colnames(gl_f) <- c(paste0("Axis_", axes[1]),
-                        paste0("Axis_", axes[2]),"omic")
+                        paste0("Axis_", axes[2]), "omic")
 
     # plot data
-    p <- ggplot(data = gl_f,
-                aes_string(x = colnames(gl_f)[1],
-                           y = colnames(gl_f)[2],
-                           color = "omic")) +
-                geom_point(alpha = 0.3) +
-                labs(x = paste0("Axis ", axes[1]),
-                     y = paste0("Axis ", axes[2])) +
-                scale_color_manual(values = colors_omics) +
-                theme_bw()
+    omic<-gl_f$omic
+    ggplot(data = gl_f,
+            aes(x = gl_f[[colnames(gl_f)[1]]],
+                y = gl_f[[colnames(gl_f)[2]]],
+                color = omic)) +
+            geom_point(alpha = 0.3) +
+            labs(x = paste0("Axis ", axes[1]),
+                 y = paste0("Axis ", axes[2])) +
+            scale_color_manual(values = colors_omics) +
+            theme_bw()
 
-    return(p)
 }

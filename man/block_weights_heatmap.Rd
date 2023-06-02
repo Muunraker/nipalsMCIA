@@ -10,7 +10,7 @@ block_weights_heatmap(mcia_results)
 \item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
 }
 \value{
-Displays the heatmap of block weights
+heatmap object containing the block weights as a heatmap
 }
 \description{
 Function to plot heatmap of block score weights

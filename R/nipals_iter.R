@@ -12,17 +12,18 @@
 #' @param ds a list of data matrices, each in "sample" x "variable" format
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
 #' @param maxIter a number for the maximum number of times NIPALS should iterate
+#' @param isCentered TRUE if data blocks have feature mean zero, FALSE otherwise
 #' @return a list containing the global/block scores, loadings and weights for
 #' a given order
 #' @examples
 #' data(NCI60)
 #' data_blocks <- lapply(data_blocks, as.matrix)
-#' nipals_results <- NIPALS_iter(data_blocks, tol = 1e-7, maxIter = 1000)
+#' nipals_results <- nipals_iter(data_blocks, tol = 1e-7, maxIter = 1000)
 #' @importFrom pracma rand
 #' @importFrom RSpectra svds
 #' @importFrom stats cov var
 #' @export
-NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
+nipals_iter <- function(ds, tol = 1e-12, maxIter = 1000, isCentered = FALSE) {
     # Main iteration loop
     stop_crit <- 2 * tol
     cov_squared_old <- 0
@@ -64,10 +65,17 @@ NIPALS_iter <- function(ds, tol = 1e-12, maxIter = 1000) {
         warning("NIPALS iteration did not converge")
     }
 
-    # Computing eigenvalue associated with the global score
-    global_matrix <- do.call(cbind, ds)
-    svdres <- RSpectra::svds(global_matrix, 1)
-    eigval <- (svdres$d)^2 / (max(dim(global_matrix)[1] - 1, 1))
+    if (isCentered) {
+        # Use fast sv calculation if blocks are centered
+        sval <- norm(gs, type = "2")
+        eigval <- (sval)^2 / (max(dim(gs)[1] - 1, 1))
+
+    } else {
+        # Otherwise use svd
+        global_matrix <- do.call(cbind, ds)
+        svdres <- RSpectra::svds(global_matrix, 1)
+        eigval <- (svdres$d)^2 / (max(dim(global_matrix)[1] - 1, 1))
+    }
 
     # Computing global loadings at final iteration
     gl <- bl_list[[1]] * gw[1]

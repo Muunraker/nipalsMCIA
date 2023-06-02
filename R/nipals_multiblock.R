@@ -6,15 +6,15 @@
 #'
 #' @details Follows the NIPALS algorithm as described by Hanafi et. al. (2010).
 #' For each order of scores/loadings, the vectors are computed via the
-#' `NIPALS_iter` function, then used to deflate the data matrix according to
+#' `nipals_iter` function, then used to deflate the data matrix according to
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames in "sample" x "variable" format,
-#'    or a MultiAssayExperiment class object
-#'    (with sample metadata as a dataframe in the colData attribute).
-#'
-#' @param preproc_method an option for the desired column-level data
+#' @param data_blocks a list of data frames or a MultiAssayExperiment class
+#' object (with sample metadata as a dataframe in the colData attribute).
+#' @param row_format for lists of data frames, indicates whether rows of
+#' datasets denote `samples` (default) or `features`.
+#' @param col_preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
 #' \item `colprofile` applies column-centering, row and column weighting by
@@ -60,7 +60,7 @@
 #' one block (w/ unit length)
 #' \item `block score weights` a matrix containing weights for each block score
 #' of each order used to construct the global scores.
-#' \item `preproc_method` the preprocessing method used on the data.
+#' \item `col_preproc_method` the column preprocessing method used on the data.
 #' }
 #' @param plots an option to display various plots of results: \itemize{
 #' \item `all` displays plots of block scores, global scores, and eigenvalue
@@ -77,14 +77,16 @@
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'    data(NCI60)
-#'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10, tol = 1e-12,
-#'    max_iter = 1000, preproc_method = "colprofile", deflationMethod = "block")
-#'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 2)
+#'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10,
+#'    tol = 1e-12, max_iter = 1000, col_preproc_method = "colprofile",
+#'    deflationMethod = "block")
+#'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
 #'    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
+nipals_multiblock <- function(data_blocks, row_format = "samples",
+                              col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9, max_iter = 1000,
                               metadata = NULL, color_col = NULL,
@@ -101,26 +103,48 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
         # If no metadata supplied, attempt to extract it from the MAE object
         if (is.null(metadata)) {
             # Convert metadata
-            metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
+            metadata <-
+              data.frame(MultiAssayExperiment::colData(data_blocks_mae))
             if (length(metadata) == 0) {
                 metadata <- NULL
             }
         }
-    }
-    else if (is(data_blocks, "list")) {
-        # Nothing needs changing
-    }
-    else {
+    } else if (is(data_blocks, "list")) {
+        # Transpose data blocks if in features x samples format:
+        if (tolower(row_format) == "features") {
+            data_blocks <- lapply(data_blocks, t)
+        }
+    } else {
         stop("Unknown input data format -
              please use MultiAssayExperiment or a list of data blocks.")
     }
 
     num_blocks <- length(data_blocks)
     omics_names <- names(data_blocks)
-    
+
     # Check number of samples are the same across all omics
-    if(length(unique(lapply(data_blocks,nrow))) > 1){
-        stop("Each omics/data block must have the same number of rows (i.e. samples).")
+    if (length(unique(lapply(data_blocks, nrow))) > 1) {
+        stop("Each omics/data block must have the same number of rows
+             (i.e. samples).")
+    }
+
+    # Check samples are the same (in same order) for each block
+    # comparing sequential sample names
+    samplenames <- lapply(data_blocks, rownames)
+    for (i in seq_len(length(samplenames) - 1)) {
+      if (any(tolower(samplenames[[i]]) != tolower(samplenames[[i + 1]]))) {
+        errmsg <- sprintf("Sample names or order in block %d do not
+                          match block %d.", i, i + 1)
+        stop(errmsg)
+      }
+    }
+
+    # Check that metadata sample names match block sample names
+    if (!is.null(metadata)) {
+      if (any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))) {
+        errmsg <- sprintf("Metadata sample names dont match block sample names")
+        stop(errmsg)
+      }
     }
 
     # Check for omics names and assign generic name if null
@@ -131,7 +155,6 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
     # Formatting feature labels to include omic type
     for (i in seq_along(data_blocks)) {
-        oName <- omics_names[[i]] # omic names
         fNames <- names(data_blocks[[i]]) # feature names
 
         # Error catching for no names - creates default values
@@ -143,7 +166,7 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
 
     # Pre-processing data
     message("Performing column-level pre-processing...")
-    data_blocks <- lapply(data_blocks, col_preproc, preproc_method)
+    data_blocks <- lapply(data_blocks, col_preproc, col_preproc_method)
     message("Column pre-processing completed.")
 
     # Block-level pre-processing
@@ -154,14 +177,14 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
         names(block_vars) <- names(data_blocks)
 
     } else {
-        block_vars <- get_TV(data_blocks)
+        block_vars <- get_tv(data_blocks)
     }
 
     message("Block pre-processing completed.")
 
     # First NIPALS run
     message("Computing order ", 1, " scores")
-    nipals_result <- NIPALS_iter(data_blocks, tol)
+    nipals_result <- nipals_iter(data_blocks, tol, isCentered = TRUE)
 
     # Saving result
     # matrix containing global scores as columns
@@ -198,12 +221,12 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
                                       gs = nipals_result$global_scores)
 
             } else {
-                stop("Uknown option for deflation step -
+                stop("Unknown option for deflation step -
                      use 'block' or 'global'")
             }
 
             # Run another NIPALS iteration
-            nipals_result <- NIPALS_iter(data_blocks, tol)
+            nipals_result <- nipals_iter(data_blocks, tol)
 
             # Save results
             global_scores <- cbind(global_scores, nipals_result$global_scores)
@@ -228,14 +251,19 @@ nipals_multiblock <- function(data_blocks, preproc_method = "colprofile",
     names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
     results_list <- list(global_scores, global_loadings, block_score_weights,
                          block_scores, block_loadings, eigvals,
-                         tolower(preproc_method), tolower(block_preproc_method),
+                         tolower(col_preproc_method),
+                         tolower(block_preproc_method),
                          block_vars)
     names(results_list) <- c("global_scores", "global_loadings",
                              "block_score_weights", "block_scores",
                              "block_loadings", "eigvals",
-                             "column_preproc_method",
+                             "col_preproc_method",
                              "block_preproc_method", "block_variances")
-    results_list$metadata <- metadata
+    if (is.null(metadata)) {
+        results_list$metadata <- NA
+    } else {
+        results_list$metadata <- metadata
+    }
 
     # Plotting results
     if (tolower(plots) == "all") {

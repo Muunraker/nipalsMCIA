@@ -19,14 +19,14 @@
 #' @export
 
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
-                                                 descending = TRUE, factor = 1) {
+                         descending = TRUE, factor = 1) {
     # list of omics plus 'all'
     omics_names <- names(mcia_out$block_loadings)
     omics_names <- c(omics_names, "all")
 
     # Return error if omic not chosen from omics_names list
     if (!(omic %in% omics_names)) {
-        stop("Error: choose appropriate omic")
+        stop("Choose an appropriate omic")
     }
 
     # Get global loadings and list of omics
@@ -52,7 +52,6 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
     if (absolute == FALSE) {
         if (descending == TRUE) {
             gl_f_ord <- gl_f[order(gl_f$loading, decreasing = TRUE), ]
-
         } else {
             gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE), ]
         }
