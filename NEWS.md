@@ -1,4 +1,14 @@
-# 0.99.3 (2023-05-26):
+# 0.99.5 (2023-06-22):
+## Major changes
+* Bumping version number to trigger re-build following bug in BiocCheck.
+
+# 0.99.4 (2023-06-01):
+
+## Major changes
+
+* Fixed data corruption issues from v0.99.3
+
+# 0.99.3 (2023-06-01):
 
 ## Major changes
 
