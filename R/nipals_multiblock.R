@@ -46,7 +46,7 @@
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
 #' }
-#' @return a list containing the following: \itemize{
+#' @return a `nipalsResult` object with the following fields: \itemize{
 #' \item `global_scores` a matrix containing global scores as columns
 #' (NOT normalized to unit variance)
 #' \item `global_loadings` a matrix containing global loadings as columns
@@ -264,6 +264,20 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     } else {
         results_list$metadata <- metadata
     }
+    
+    # creating S4 class object with nipals outputs
+    mcia_out <- new("NipalsResult",
+                   global_scores = results_list$global_scores,
+                   global_loadings = results_list$global_loadings,
+                   block_score_weights = results_list$block_score_weights,
+                   block_scores = results_list$block_scores,
+                   block_loadings = results_list$block_loadings,
+                   eigvals = results_list$eigvals,
+                   col_preproc_method = results_list$col_preproc_method,
+                   block_preproc_method = results_list$block_preproc_method,
+                   block_variances = results_list$block_variances,
+                   metadata = results_list$metadata)
+
 
     # Plotting results
     if (tolower(plots) == "all") {
@@ -281,11 +295,10 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
         par(mfrow = c(1, 1))
 
     } else if (tolower(plots) == "none") {
-        # Are we missing something here? Need to check previous versions.
 
     } else {
         message("No known plotting options specified - skipping plots.")
     }
 
-    return(results_list)
+    return(mcia_out)
 }

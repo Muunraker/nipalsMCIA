@@ -77,7 +77,7 @@ NORMALIZATION OPTION APPLIED
 argument. Note: overrides metadata present in any MAE class object.}}
 }
 \value{
-a list containing the following: \itemize{
+a `nipalsResult` object with the following fields: \itemize{
 \item `global_scores` a matrix containing global scores as columns
 (NOT normalized to unit variance)
 \item `global_loadings` a matrix containing global loadings as columns
