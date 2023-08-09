@@ -28,10 +28,13 @@ NipalsResult <- setClass("NipalsResult", representation(global_scores = "matrix"
 # defining show methoid for class
 setMethod("show", "NipalsResult",
           function(object){
-            cat(is(object)[[1]], "\n",
-                "Dataset dimensions:   ", nrow(object@global_scores)," x ", nrow(object@global_loadings), "\n",
-                "Number of blocks:  ", length(object@block_variances), "\n",
-                "Block dimensions:   \n",
+            cat(is(object)[[1]], " Object with properties: \n",
+                "> Dataset dimensions:   ", nrow(object@global_scores)," x ", nrow(object@global_loadings), "\n",
+                "> Number of blocks:  ", length(object@block_variances), "\n",
+                "> Order of scores:  ", ncol(object@global_scores), "\n",
+                "> Column preprocessing:  ", object@col_preproc_method, "\n",
+                "> Block preprocessing:  ", object@block_preproc_method, "\n",
+                "> Features per block:   \n",
                 sep = ""
             )
             
@@ -44,5 +47,5 @@ setMethod("show", "NipalsResult",
               print(c(unlist(blockdims),'...'))
           }
           
-          # printing 
+
 )
