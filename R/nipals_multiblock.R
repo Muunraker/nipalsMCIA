@@ -260,7 +260,8 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
                              "col_preproc_method",
                              "block_preproc_method", "block_variances")
     if (is.null(metadata)) {
-        results_list$metadata <- NA
+        # No metadata => empty dataframe
+        results_list$metadata <- data.frame()
     } else {
         results_list$metadata <- metadata
     }
@@ -282,16 +283,16 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     # Plotting results
     if (tolower(plots) == "all") {
         par(mfrow = c(1, 2))
-        projection_plot(results_list, "all", legend_loc = "bottomleft",
+        projection_plot(mcia_out, "all", legend_loc = "bottomleft",
                         color_col = color_col) # first two orders of scores
-        global_scores_eigenvalues_plot(results_list) # global score eigenvalues
+        global_scores_eigenvalues_plot(mcia_out) # global score eigenvalues
         par(mfrow = c(1, 1))
 
     } else if (tolower(plots) == "global") {
         par(mfrow = c(1, 2))
         # first two global scores
-        projection_plot(results_list, "global", color_col = color_col)
-        global_scores_eigenvalues_plot(results_list) # global score eigenvalues
+        projection_plot(mcia_out, "global", color_col = color_col)
+        global_scores_eigenvalues_plot(mcia_out) # global score eigenvalues
         par(mfrow = c(1, 1))
 
     } else if (tolower(plots) == "none") {

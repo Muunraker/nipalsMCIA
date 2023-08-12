@@ -16,9 +16,9 @@
 #' @export
 global_scores_eigenvalues_plot <- function(mcia_results) {
     # getting total variance if supplied
-    if (is.list(mcia_results$block_variances)) {
+    if (is.list(mcia_results@block_variances)) {
         ylabel <- "Prop. Total Variance"
-        totvar <- sum(unlist(mcia_results$block_variances))
+        totvar <- sum(unlist(mcia_results@block_variances))
 
     } else {
         ylabel <- "Eigenvalue"
@@ -26,8 +26,8 @@ global_scores_eigenvalues_plot <- function(mcia_results) {
     }
 
     # extract eigenvalues
-    barploteigs <- (unlist(mcia_results$eigvals)) / totvar
-    names(barploteigs) <- seq(1, length(mcia_results$eigvals))
+    barploteigs <- (unlist(mcia_results@eigvals)) / totvar
+    names(barploteigs) <- seq(1, length(mcia_results@eigvals))
 
     # generate barplot
     barplot(barploteigs, xlab = "Factors", ylab = ylabel, cex.names = 1,

@@ -368,8 +368,21 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
 
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
-mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
-names(mcia_results_sc)
+mcia_results_sc_list <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
+names(mcia_results_sc_list)
+
+# **** TEMPORARY - CONVERT TO NIPALS RESULT OBJECT DIRECTLY *********
+mcia_results_sc <- new("NipalsResult",
+                   global_scores = mcia_results_sc_list$global_scores,
+                   global_loadings = mcia_results_sc_list$global_loadings,
+                   block_score_weights = mcia_results_sc_list$block_score_weights,
+                   block_scores = mcia_results_sc_list$block_scores,
+                   block_loadings = mcia_results_sc_list$block_loadings,
+                   eigvals = mcia_results_sc_list$eigvals,
+                   col_preproc_method = mcia_results_sc_list$col_preproc_method,
+                   block_preproc_method = mcia_results_sc_list$block_preproc_method,
+                   block_variances = mcia_results_sc_list$block_variances,
+                   metadata = mcia_results_sc_list$metadata)
 ```
 
 ## Visualization
@@ -914,7 +927,7 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-You can also obtain the following bar plot using the output of `nipals_multiblock` e.g. with `ggplot(data.frame(table(mcia_results_sc$metadata)), aes(x = CellType, y = Freq, fill = CellType)) + geom_bar(stat = "identity")` (for the base plot).
+You can also obtain the following bar plot using the output of `nipals_multiblock` e.g. with `ggplot(data.frame(table(mcia_results_sc@metadata)), aes(x = CellType, y = Freq, fill = CellType)) + geom_bar(stat = "identity")` (for the base plot).
 
 ```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
 # examine the total counts

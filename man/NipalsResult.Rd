@@ -5,7 +5,7 @@
 \alias{NipalsResult}
 \title{An S4 class to contain results computed with `nipals_multiblock()`}
 \description{
-The class contains the following entries:
+An S4 class to contain results computed with `nipals_multiblock()`
 }
 \section{Slots}{
 

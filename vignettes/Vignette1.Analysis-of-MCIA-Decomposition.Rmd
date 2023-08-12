@@ -146,10 +146,10 @@ mcia_results <- nipals_multiblock(data_blocks,
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
-The results contain several outputs from the decomposition:
+The result is an `NipalsResult` object containing several outputs from the decomposition:
 
 ```{r intro-mcia-results}
-names(mcia_results)
+slotNames(mcia_results)
 ```
 
 We describe the first two in more detail below, and will discuss several others
@@ -270,7 +270,7 @@ mcia_results <- nipals_multiblock(data_blocks,
                                   num_PCs = 10, tol = 1e-12)
 
 # alternative method for adding metadata
-mcia_results$metadata <- metadata_NCI60
+mcia_results@metadata <- metadata_NCI60
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine
@@ -417,7 +417,7 @@ pathway as well as the total number of significant pathways for each factor.
 
 ```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 # extract mRNA global loadings
-mrna_gfscores <- mcia_results$global_loadings
+mrna_gfscores <- mcia_results@global_loadings
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
 mrna_gfscores <- mrna_gfscores[mrna_rows, ]
 

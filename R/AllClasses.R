@@ -12,7 +12,7 @@
 #' 
 #' @name NipalsResult
 #' @rdname NipalsResult
-#' @export
+#' @exportClass NipalsResult
 
 NipalsResult <- setClass("NipalsResult", representation(global_scores = "matrix",
                                         global_loadings = "matrix", 
@@ -23,29 +23,23 @@ NipalsResult <- setClass("NipalsResult", representation(global_scores = "matrix"
                                         col_preproc_method = "character",
                                         block_preproc_method = "character",
                                         block_variances = "list",
-                                        metadata = "data.frame"))
+                                        metadata = "data.frame")
+)
 
-# defining show methoid for class
+# defining show method for NipalsResult
 setMethod("show", "NipalsResult",
-          function(object){
-            cat(is(object)[[1]], " Object with properties: \n",
-                "> Dataset dimensions:   ", nrow(object@global_scores)," x ", nrow(object@global_loadings), "\n",
-                "> Number of blocks:  ", length(object@block_variances), "\n",
-                "> Order of scores:  ", ncol(object@global_scores), "\n",
-                "> Column preprocessing:  ", object@col_preproc_method, "\n",
-                "> Block preprocessing:  ", object@block_preproc_method, "\n",
-                "> Features per block:   \n",
-                sep = ""
-            )
-            
-            blockdims <- lapply(object@block_loadings,nrow)
-            
-            # printing blocks with dimensions
-            if(length(blockdims)<11){
-              print(unlist(blockdims))
-            }else
-              print(c(unlist(blockdims),'...'))
-          }
-          
-
+  function(object){
+    cat(is(object)[[1]], " Object with properties: \n",
+        "> Dataset dimensions:   ", nrow(object@global_scores)," x ", nrow(object@global_loadings), "\n",
+        "> Number of blocks:  ", length(object@block_variances), "\n",
+        "> Order of scores:  ", ncol(object@global_scores), "\n",
+        "> Column preprocessing:  ", object@col_preproc_method, "\n",
+        "> Block preprocessing:  ", object@block_preproc_method, "\n",
+        "> Block names and sizes:   \n",
+        sep = ""
+    )
+    
+    blockdims <- lapply(object@block_loadings,nrow)
+    print(unlist(blockdims))
+  }
 )

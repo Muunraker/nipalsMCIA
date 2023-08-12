@@ -14,14 +14,14 @@
 #'         \item `block` - scatter plot of two orders of block scores
 #'                         only (aka factors) for given block.
 #'         }
-#' @param block_name of the block if projection = "block"
+#' @param block_name Name of the  block to be plotted (if `projection = block` argument used). 
 #'
 #' @param orders Option to select orders of factors to plot against each other
 #'         (for projection plots)
 #' @param color_col Option to plot clusters/colors in projection plots,
 #'         with two options:\itemize{
 #' \item `none` (Default) - no clusters/colors plotted.
-#' \item A character string of the column name of the `mcia_results$metadata`
+#' \item A character string of the column name of the `mcia_results@metadata`
 #'         dataframe determining which color groupings to use
 #'         projection plots only)
 #' }
@@ -55,12 +55,12 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
     # case i) no color_col, clusters/categories were not specified
     if (is.null(color_col)) {
-        clust_indexes <- list(seq(1, dim(mcia_results$global_score)[[1]]))
+        clust_indexes <- list(seq(1, dim(mcia_results@global_scores)[[1]]))
 
     # case ii) yes color_col, clusters/categories were specified
     } else if (is.character(color_col)) {
         # locating the color_col column within metadata
-        col_idx <- grep(color_col, names(mcia_results$metadata))
+        col_idx <- grep(color_col, names(mcia_results@metadata))
         if (any(length(col_idx) < 1)) {
             stop("Column name for color_col not found in metadata.")
         }
@@ -75,9 +75,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
         # creating a list of samples indexes to color each cluster/category
         clust_indexes <- list()
-        uniq_clusts <- unique(unlist(mcia_results$metadata[col_idx]))
+        uniq_clusts <- unique(unlist(mcia_results@metadata[col_idx]))
         for (clust in uniq_clusts) {
-            cdata <- list(grep(clust, mcia_results$metadata[[col_idx]]))
+            cdata <- list(grep(clust, mcia_results@metadata[[col_idx]]))
             clust_indexes <- c(clust_indexes, cdata)
         }
         names(clust_indexes) <- uniq_clusts
@@ -86,7 +86,7 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     } else {
         message("color_col option not recognized, ",
                 "defaulting to black/white plotting.")
-        clust_indexes <- list(seq(1, dim(mcia_results$global_score)[[1]]))
+        clust_indexes <- list(seq(1, dim(mcia_results@global_scores)[[1]]))
     }
 
     ### Resolving the cluster colors IF SPECIFIED
@@ -106,18 +106,18 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     ### Plot 1 - projection == all
     if (tolower(projection) == "all") {
         # Normalize global scores to unit variance
-        gs_norms <- apply(mcia_results$global_scores, 2,
+        gs_norms <- apply(mcia_results@global_scores, 2,
                                             function(x) (sqrt(var(x))))
-        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        gs_normed <- t(t(mcia_results@global_scores) / gs_norms)
 
         # Normalize block scores to unit variance
         bs_normed <- list()
         bl_normed <- list()
-        for (i in seq(1, length(mcia_results$block_scores))) {
-            bs_norms <- apply(mcia_results$block_scores[[i]], 2,
+        for (i in seq(1, length(mcia_results@block_scores))) {
+            bs_norms <- apply(mcia_results@block_scores[[i]], 2,
                                         function(x) (sqrt(var(x))))
-            bs_normed[[i]] <- t(t(mcia_results$block_scores[[i]]) / bs_norms)
-            bl_normed[[i]] <- t(t(mcia_results$block_loadings[[i]]) / bs_norms)
+            bs_normed[[i]] <- t(t(mcia_results@block_scores[[i]]) / bs_norms)
+            bl_normed[[i]] <- t(t(mcia_results@block_loadings[[i]]) / bs_norms)
         }
 
         # Getting bounds for projection plot
@@ -209,17 +209,17 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
             # plotting legend without clusters/categories
             if (length(plot_colors) == 1) {
                 legend(legend_loc,
-                       legend = c(names(mcia_results$block_loadings)),
-                       pch = 0:length(mcia_results$block_loadings), cex = cex)
+                       legend = c(names(mcia_results@block_loadings)),
+                       pch = 0:length(mcia_results@block_loadings), cex = cex)
 
             # plotting legend for clusters/categories
             } else {
-                leg_labels <- c(names(mcia_results$block_loadings),
+                leg_labels <- c(names(mcia_results@block_loadings),
                                 names(plot_colors))
-                leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
+                leg_shapes <- c(seq(1, length(mcia_results@block_loadings)),
                                 rep(16, length(plot_colors))) - 1
                 leg_colors <- c(rep("black",
-                                    length(mcia_results$block_loadings)),
+                                    length(mcia_results@block_loadings)),
                                 unname(unlist(plot_colors)))
 
                 legend(legend_loc, legend = leg_labels,
@@ -230,28 +230,28 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     } else if (tolower(projection) == "block") {
         # Normalize global scores to unit variance
         # Still included to make comparable plots
-        gs_norms <- apply(mcia_results$global_scores, 2,
+        gs_norms <- apply(mcia_results@global_scores, 2,
                           function(x) (sqrt(var(x))))
-        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        gs_normed <- t(t(mcia_results@global_scores) / gs_norms)
 
         # Check for the presence of the block name
-        block_check <- any(block_name == names(mcia_results[["block_scores"]]))
+        block_check <- any(block_name == names(mcia_results@block_scores))
         if (block_check == FALSE) {
-            block_names <- paste(names(mcia_results$block_scores),
+            block_names <- paste(names(mcia_results@block_scores),
                                  collapse = ", ")
             msg <- paste0("block_name: '", block_name,
                           "' is not part of the data blocks list: ",
                           "'", block_names, "'.")
             stop(msg)
         }
-        block_idx <- which(block_name == names(mcia_results[["block_scores"]]))
+        block_idx <- which(block_name == names(mcia_results@block_scores))
         block_idx <- as.numeric(block_idx)
 
         # Normalize block scores to unit variance
-        # message(mcia_results$block_scores[[block_idx]])
-        bs_norms <- apply(mcia_results$block_scores[[block_idx]], 2,
+        # message(mcia_results@block_scores[[block_idx]])
+        bs_norms <- apply(mcia_results@block_scores[[block_idx]], 2,
                           function(x) (sqrt(var(x))))
-        bs_normed <- t(t(mcia_results$block_scores[[block_idx]]) / bs_norms)
+        bs_normed <- t(t(mcia_results@block_scores[[block_idx]]) / bs_norms)
 
         # Getting bounds for projection plot
         # minimum 1st block score
@@ -314,12 +314,12 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
 
             # plotting legend for clusters/categories
             } else {
-                leg_labels <- c(names(mcia_results$block_loadings),
+                leg_labels <- c(names(mcia_results@block_loadings),
                                 names(plot_colors))
-                leg_shapes <- c(seq(1, length(mcia_results$block_loadings)),
+                leg_shapes <- c(seq(1, length(mcia_results@block_loadings)),
                                 rep(16, length(plot_colors))) - 1
                 leg_colors <- c(rep("black",
-                                    length(mcia_results$block_loadings)),
+                                    length(mcia_results@block_loadings)),
                                 unname(unlist(plot_colors)))
                 legend(legend_loc, legend = leg_labels,
                        col = leg_colors, pch = leg_shapes, cex = cex)
@@ -329,9 +329,9 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
     } else if (tolower(projection) == "global") {
         ### Plot 2 - projection plot global score only
         # Normalize global scores to unit variance
-        gs_norms <- apply(mcia_results$global_scores, 2,
+        gs_norms <- apply(mcia_results@global_scores, 2,
                           function(x) (sqrt(var(x))))
-        gs_normed <- t(t(mcia_results$global_scores) / gs_norms)
+        gs_normed <- t(t(mcia_results@global_scores) / gs_norms)
 
         # Getting bounds for projection plot
         min_x <- min(gs_normed[, orders[[1]]]) # minimum x coordinate in plot

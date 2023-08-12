@@ -1,5 +1,5 @@
 # extract mRNA global loadings
-mrna_gfscores <- mcia_results$global_loadings
+mrna_gfscores <- mcia_results@global_loadings
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
 mrna_gfscores <- mrna_gfscores[mrna_rows, ]
 

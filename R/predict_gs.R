@@ -23,10 +23,10 @@
 #' @export
 #'
 predict_gs <- function(mcia_results, df) {
-    bl <- mcia_results$block_loadings
-    bw <- mcia_results$block_score_weights
-    col_preproc_method <- mcia_results$col_preproc_method
-    block_preproc_method <- mcia_results$block_preproc_method
+    bl <- mcia_results@block_loadings
+    bw <- mcia_results@block_score_weights
+    col_preproc_method <- mcia_results@col_preproc_method
+    block_preproc_method <- mcia_results@block_preproc_method
 
     num_omics <- length(bl)
     if (length(df) != length(bl) || length(df) != dim(bw)[[1]]) {

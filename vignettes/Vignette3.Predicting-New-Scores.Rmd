@@ -79,14 +79,14 @@ MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train,
 ## Visualize model on training data using metadata on cancer type
 
 ```{r visualize-training-model, fig.height = 2.5}
-MCIA_train$metadata <- data.frame(metadata_NCI60[train_samples, ],
+MCIA_train@metadata <- data.frame(metadata_NCI60[train_samples, ],
                                   row.names = rownames(data_blocks_train$mrna))
-colnames(MCIA_train$metadata) <- c("cancerType")
+colnames(MCIA_train@metadata) <- c("cancerType")
 meta_colors <- get_metadata_colors(mcia_results = MCIA_train, color_col = 1,
                                    color_pal_params = list(option = "E"))
 
-MCIA_out <- data.frame(MCIA_train$global_scores[, 1:2])
-MCIA_out$cancerType <- MCIA_train$metadata[, 1]
+MCIA_out <- data.frame(MCIA_train@global_scores[, 1:2])
+MCIA_out$cancerType <- MCIA_train@metadata[, 1]
 colnames(MCIA_out) <- c("Factor.1", "Factor.2", "cancerType")
 
 # plot the results

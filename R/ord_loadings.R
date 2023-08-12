@@ -21,7 +21,7 @@
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
                          descending = TRUE, factor = 1) {
     # list of omics plus 'all'
-    omics_names <- names(mcia_out$block_loadings)
+    omics_names <- names(mcia_out@block_loadings)
     omics_names <- c(omics_names, "all")
 
     # Return error if omic not chosen from omics_names list
@@ -30,12 +30,12 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
     }
 
     # Get global loadings and list of omics
-    gl <- mcia_out$global_loadings
+    gl <- mcia_out@global_loadings
     # omic_type <- gsub("^.*_", "", rownames(gl))
 
-    omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
+    omic_dims <- vapply(mcia_out@block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
-    omics_labels <- names(mcia_out$block_loadings)
+    omics_labels <- names(mcia_out@block_loadings)
     for (i in seq_along(omics_labels)) {
         omic_label <- omics_labels[i]
         length_omic <- omic_dims[i]

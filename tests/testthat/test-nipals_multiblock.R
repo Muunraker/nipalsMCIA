@@ -6,16 +6,16 @@ test_that("Number of block score weights correct (random)", {
   test <- nipals_multiblock(test_data, plots = "none",
                             num_PCs = 4, tol = 1e-9)
 
-  expect_equal(c(10, 4), dim(test$global_loadings))
+  expect_equal(c(10, 4), dim(test@global_loadings))
 })
 
 test_that("Number of block score weights correct (NCI60)", {
-  expect_equal(c(20448, 2), dim(mcia_results$global_loadings))
+  expect_equal(c(20448, 2), dim(mcia_results@global_loadings))
 })
 
 # testing magnitude of top three eigenvalues of NCI60 dataset
 test_that("Top eigenvalues correct", {
-  expect_equal(all(mcia_results3$eigvals > 0.21), TRUE)
+  expect_equal(all(mcia_results3@eigvals > 0.21), TRUE)
 })
 
 # expect error if number of samples is wrong

@@ -20,11 +20,11 @@
 
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
     # extracting global loadings
-    gl <- mcia_out$global_loadings
+    gl <- mcia_out@global_loadings
     
-    omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
+    omic_dims <- vapply(mcia_out@block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
-    omics_labels <- names(mcia_out$block_loadings)
+    omics_labels <- names(mcia_out@block_loadings)
     for (i in seq_along(omics_labels)) {
         omic_label <- omics_labels[i]
         length_omic <- omic_dims[i]
