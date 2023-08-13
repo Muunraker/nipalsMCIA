@@ -73,6 +73,7 @@
 #' \item `metadata` the metadata dataframe supplied with the `metadata`
 #' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
+#' @importFrom methods new
 #' @importFrom MultiAssayExperiment experiments metadata colData assays
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
