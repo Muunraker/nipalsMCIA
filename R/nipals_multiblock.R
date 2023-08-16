@@ -247,39 +247,35 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     }
 
     # Formatting results
+    # adding block names in outputs
     names(block_scores) <- names(data_blocks)
     names(block_loadings) <- names(data_blocks)
     names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
-    results_list <- list(global_scores, global_loadings, block_score_weights,
-                         block_scores, block_loadings, eigvals,
-                         tolower(col_preproc_method),
-                         tolower(block_preproc_method),
-                         block_vars)
-    names(results_list) <- c("global_scores", "global_loadings",
-                             "block_score_weights", "block_scores",
-                             "block_loadings", "eigvals",
-                             "col_preproc_method",
-                             "block_preproc_method", "block_variances")
+
+    # adding row (sample) names in outputs
+    rownames(global_scores) <- rownames(data_blocks[[1]])
+
+    for (j in seq(1, num_blocks)) {
+        rownames(block_scores[[j]]) <- rownames(data_blocks[[1]])
+    }
+
+    # fixing no metadata with empty data frame
     if (is.null(metadata)) {
-        # No metadata => empty dataframe
-        results_list$metadata <- data.frame()
-    } else {
-        results_list$metadata <- metadata
+        metadata <- data.frame()
     }
     
     # creating S4 class object with nipals outputs
     mcia_out <- new("NipalsResult",
-                   global_scores = results_list$global_scores,
-                   global_loadings = results_list$global_loadings,
-                   block_score_weights = results_list$block_score_weights,
-                   block_scores = results_list$block_scores,
-                   block_loadings = results_list$block_loadings,
-                   eigvals = results_list$eigvals,
-                   col_preproc_method = results_list$col_preproc_method,
-                   block_preproc_method = results_list$block_preproc_method,
-                   block_variances = results_list$block_variances,
-                   metadata = results_list$metadata)
-
+                   global_scores = global_scores,
+                   global_loadings = global_loadings,
+                   block_score_weights = block_score_weights,
+                   block_scores = block_scores,
+                   block_loadings = block_loadings,
+                   eigvals = eigvals,
+                   col_preproc_method = tolower(col_preproc_method),
+                   block_preproc_method = tolower(block_preproc_method),
+                   block_variances = block_vars,
+                   metadata = metadata)
 
     # Plotting results
     if (tolower(plots) == "all") {
