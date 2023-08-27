@@ -21,6 +21,8 @@ Function to set the metadata of a `NipalsResult` object.
 }
 \examples{
 data("NCI60")
-mcia_out <- nipals_multiblock(data_blocks, num_PCs = 10)
+data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                              colData=metadata_NCI60)
+mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10)
 mcia_out <- nmb_set_metadata(mcia_out,metadata_NCI60)
 }

@@ -132,6 +132,10 @@ data(NCI60)
 data_blocks$miRNA[1:3, 1:3]
 data_blocks$mrna[1:3, 1:3]
 data_blocks$prot[1:3, 1:3]
+
+# convert data_blocks to an MAE object
+data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                              colData=metadata_NCI60)
 ```
 
 # Running and reviewing the MCIA output
@@ -141,7 +145,7 @@ we take $r=10$.
 
 ```{r intro-mcia, warning = FALSE, message = FALSE}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks,
+mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
@@ -211,7 +215,7 @@ parameter (default=all):
 
 ```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4)}
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks,
+mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
                                   num_PCs = 10, tol = 1e-12)
 ```
@@ -252,7 +256,8 @@ The `metadata` requires a dataframe where rows are samples and columns are
 different labels,allowing for a variety of visualization objectives/explorations. 
 For instance, each of the 21 samples in the NCI-60 dataset represents a patient 
 with one of three cancer types: CNS, Leukemia, or Melanoma. We have provided this 
-metadata as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`:
+metadata as part of the `data(NCI60)` datasets and can be found as `metadata_NCI60`
+or as `colData(data_blocks_mae)`:
 
 ```{r part-1-metadata}
 head(metadata_NCI60)
@@ -264,13 +269,14 @@ of `nipals_multiblock()` or added directly to `mcia_results`:
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
-mcia_results <- nipals_multiblock(data_blocks,
+mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
                                   metadata = metadata_NCI60, plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 
+# AK comment: we should only have one means of adding the metadata, which is via the colData column of the input data
 # alternative method for adding metadata
-mcia_results <- nmb_set_metadata(mcia_results,metadata_NCI60)
+# mcia_results <- nmb_set_metadata(mcia_results,metadata_NCI60)
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine

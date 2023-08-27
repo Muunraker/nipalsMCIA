@@ -32,6 +32,7 @@ Imports:
     grid,
     methods,
     MultiAssayExperiment,
+    SummarizedExperiment,
     pracma,
     rlang,
     RSpectra,
