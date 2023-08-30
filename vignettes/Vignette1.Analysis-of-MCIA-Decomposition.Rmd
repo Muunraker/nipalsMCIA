@@ -273,7 +273,7 @@ is passed to the `metadata` slot of the `NipalsResult` instance,
 set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
-                                  metadata = metadata_NCI60, plots = "none",
+                                  plots = "none",
                                   num_PCs = 10, tol = 1e-12)
 
 # AK comment: we should only have one means of adding the metadata, which is via the colData column of the input data

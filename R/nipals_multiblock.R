@@ -33,10 +33,6 @@
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
 #' @param max_iter a number for the maximum number of times NIPALS should
 #' iterate
-#' @param metadata a data frame containing metadata (i.e. sample labels) for
-#' each sample in the dataframe.
-#' May have multiple columns, but rows and row names must match the data frames
-#' in `data_blocks`.
 #' @param color_col Optional argument with the column name of the `metadata`
 #' data frame used to define plotting colors
 #' @param deflationMethod an option for the desired deflation method, either:
@@ -90,8 +86,8 @@
 nipals_multiblock <- function(data_blocks_mae, 
                               col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
-                              num_PCs = 10, tol = 1e-9, max_iter = 1000,
-                              metadata = NULL, color_col = NULL,
+                              num_PCs = 10, tol = 1e-9, 
+                              max_iter = 1000,color_col = NULL,
                               deflationMethod = "block", plots = "all") {
 
     # Check for input type MAE or list
