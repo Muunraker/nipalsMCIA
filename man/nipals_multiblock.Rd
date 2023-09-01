@@ -11,7 +11,6 @@ nipals_multiblock(
   num_PCs = 10,
   tol = 1e-09,
   max_iter = 1000,
-  metadata = NULL,
   color_col = NULL,
   deflationMethod = "block",
   plots = "all"
@@ -43,11 +42,6 @@ square root of its variance
 
 \item{max_iter}{a number for the maximum number of times NIPALS should
 iterate}
-
-\item{metadata}{a data frame containing metadata (i.e. sample labels) for
-each sample in the dataframe.
-May have multiple columns, but rows and row names must match the data frames
-in `data_blocks`.}
 
 \item{color_col}{Optional argument with the column name of the `metadata`
 data frame used to define plotting colors}
