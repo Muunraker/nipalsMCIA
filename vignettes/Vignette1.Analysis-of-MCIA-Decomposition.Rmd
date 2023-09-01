@@ -450,6 +450,11 @@ report (below) we can see that the most significant pathway is associated with
 Factor 3 and that there is a large variation in the number of total (significant)
 pathways ranging from 7 (Factor 8) to 143 (Factor 4).
 
+```{r include = FALSE}
+# # Apply scientific notation to min_pval
+geneset_report[[1]]$min_pval <- sprintf("%.2e", geneset_report[[1]]$min_pval)
+```
+
 ```{r part-2-genesets}
 geneset_report[[1]]
 ```
@@ -465,9 +470,31 @@ factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
                                  nproc = 4, maxSize = 500)
 ```
 
-```{r part-2-gsea-for-factor-3-viz}
+```{r include=FALSE}
 # Order by adjusted p value
 factor3_paths <- factor3_paths[order(factor3_paths$padj), ]
+
+# Apply scientific notation to padj
+to_sci <- function(x) {
+    return(sprintf("%.2e", x))
+}
+factor3_paths[,"padj"] <- sapply(factor3_paths[,"padj"], to_sci)
+
+# Clean up pathway name
+clean_pathway_name <- function(x) {
+    replaced_value <- str_replace_all(x , '_', ' ')
+    if (nchar(replaced_value) > 49){
+        substring_value <- substr(replaced_value, 1, 50) 
+        return(paste0(substring_value, '...'))
+    }
+    else {
+        return(replaced_value)
+    }
+}
+factor3_paths[,"pathway"] <- apply(X=factor3_paths[,"pathway"], MARGIN=1, FUN =clean_pathway_name)
+```
+
+```{r part-2-gsea-for-factor-3-viz}
 head(factor3_paths[, c("pathway", "padj")])
 ```
 
