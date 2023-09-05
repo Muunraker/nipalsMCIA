@@ -9,8 +9,8 @@ extract_from_mae(MAE_object, subset_data = "all")
 \arguments{
 \item{MAE_object}{an MAE object containing experiment data for extraction
 colData field optional
-experiments should either be SummarizedExperiment or SingleCellExperiment 
-objects}
+experiments should either be SummarizedExperiment, SingleCellExperiment, or 
+RangedSummarizedExperiment classes}
 
 \item{subset_data}{\itemize{
 \item `all` use all experiments in MAE object

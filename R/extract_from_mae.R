@@ -5,8 +5,8 @@
 #' 
 #' @param MAE_object an MAE object containing experiment data for extraction
 #' colData field optional
-#' experiments should either be SummarizedExperiment or SingleCellExperiment 
-#' objects
+#' experiments should either be SummarizedExperiment, SingleCellExperiment, or 
+#' RangedSummarizedExperiment classes
 #' @param subset_data \itemize{
 #' \item `all` use all experiments in MAE object
 #' \item `c(omic1,omic2,...)` list of omics from names(MAE_object)
@@ -17,7 +17,7 @@
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
 #' NCI60_input = extract_from_mae(data_blocks_mae,subset='all')
-#' @importFrom MultiAssayExperiment colData assays
+#' @importFrom MultiAssayExperiment colData assays experiments
 #' @importFrom MultiAssayExperiment mergeReplicates intersectColumns
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @export
@@ -34,6 +34,18 @@ if (subset_data!="all"){
   }
     
 }
+  
+n_omics = length(MAE_object)
+if (n_omics==1){
+  stop("The nipalsMCIA algorithm is designed for analysis of > 1 omics experiments")}
+else{
+  for (i in seq_along(c(1:n_omics))){
+    if(is.null(colnames(experiments(MAE_object)[[i]]))){
+      stop("All experiments must have colnames (sample names)")}
+  }
+}
+
+  
 
 MAE_object_harmonize = MultiAssayExperiment::mergeReplicates(intersectColumns(MAE_object))
 

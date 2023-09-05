@@ -10,7 +10,7 @@
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames or a MultiAssayExperiment class
+#' @param data_blocks_mae a MultiAssayExperiment class
 #' object (with sample metadata as a dataframe in the colData attribute).
 #' @param col_preproc_method an option for the desired column-level data
 #' pre-processing, either:

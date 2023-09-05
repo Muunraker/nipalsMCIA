@@ -1,3 +1,4 @@
+---
 title: "Analysis of MCIA Decomposition"
 author:
 - Max Mattessich
@@ -82,7 +83,7 @@ The `nipals_multiblock` function accepts as input a [MultiAssayExperiment](https
 multi-omics data in which each assay can be stored as an individual experiment
 alongside relevant metadata for samples and experiments.  If users
 have a list of data blocks with matching sample names (with optional sample-level
-metadata), we provide a simpleconversion function (`simple_mae.R`) to generate an 
+metadata), we provide a simple conversion function (`simple_mae.R`) to generate an 
 MAE object from the data blocks.  For more sophisticated MAE object construction,
 please consult the MAE documentation.
 
@@ -121,8 +122,7 @@ set.seed(42)
 
 ## Preview of the NCI60 dataset
 
-The NCI60 data set has been included with the `nipalsMCIA` package and is
-easily available as shown below:
+The NCI60 data set has been included with the `nipalsMCIA` package:
 
 ```{r intro-load-data}
 # load the dataset which uses the name data_blocks
@@ -149,7 +149,7 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
-The result is an `NipalsResult` object containing several outputs from the decomposition:
+The result is an object of the `NipalsResult` class containing several outputs from the decomposition:
 
 ```{r intro-mcia-results}
 slotNames(mcia_results)
@@ -252,7 +252,7 @@ In addition, scores can be colored by a meaningful label such as cancer type for
 this data. The `projection_plot()` function can incorporate sample metadata if 
 it is included in the `colData` slot of the associated MAE object.  The sample
 metadata contains rownames corresponding to the primary sample names of the MAE
-object, and columns contain different metadata (e.g. age, disease status, etc.)
+object, and columns contain different metadata (e.g. age, disease status, etc.).
 For instance, each of the 21 samples in the NCI-60 dataset represents a cell line 
 with one of three cancer types: CNS, Leukemia, or Melanoma. We have provided this 
 metadata as part of the `data(NCI60)` dataset and show how it can be included in 
@@ -272,12 +272,8 @@ is passed to the `metadata` slot of the `NipalsResult` instance,
 set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
-                                  metadata = metadata_NCI60, plots = "none",
+                                  plots = "none",
                                   num_PCs = 10, tol = 1e-12)
-
-# AK comment: we should only have one means of adding the metadata, which is via the colData column of the input data
-# alternative method for adding metadata
-# mcia_results <- nmb_set_metadata(mcia_results,metadata_NCI60)
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine

@@ -30,6 +30,13 @@ simple_mae <- function(matrix_list,row_format = "feature", colData_input=NULL){
     stop("Choose from sample or feature orientation")
   }
   
+  # Check if sample names are missing
+  for (i in seq_along(matrix_list)){
+    if(is.null(colnames(matrix_list[[i]]))){
+      stop("All omics must have sample names")
+    }
+  }
+  
   if(is.null(colData_input)){
   mae_object<-MultiAssayExperiment::MultiAssayExperiment(
       lapply(matrix_list, function(x) SummarizedExperiment(as.matrix(x))))}

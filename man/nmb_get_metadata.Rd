@@ -10,17 +10,16 @@ nmb_get_metadata(nmb_object)
 \item{nmb_object}{A `NipalsResult` object.}
 }
 \value{
-a data frame containing the metadata in the object.
+a dataframe containing metadata associated with the `NipalsResult` object.
 }
 \description{
-Retrieves the metadata from a `NipalsResult` object,
-typically output from `nipals_multiblock()`.
+Retrieves the metadata
+from a `NipalsResult` object, typically output from `nipals_multiblock()`.
 }
 \examples{
 data("NCI60")
 data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
                               colData=metadata_NCI60)
-mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
-                               metadata = metadata_NCI60)
-res_metadata <- nmb_get_metadata(mcia_out)
+mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10)
+nipals_metadata <- nmb_get_metadata(mcia_out)
 }
