@@ -1,3 +1,4 @@
+---
 title: "Analysis of MCIA Decomposition"
 author:
 - Max Mattessich
@@ -70,20 +71,20 @@ subjects with three data blocks. The data blocks include mRNA levels
 (12895 features), microRNA levels (537 features) and protein levels
 (7016 features). 
 
-The `nipals_multiblock` function implements performs MCIA using the NIPALS algorithm.  
-`nipals_multiblock` outputs results of the decomposition, including a low-dimensional 
-embedding of the data in its global scores, and the contributions of the data 
-blocks (block score weights) and features (global loadings) to the global scores.  
+The `nipals_multiblock` function performs MCIA using the NIPALS algorithm.  
+`nipals_multiblock` outputs a decomposition that includes a low-dimensional 
+embedding of the data in the form of global scores, and the contributions of the data 
+blocks (block score weights) and features (global loadings) to these same global scores.  
 `nipalsMCIA` provides several additional functions to visualize, analyze, 
 and interpret these results.
 
 The `nipals_multiblock` function accepts as input a [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html)
-(MAE) object. Such objects represent a sophisticated approach to organizing
+(MAE) object. Such objects represent a modern classed-based approach to organizing
 multi-omics data in which each assay can be stored as an individual experiment
 alongside relevant metadata for samples and experiments.  If users
-have a list of data blocks with matching sample names (with optional sample-level
-metadata), we provide a simpleconversion function (`simple_mae.R`) to generate an 
-MAE object from the data blocks.  For more sophisticated MAE object construction,
+have a list of data blocks with matching sample names (and optional sample-level
+metadata), we provide a simple conversion function (`simple_mae.R`) to generate an 
+MAE object.  For more sophisticated MAE object construction,
 please consult the MAE documentation.
 
 In the context of the NCI60 data set and this vignette, we will show you the
@@ -249,9 +250,9 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2))
 ```
 
 In addition, scores can be colored by a meaningful label such as cancer type for 
-this data. The `projection_plot()` function can incorporate sample metadata if 
-it is included in the `colData` slot of the associated MAE object.  The sample
-metadata contains rownames corresponding to the primary sample names of the MAE
+this data. To do so, the colData slot of the associated MAE object must be loaded
+with sample-level metadata prior to invoking projection_plot(). The sample metadata
+is composed of row names corresponding to the primary sample names of the MAE
 object, and columns contain different metadata (e.g. age, disease status, etc.)
 For instance, each of the 21 samples in the NCI-60 dataset represents a cell line 
 with one of three cancer types: CNS, Leukemia, or Melanoma. We have provided this 
@@ -265,7 +266,7 @@ data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
                               colData=metadata_NCI60)
 ```
 
-We now rerun `nipals_multiblock()` using the updated MAE object, the `colData`
+We now rerun `nipals_multiblock()` using the updated MAE object, where the `colData`
 is passed to the `metadata` slot of the `NipalsResult` instance,
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
@@ -281,10 +282,12 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine
-which column of `metadata` is used for color_col the projection plots, in this
-case the column is `cancerType`. `color_pal` can then be used with a character
-vector or `scales::<function>` to select the colors which are applied
-alphabetically:
+which column of `metadata` is used for coloring the individual data points, in this
+case `cancerType`. `color_pal` can then be used with a vector of colors
+(i.e. c('blue', 'red', 'green')) or `scales::<function>` to select a color palette.
+Note: colors are   applied by lexicographically sorting the unique list of metadata
+values, the first color is then assigned to the first value, second with second
+and so on.
 
 ```{r part-1-visualize-clusters-color-col, fig.dim = c(5, 5)}
 # meta_colors = c('orange', 'purple', 'pink')
@@ -295,19 +298,23 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2),
                 color_col = "cancerType", color_pal = meta_colors,
                 legend_loc = "bottomleft")
 ```
+Using this plot one can observe that global factor scores for factor 1 and 2
+can separate samples into their cancer types.
 
 ## Visualizing the Clustering of Samples by Factor Scores
 
-A heatmap can be used to cluster the global scores across all factors using
-`global_scores_heatmap()`.  The samples can be colored by the associated metadata 
-using `color_cor` + `color_pal`as shown below.  One can observe that samples 
-cluster by cancer type.
+A heatmap can be used to cluster the samples based on global scores across all factors
+using `global_scores_heatmap()`. The samples can be colored by the associated metadata 
+using `color_cor` + `color_pal`as shown below.
 
 
 ```{r part-1-global-heatmap-colored, fig.dim = c(6, 4)}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
+
+Like the projection plot, one can observe that the clustering can differentiate
+between cancer type quite effectively.
 
 # Part 2: Interpreting Global Loadings
 
@@ -324,17 +331,16 @@ factor score, and can be visualized using the function `block_weights_heatmap()`
 block_weights_heatmap(mcia_results)
 ```
 
-For example, we can observe that factors 7-9 have the strongest contribution
+Here, we can observe that factors 7-9 have the strongest contribution
 from the protein data.
 
 ## Visualize All Feature Loadings on Two Axes
 
 MCIA returns feature loadings for each factor that can be used to understand
-important contributions of multi-omic features to a given factor.
-To get a sense of which omics features show highest contribution to
-each factor, one can plot feature loadings for any two omics using the
-`vis_load_plot` function.  The features that take the most extreme values will
-be the strongest contributors to that factor.
+important contributions. To get a sense of which omics features show high
+contribution to each factor, one can plot feature loadings for any two omics
+using the `vis_load_plot` function. The features that take the most extreme
+values will be the strongest contributors to that factor.
 
 ```{r part-2-loadings, fig.dim = c(6, 4)}
 # colors_omics = c('red', 'blue', 'green')
@@ -344,18 +350,25 @@ colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
 
+Using the graph above we can deduce that individual miRNA features tend to
+spread out much more from the (0,0) region than mRNA and prot features,
+therefore, per miRNA feature, there is a stronger contribution of these
+variables to the decomposition via factor 1 and 4.
+
 ## Scree Plot: Visualizing the Top Features per Factor
 
-For a given factor, users can return and visualize a ranked list of top
-magnitude features. Features can be ranked based on the users preference:
-either by absolute value, ascending, or descending values. All features, or
-features in a given omic can be ranked. The `ord_loadings` function returns a
-ranked list, and `vis_load_ord` allows users to visualize the features loadings
-as a scree plot.
+To dive into each factor users can generate a scree plot of top loading 
+values using the following two steps/functions: 1) `ord_loadings(...)` which
+calculates a list of ranked feature loadings, and 2) `vis_load_ord(...)` which 
+takes as input ranked values from step (1) to generate a scree plot. Features
+can be ranked based on ascending or descending values and/or absolute value. 
+Users can also plot features from all omics together or focus on a specific
+omic by using a corresponding block name (i.e. mrna). 
 
 ### Factor 1
 
-Here, we return and visualize two ranked lists for Factor 1: using all omics, or just mrna.
+Here, we return and visualize two ranked lists for Factor 1: using all omics,
+or just mrna.
 
 ```{r part-2-factor-1, fig.dim = c(8, 3)}
 # define the loadings
@@ -372,6 +385,11 @@ mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
 
 ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
+
+By using the graph on the left we see that miRNA is playing the strongest
+role across all positive feature loadings whereas the right graph allows us to
+focus on mRNA signals where genes like *GNS* and *WASL* come up as top
+contributors.
 
 ### Factor 2
 
@@ -393,12 +411,19 @@ prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
 
 ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
+For factor 2, we again see that across all omics miRNA is playing the strongest
+role. One important difference (relative to factor 1) is made by ranking the
+values according to the absolute value. Doing so allowed us to identify 9 (out
+of 15) features with a strong negative loading value. Even more impressive is the 
+right graph where only prot features are plotted using absolute ranking. In this
+second plot only strong negative loading values are present showcasing the
+importance of using absolute rankings, alternatively, you can make two scree
+plots with no absolute ranking and then apply descending order for one and
+ascending order for the other.
 
 ### Factor 4
 
 We return and visualize a ranked list for Factor 4 with the top 60 features.
-One can observe that while miRNA dominate the top features, proteins are also 
-represented.
 
 ```{r part-2-factor-4, fig.dim = c(10, 4)}
 # define the loadings
@@ -406,10 +431,12 @@ all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
                       descending = TRUE, factor = 4)
 
 # visualization
-all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
-                           n_feat = 60)
+all_4_plot <- vis_load_ord(gl_f_ord = all_4, omic_name='all', 
+                           colors_omics = colors_omics, n_feat = 60)
 all_4_plot
 ```
+One can observe that while miRNA dominate the top features, proteins are also 
+represented.
 
 ## Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks
 
