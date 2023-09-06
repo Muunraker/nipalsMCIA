@@ -14,7 +14,7 @@
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks, num_PCs = 10, 
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10, 
 #'                                   plots = "none", tol = 1e-12)
 #' all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
 #'     absolute = FALSE, descending = TRUE, factor = 1)

@@ -9,26 +9,27 @@
 #'
 #' @param mcia_results an mcia object output by nipals_multiblock()
 #'         containing block scores, weights, and pre-processing identifier.
-#' @param df a list of data matrices to make predictions from, where each entry
-#'         corresponds to one omics type in "sample" x " features" format.
-#'         Feature and omic order must match `bl`. Pre-processing should also
-#'         match the data used to generate `bl` and `bw`.
-#' @return a matrix of predicted global scores, in form
+#' @param test_data an MAE object with the same block types and features as the
+#'         training dataset.  Feature and omic order must match `bl`. 
+#' @return a matrix of predicted global scores for the training data
 #' @examples
 #'    data(NCI60)
 #'    data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                                  colData=metadata_NCI60)
 #'    mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 2)
-#'    new_data <- data_blocks # should update with a truly new dataset
+#'    new_data <- data_blocks_mae # should update with a truly new dataset
 #'    preds <- predict_gs(mcia_results, new_data)
 #'
 #' @export
 #'
-predict_gs <- function(mcia_results, df) {
+predict_gs <- function(mcia_results, test_data) {
     bl <- mcia_results@block_loadings
     bw <- mcia_results@block_score_weights
     col_preproc_method <- mcia_results@col_preproc_method
     block_preproc_method <- mcia_results@block_preproc_method
+    
+    # extract data from train MAE object
+    df <- extract_from_mae(test_data)
 
     num_omics <- length(bl)
     if (length(df) != length(bl) || length(df) != dim(bw)[[1]]) {
@@ -41,16 +42,6 @@ predict_gs <- function(mcia_results, df) {
     df <- lapply(df, col_preproc, col_preproc_method)
     df <- lapply(df, block_preproc, block_preproc_method)
     message("Pre-processing completed")
-
-    # if (tolower(preproc_method) == "colprofile") {
-    #    message("Centered column profile pre-processing detected.")
-    #    message("Performing pre-processing on data")
-    #    df <- lapply(df, CCpreproc)
-    #    message("Pre-processing completed.")
-    # } else {
-    #    message("No pre-processing detected.")
-    #    df <- lapply(df, as.matrix)
-    # }
 
     # ensuring all arguments are matrices
     bl <- lapply(bl, as.matrix)

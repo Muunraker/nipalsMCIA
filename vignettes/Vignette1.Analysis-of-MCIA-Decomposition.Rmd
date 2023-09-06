@@ -87,7 +87,7 @@ metadata), we provide a simple conversion function (`simple_mae.R`) to generate 
 MAE object.  For more sophisticated MAE object construction,
 please consult the MAE documentation.
 
-In the context of the NCI60 data set and this vignette, we will show you the
+In the context of the NCI-60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and
 proteins. More specifically, we will show you how to interpret the global
 factor scores in [Part 1: Interpreting Global Factor Scores] and global loadings
@@ -120,9 +120,9 @@ library(stringr)
 set.seed(42)
 ```
 
-## Preview of the NCI60 dataset
+## Preview of the NCI-60 dataset
 
-The NCI60 data set has been included with the `nipalsMCIA` package and is
+The NCI-60 data set has been included with the `nipalsMCIA` package and is
 easily available as shown below:
 
 ```{r intro-load-data}
@@ -133,9 +133,12 @@ data(NCI60)
 data_blocks$miRNA[1:3, 1:3]
 data_blocks$mrna[1:3, 1:3]
 data_blocks$prot[1:3, 1:3]
+```
 
-# convert data_blocks to an MAE object
-data_blocks_mae <- simple_mae(data_blocks,row_format="sample")
+To convert data_blocks into an MAE object we provide the `simple_mae()`
+function:
+```{r convert-to-mae}
+data_blocks_mae <- simple_mae(data_blocks, row_format="sample")
 ```
 
 # Running and reviewing the MCIA output
@@ -150,7 +153,7 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
                                   num_PCs = 10, tol = 1e-12, plots = "none")
 ```
 
-The result is an `NipalsResult` object containing several outputs from the decomposition:
+The result is an NipalsResult object containing several outputs from the decomposition:
 
 ```{r intro-mcia-results}
 slotNames(mcia_results)
@@ -249,48 +252,50 @@ plot using `projection = "global"`.
 projection_plot(mcia_results, projection = "global", orders = c(1, 2))
 ```
 
-In addition, scores can be colored by a meaningful label such as cancer type for 
-this data. To do so, the colData slot of the associated MAE object must be loaded
-with sample-level metadata prior to invoking projection_plot(). The sample metadata
-is composed of row names corresponding to the primary sample names of the MAE
-object, and columns contain different metadata (e.g. age, disease status, etc.)
-For instance, each of the 21 samples in the NCI-60 dataset represents a cell line 
-with one of three cancer types: CNS, Leukemia, or Melanoma. We have provided this 
-metadata as part of the `data(NCI60)` dataset and show how it can be included in 
-the resulting MAE object using the `colData` parameter in `simple_mae()`,
-or as `colData(data_blocks_mae)`:
+In addition, scores can be colored by a meaningful label such as cancer type
+which is highly relevant to NCI-60. To do so, the colData slot of the associated
+MAE object must be loaded with sample-level metadata prior to invoking
+`projection_plot()`. The sample metadata is composed of row names corresponding to
+the primary sample names of the MAE object, and columns contain different
+metadata (e.g. age, disease status, etc). For instance, each of the 21 samples
+in the NCI-60 dataset represents a cell line with one of three cancer types:
+CNS, Leukemia, or Melanoma. We have provided this metadata as part of the
+`data(NCI60)` dataset and we next show how it can be included in the resulting MAE
+object using the `colData` parameter in `simple_mae()`:
 
 ```{r part-1-metadata}
+# preview of metadata
 head(metadata_NCI60)
-data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+
+# loading of mae with metadata
+data_blocks_mae <- simple_mae(data_blocks, row_format="sample",
                               colData=metadata_NCI60)
 ```
 
-We now rerun `nipals_multiblock()` using the updated MAE object, where the `colData`
-is passed to the `metadata` slot of the `NipalsResult` instance,
+We now rerun `nipals_multiblock()` using the updated MAE object, where the
+`colData` is passed to the `metadata` slot of the `NipalsResult` instance,
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
-                                  metadata = metadata_NCI60, plots = "none",
+                                  plots = "none",
                                   num_PCs = 10, tol = 1e-12)
-
-# AK comment: we should only have one means of adding the metadata, which is via the colData column of the input data
-# alternative method for adding metadata
-# mcia_results <- nmb_set_metadata(mcia_results,metadata_NCI60)
 ```
 
 The `color_col` argument of `projection_plot()` can then be used to determine
-which column of `metadata` is used for coloring the individual data points, in this
-case `cancerType`. `color_pal` can then be used with a vector of colors
-(i.e. c('blue', 'red', 'green')) or `scales::<function>` to select a color palette.
-Note: colors are   applied by lexicographically sorting the unique list of metadata
-values, the first color is then assigned to the first value, second with second
-and so on.
+which column of `metadata` is used for coloring the individual data points, in
+this case `cancerType`. `color_pal` is used to assign a color palette and
+requires a vector of colors (i.e. c('blue', 'red', 'green')). To help create
+this vector we also provided `get_metadata_colors()`, a helper function (used 
+below) that can be used with a `scales::<function>` to return an appropriate
+vector of colors. Note: colors are applied by lexicographically sorting the list
+of unique metadata values then assigning the first color to the first value,
+second with second and so on.
 
 ```{r part-1-visualize-clusters-color-col, fig.dim = c(5, 5)}
-# meta_colors = c('orange', 'purple', 'pink')
+# meta_colors = c("blue", "grey", "yellow") can use color names
+# meta_colors = c("#00204DFF", "#7C7B78FF", "#FFEA46FF") can use hex codes
 meta_colors <- get_metadata_colors(mcia_results, color_col = 1,
                                    color_pal_params = list(option = "E"))
 
@@ -298,12 +303,12 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2),
                 color_col = "cancerType", color_pal = meta_colors,
                 legend_loc = "bottomleft")
 ```
-Using this plot one can observe that global factor scores for factor 1 and 2
-can separate samples into their cancer types.
+Using this plot one can observe that global factor scores for factor 1 and 2 can
+separate samples into their cancer types.
 
 ## Visualizing the Clustering of Samples by Factor Scores
 
-A heatmap can be used to cluster the samples based on global scores across all factors
+A heatmap can be used to cluster samples based on global scores across all factors
 using `global_scores_heatmap()`. The samples can be colored by the associated metadata 
 using `color_cor` + `color_pal`as shown below.
 
@@ -312,7 +317,6 @@ using `color_cor` + `color_pal`as shown below.
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
-
 Like the projection plot, one can observe that the clustering can differentiate
 between cancer type quite effectively.
 
@@ -331,7 +335,7 @@ factor score, and can be visualized using the function `block_weights_heatmap()`
 block_weights_heatmap(mcia_results)
 ```
 
-Here, we can observe that factors 7-9 have the strongest contribution
+For example, we can observe that factors 7-9 have the strongest contribution
 from the protein data.
 
 ## Visualize All Feature Loadings on Two Axes
@@ -349,7 +353,6 @@ colors_omics <- get_colors(mcia_results)
 
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
-
 Using the graph above we can deduce that individual miRNA features tend to
 spread out much more from the (0,0) region than mRNA and prot features,
 therefore, per miRNA feature, there is a stronger contribution of these
@@ -358,8 +361,8 @@ variables to the decomposition via factor 1 and 4.
 ## Scree Plot: Visualizing the Top Features per Factor
 
 To dive into each factor users can generate a scree plot of top loading 
-values using the following two steps/functions: 1) `ord_loadings(...)` which
-calculates a list of ranked feature loadings, and 2) `vis_load_ord(...)` which 
+values using the following two steps/functions: 1) `ord_loadings()` which
+calculates a list of ranked feature loadings, and 2) `vis_load_ord()` which 
 takes as input ranked values from step (1) to generate a scree plot. Features
 can be ranked based on ascending or descending values and/or absolute value. 
 Users can also plot features from all omics together or focus on a specific
@@ -411,6 +414,7 @@ prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
 
 ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
+
 For factor 2, we again see that across all omics miRNA is playing the strongest
 role. One important difference (relative to factor 1) is made by ranking the
 values according to the absolute value. Doing so allowed us to identify 9 (out
@@ -431,8 +435,8 @@ all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
                       descending = TRUE, factor = 4)
 
 # visualization
-all_4_plot <- vis_load_ord(gl_f_ord = all_4, omic_name='all', 
-                           colors_omics = colors_omics, n_feat = 60)
+all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
+                           n_feat = 60)
 all_4_plot
 ```
 One can observe that while miRNA dominate the top features, proteins are also 
@@ -440,7 +444,7 @@ represented.
 
 ## Pathway Analysis for the Top Factors using Data from Gene-Centric Omics Blocks
 
-The NCI60 data set includes gene expression data, and its corresponding global
+The NCI-60 data set includes gene expression data, and its corresponding global
 loading matrix is a gene by factor matrix. We can learn more about the pathways
 a given factor may be capturing by running a global loading for a given factor 
 through a gene set enrichment analysis (GSEA). Here, we look at factors 1 and 3.
@@ -543,5 +547,3 @@ sig_path3$leadingEdge[[1]][1:10]
 ```{r session-info}
 sessionInfo()
 ```
-
-</details>

@@ -63,9 +63,9 @@ nmb_get_bs <- function(nmb_object) {
 #' @return a list of matrices containing block loadings.
 #' @examples
 #' data("NCI60")
-#' data_blocks_mae <- simple_mae(data_blocks_mae,row_format="sample",
+#' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_out <- nipals_multiblock(data_blocks, num_PCs = 10)
+#' mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10)
 #' block_loadings<- nmb_get_bl(mcia_out)
 #' @export
 
@@ -112,19 +112,18 @@ nmb_get_eigs <- function(nmb_object) {
 
 #' Accessor function for metadata
 #'
-#' @description Retrieves the metadata from a `NipalsResult` object,
-#' typically output from `nipals_multiblock()`.
+#' @description Retrieves the metadata
+#' from a `NipalsResult` object, typically output from `nipals_multiblock()`.
 #' @param nmb_object A `NipalsResult` object.
-#' @return a data frame containing the metadata in the object.
+#' @return a dataframe containing metadata associated with the `NipalsResult` object.
 #' @examples
 #' data("NCI60")
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
-#'                                metadata = metadata_NCI60)
-#' res_metadata <- nmb_get_metadata(mcia_out)
+#' mcia_out <- nipals_multiblock(data_blocks_mae, num_PCs = 10)
+#' nipals_metadata <- nmb_get_metadata(mcia_out)
 #' @export
 
 nmb_get_metadata <- function(nmb_object) {
-    return(nmb_object@metadata)
+  return(nmb_object@metadata)
 }
