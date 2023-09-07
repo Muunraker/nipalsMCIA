@@ -372,8 +372,8 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
 
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
-mcia_results_sc_list <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
-names(mcia_results_sc_list)
+mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
+mcia_results_sc
 ```
 
 ## Visualization

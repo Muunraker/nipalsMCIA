@@ -162,7 +162,7 @@ slotNames(mcia_results)
 We describe the first two in more detail below, and will discuss several others
 in the remainder of the vignette.  For additional details on the decomposition, see
 ([Hanafi, 2011](https://doi.org/10.1016/j.chemolab.2010.05.010), 
-[Mattesich, 2022](http://hdl.handle.net/10427/CZ30Q6773))
+[Mattesich, 2022](http://hdl.handle.net/10427/CZ30Q6773)).
 
 ## Brief overview of the Global Scores Matrix ($F$)
 
@@ -213,8 +213,8 @@ In the introduction we showed how to calculate the MCIA decomposition using
 `nipals_multiblock()` but used the parameter `plots = "none"` to avoid the
 default plotting behavior of this function. By default, this function will
 generate two plots which help establish an initial intuition for the MCIA
-decomposition. Here we will re-run `nipals_multiblock()` and omit the `plots`
-parameter (default=all):
+decomposition. Here we will re-run `nipals_multiblock()` with the default `plots`
+parameter (`all`):
 
 ```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4)}
 set.seed(42)
@@ -287,7 +287,7 @@ The `color_col` argument of `projection_plot()` can then be used to determine
 which column of `metadata` is used for coloring the individual data points, in
 this case `cancerType`. `color_pal` is used to assign a color palette and
 requires a vector of colors (i.e. c('blue', 'red', 'green')). To help create
-this vector we also provided `get_metadata_colors()`, a helper function (used 
+this vector we also provide `get_metadata_colors()`, a helper function (used 
 below) that can be used with a `scales::<function>` to return an appropriate
 vector of colors. Note: colors are applied by lexicographically sorting the list
 of unique metadata values then assigning the first color to the first value,
@@ -329,7 +329,7 @@ matrix $A$ that is $p\times r$.
 
 The global loadings matrix is calculated using a weighted sum of the block loadings.
 These weights can be interpreted as the contribution of each omic to the global
-factor score, and can be visualized using the function `block_weights_heatmap()`.
+factor score (i.e. *pseudoeigenvalue*), and can be visualized using the function `block_weights_heatmap()`.
 
 ```{r part-2-block-heatmap, fig.dim = c(4.5, 3)}
 block_weights_heatmap(mcia_results)
@@ -353,10 +353,9 @@ colors_omics <- get_colors(mcia_results)
 
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 ```
-Using the graph above we can deduce that individual miRNA features tend to
-spread out much more from the (0,0) region than mRNA and prot features,
-therefore, per miRNA feature, there is a stronger contribution of these
-variables to the decomposition via factor 1 and 4.
+From this plot, we can deduce that individual miRNA features tend to
+have the most extreme values in factors 1 and 4, thereby contributing most strongly
+to the global scores for those factors.
 
 ## Scree Plot: Visualizing the Top Features per Factor
 
@@ -389,10 +388,9 @@ mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
 ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-By using the graph on the left we see that miRNA is playing the strongest
-role across all positive feature loadings whereas the right graph allows us to
-focus on mRNA signals where genes like *GNS* and *WASL* come up as top
-contributors.
+The first plot shows that that miRNA has the overal top positive feature loadings for
+factor 1, whereas the second plot allows us to focus on only mRNA signals,
+where genes like *GNS* and *WASL* come up as top contributors.
 
 ### Factor 2
 
@@ -415,15 +413,12 @@ prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
 ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
 ```
 
-For factor 2, we again see that across all omics miRNA is playing the strongest
+For factor 2, we again see that across all omics, miRNA is playing the strongest
 role. One important difference (relative to factor 1) is made by ranking the
-values according to the absolute value. Doing so allowed us to identify 9 (out
-of 15) features with a strong negative loading value. Even more impressive is the 
-right graph where only prot features are plotted using absolute ranking. In this
-second plot only strong negative loading values are present showcasing the
-importance of using absolute rankings, alternatively, you can make two scree
-plots with no absolute ranking and then apply descending order for one and
-ascending order for the other.
+values according to the absolute value. Doing so allows us to identify 9 (out
+of 15) features with a strong negative loading value. The right plot shows that
+the negatively values protein features have the largest absolute values, indicating 
+that they may play a distinct role from the miRNA in global scores for this factor. 
 
 ### Factor 4
 
@@ -446,7 +441,7 @@ represented.
 
 The NCI-60 data set includes gene expression data, and its corresponding global
 loading matrix is a gene by factor matrix. We can learn more about the pathways
-a given factor may be capturing by running a global loading for a given factor 
+over-represented in a given factor by running the global loadings for the factor 
 through a gene set enrichment analysis (GSEA). Here, we look at factors 1 and 3.
 We run `gsea_report()`, which reports on the p-value of the most significant 
 pathway as well as the total number of significant pathways for each factor. 
