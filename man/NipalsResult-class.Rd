@@ -5,9 +5,6 @@
 \alias{NipalsResult-class}
 \alias{NipalsResult}
 \title{An S4 class to contain results computed with `nipals_multiblock()`}
-\value{
-A NipalsResult object.
-}
 \description{
 An S4 class to contain results computed with `nipals_multiblock()`
 }
