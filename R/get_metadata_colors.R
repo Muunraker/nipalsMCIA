@@ -12,7 +12,7 @@
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                                colData=metadata_NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10, 
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                   plots = "none", tol = 1e-12)
 #' colors_omics <- get_metadata_colors(mcia_results, "cancerType",
 #'                                     color_pal_params = list(option = "E"))
@@ -23,14 +23,13 @@ get_metadata_colors <- function(mcia_results, color_col,
                                 color_pal_params = list()) {
   meta_list <- unique(mcia_results@metadata[, color_col])
   meta_list <- sort(meta_list) # alphabetize the metadata
-  
+
   if (is(color_pal, "function")) {
     colors_meta <- do.call(color_pal, color_pal_params)(length(meta_list))
-    
   } else if (is(color_pal, "character")) {
     colors_meta <- color_pal
   }
-  
+
   names(colors_meta) <- meta_list
   return(colors_meta)
 }

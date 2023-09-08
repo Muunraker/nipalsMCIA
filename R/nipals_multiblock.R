@@ -68,14 +68,14 @@
 #' argument. Note: overrides metadata present in any MAE class object.}
 #' @importFrom graphics par
 #' @importFrom methods new
-#' @importFrom MultiAssayExperiment colData 
+#' @importFrom MultiAssayExperiment colData
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'    data(NCI60)
 #'    data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                                  colData=metadata_NCI60)
 #'    NIPALS_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
-#'                                        tol = 1e-12, max_iter = 1000, 
+#'                                        tol = 1e-12, max_iter = 1000,
 #'                                        col_preproc_method = "colprofile",
 #'                                        deflationMethod = "block")
 #'    MCIA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4)
@@ -83,24 +83,21 @@
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks_mae, 
+nipals_multiblock <- function(data_blocks_mae,
                               col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
-                              num_PCs = 10, tol = 1e-9, 
+                              num_PCs = 10, tol = 1e-9,
                               max_iter = 1000,color_col = NULL,
                               deflationMethod = "block", plots = "all") {
-
     # Check for input type MAE or list
     if (is(data_blocks_mae, "MultiAssayExperiment")) {
-      data_blocks<-extract_from_mae(data_blocks_mae)
-      metadata <-
-        data.frame(MultiAssayExperiment::colData(data_blocks_mae))
+      data_blocks <- extract_from_mae(data_blocks_mae)
+      metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
       if (length(metadata) == 0) {
         metadata <- NULL
       }
     } else {
-        stop("Unknown input data format -
-             please use MultiAssayExperiment")
+        stop("Unknown input data format - please use MultiAssayExperiment")
     }
 
     num_blocks <- length(data_blocks)
@@ -221,19 +218,19 @@ nipals_multiblock <- function(data_blocks_mae,
     if (is.null(metadata)) {
         metadata <- data.frame()
     }
-    
+
     # creating S4 class object with nipals outputs
     mcia_out <- new("NipalsResult",
-                   global_scores = global_scores,
-                   global_loadings = global_loadings,
-                   block_score_weights = block_score_weights,
-                   block_scores = block_scores,
-                   block_loadings = block_loadings,
-                   eigvals = eigvals,
-                   col_preproc_method = tolower(col_preproc_method),
-                   block_preproc_method = tolower(block_preproc_method),
-                   block_variances = block_vars,
-                   metadata = metadata)
+                    global_scores = global_scores,
+                    global_loadings = global_loadings,
+                    block_score_weights = block_score_weights,
+                    block_scores = block_scores,
+                    block_loadings = block_loadings,
+                    eigvals = eigvals,
+                    col_preproc_method = tolower(col_preproc_method),
+                    block_preproc_method = tolower(block_preproc_method),
+                    block_variances = block_vars,
+                    metadata = metadata)
 
     # Plotting results
     if (tolower(plots) == "all") {

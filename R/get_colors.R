@@ -11,7 +11,7 @@
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10, 
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                  plots = "none", tol = 1e-12)
 #' colors_omics <- get_colors(mcia_results)
 #' @importFrom scales viridis_pal
@@ -31,4 +31,3 @@ get_colors <- function(mcia_results, color_pal = scales::viridis_pal,
     names(colors_omics) <- omic_list
     return(colors_omics)
 }
-

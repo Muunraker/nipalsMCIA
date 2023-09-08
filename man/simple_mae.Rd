@@ -24,11 +24,11 @@ Create an MAE object from a set of data matrices and column data.
 \details{
 Requires that sample names match across experiments and are identical
 to primary names, will only convert data matrices to SummarizedExperiment class.
-If the data is more complex, please follow the guidelines 
+If the data is more complex, please follow the guidelines
 for creating an MAE object outlined in `help(MultiAssayExperiment)`
 }
 \examples{
 data(NCI60)
-data_blocks_mae <- simple_mae(data_blocks,row_format='sample', 
-                              colData=metadata_NCI60)
+data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+                              colData = metadata_NCI60)
 }

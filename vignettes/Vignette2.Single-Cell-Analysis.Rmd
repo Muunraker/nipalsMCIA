@@ -343,9 +343,10 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 set.seed(42)
 
 # convert data_blocks_sc to an MAE object using the SingleCellExperiment class
-data_blocks_sc_mae<- MultiAssayExperiment::MultiAssayExperiment(
-                     lapply(data_blocks_sc, function(x) SingleCellExperiment(t(as.matrix(x)))),
-                     colData = metadata_sc)
+data_blocks_sc_mae <-
+  MultiAssayExperiment::MultiAssayExperiment(lapply(data_blocks_sc, function(x)
+    SingleCellExperiment::SingleCellExperiment(t(as.matrix(x)))),
+    colData = metadata_sc)
 mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
                                      col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
@@ -653,8 +654,7 @@ annotations defined in a later section, so we will clear them out here to
 proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file = file.path(path_inst,
-                                "tenx_pbmc5k_CITEseq_annotated.rds"))
+obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
 # reset to baseline
 Idents(object = obj) <- "seurat_clusters"
@@ -923,7 +923,7 @@ You can also obtain the following bar plot using the output of `nipals_multibloc
 ```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
 # examine the total counts
 ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
-  geom_bar() +
+  geom_bar(color = "black", linewidth = 0.2) +
   labs(title = "Cell Type Counts", x = "Cell Type", y = "Count") +
   scale_fill_manual(values = meta_colors_sc) +
   theme_bw() +

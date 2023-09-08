@@ -42,5 +42,3 @@ test_that("use given omics color palette", {
     expect_length(get_colors(mcia_results,
                              color_pal = c("red", "green", "blue")), 3)
 })
-
-

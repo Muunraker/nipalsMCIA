@@ -138,7 +138,7 @@ data_blocks$prot[1:3, 1:3]
 To convert data_blocks into an MAE object we provide the `simple_mae()`
 function:
 ```{r convert-to-mae}
-data_blocks_mae <- simple_mae(data_blocks, row_format="sample")
+data_blocks_mae <- simple_mae(data_blocks, row_format = "sample")
 ```
 
 # Running and reviewing the MCIA output
@@ -268,8 +268,8 @@ object using the `colData` parameter in `simple_mae()`:
 head(metadata_NCI60)
 
 # loading of mae with metadata
-data_blocks_mae <- simple_mae(data_blocks, row_format="sample",
-                              colData=metadata_NCI60)
+data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+                              colData = metadata_NCI60)
 ```
 
 We now rerun `nipals_multiblock()` using the updated MAE object, where the
@@ -507,16 +507,17 @@ factor3_paths[,"padj"] <- sapply(factor3_paths[,"padj"], to_sci)
 
 # Clean up pathway name
 clean_pathway_name <- function(x) {
-    replaced_value <- str_replace_all(x , '_', ' ')
-    if (nchar(replaced_value) > 49){
-        substring_value <- substr(replaced_value, 1, 50) 
-        return(paste0(substring_value, '...'))
+    replaced_value <- str_replace_all(x , "_", " ")
+    if (nchar(replaced_value) > 49) {
+      substring_value <- substr(replaced_value, 1, 50) 
+      return(paste0(substring_value, '...'))
     }
     else {
-        return(replaced_value)
+      return(replaced_value)
     }
 }
-factor3_paths[,"pathway"] <- apply(X=factor3_paths[,"pathway"], MARGIN=1, FUN =clean_pathway_name)
+factor3_paths[, "pathway"] <- apply(X = factor3_paths[,"pathway"],
+                                    MARGIN = 1, FUN = clean_pathway_name)
 ```
 
 ```{r part-2-gsea-for-factor-3-viz}
