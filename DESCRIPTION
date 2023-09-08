@@ -22,7 +22,7 @@ License: GPL-3
 URL: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
-    R (>= 4.2.0)
+    R (>= 4.3.0)
 Imports:
     ComplexHeatmap,
     dplyr,

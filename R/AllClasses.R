@@ -15,6 +15,8 @@
 #' @slot block_variances A list of variances for each block.
 #' @slot metadata A data frame of metadata originally passed into
 #' `nipals_multiblock()`.
+#' 
+#' @returns A NipalsResult object.
 #'
 #' @exportClass NipalsResult
 
