@@ -12,7 +12,7 @@
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10, 
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                   plots = "none", tol = 1e-12)
 #'                                   colors_omics <- get_colors(mcia_results)
 #' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
@@ -23,7 +23,7 @@
 vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
     # extracting global loadings
     gl <- mcia_out@global_loadings
-    
+
     omic_dims <- vapply(mcia_out@block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
     omics_labels <- names(mcia_out@block_loadings)
@@ -40,15 +40,12 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
                         paste0("Axis_", axes[2]), "omic")
 
     # plot data
-    omic<-gl_f$omic
+    omic <- gl_f$omic
     ggplot(data = gl_f,
-            aes(x = gl_f[[colnames(gl_f)[1]]],
-                y = gl_f[[colnames(gl_f)[2]]],
-                color = omic)) +
-            geom_point(alpha = 0.3) +
-            labs(x = paste0("Axis ", axes[1]),
-                 y = paste0("Axis ", axes[2])) +
-            scale_color_manual(values = colors_omics) +
-            theme_bw()
-
+           aes(x = gl_f[[colnames(gl_f)[1]]], y = gl_f[[colnames(gl_f)[2]]],
+               color = omic)) +
+      geom_point(alpha = 0.3) +
+      labs(x = paste0("Axis ", axes[1]), y = paste0("Axis ", axes[2])) +
+      scale_color_manual(values = colors_omics) +
+      theme_bw()
 }

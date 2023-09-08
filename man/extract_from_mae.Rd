@@ -9,7 +9,7 @@ extract_from_mae(MAE_object, subset_data = "all")
 \arguments{
 \item{MAE_object}{an MAE object containing experiment data for extraction
 colData field optional
-experiments should either be SummarizedExperiment, SingleCellExperiment, or 
+experiments should either be SummarizedExperiment, SingleCellExperiment, or
 RangedSummarizedExperiment classes}
 
 \item{subset_data}{\itemize{
@@ -21,7 +21,7 @@ RangedSummarizedExperiment classes}
 List of harmonized data matrices for input into nipals_multiblock()
 }
 \description{
-Extract a list of harmonized data matrices for 
+Extract a list of harmonized data matrices for
 input into nipals_multiblock() from an MAE object
 }
 \examples{

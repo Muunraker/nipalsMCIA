@@ -14,7 +14,7 @@
 #'         \item `block` - scatter plot of two orders of block scores
 #'                         only (aka factors) for given block.
 #'         }
-#' @param block_name Name of the  block to be plotted (if `projection = block` argument used). 
+#' @param block_name Name of the  block to be plotted (if `projection = block` argument used).
 #'
 #' @param orders Option to select orders of factors to plot against each other
 #'         (for projection plots)
@@ -38,7 +38,7 @@
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
 #'                               colData=metadata_NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,  
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                   plots = "none", tol = 1e-12)
 #' projection_plot(mcia_results, projection = "all", orders = c(1,2),
 #'                 color_col = "cancerType", legend_loc = "bottomright")

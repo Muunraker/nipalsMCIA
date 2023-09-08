@@ -47,8 +47,8 @@ BiocManager::install("nipalsMCIA")
 
 ```{r load-packages, message = FALSE}
 library(ggplot2)
-library(nipalsMCIA)
 library(MultiAssayExperiment)
+library(nipalsMCIA)
 ```
 
 ## Split the data
@@ -63,6 +63,7 @@ train_samples <- sample.int(num_samples, num_train)
 
 data_blocks_train <- data_blocks
 data_blocks_test <- data_blocks
+
 for (i in seq_along(data_blocks)) {
   data_blocks_train[[i]] <- data_blocks_train[[i]][train_samples, ]
   data_blocks_test[[i]] <- data_blocks_test[[i]][-train_samples, ]
@@ -70,19 +71,18 @@ for (i in seq_along(data_blocks)) {
 
 # Split corresponding metadata
 metadata_train <- data.frame(metadata_NCI60[train_samples, ],
-                                  row.names = rownames(data_blocks_train$mrna))
+                             row.names = rownames(data_blocks_train$mrna))
 colnames(metadata_train) <- c("cancerType")
 
 metadata_test <- data.frame(metadata_NCI60[-train_samples, ],
-                                  row.names = rownames(data_blocks_test$mrna))
+                            row.names = rownames(data_blocks_test$mrna))
 colnames(metadata_test) <- c("cancerType")
 
 # Create train and test mae objects
-data_blocks_train_mae<-simple_mae(data_blocks_train,row_format="sample",
-                                  colData=metadata_train)
-data_blocks_test_mae<-simple_mae(data_blocks_test,row_format="sample",
-                                  colData=metadata_test)
-                                  
+data_blocks_train_mae <- simple_mae(data_blocks_train, row_format = "sample",
+                                    colData = metadata_train)
+data_blocks_test_mae <- simple_mae(data_blocks_test, row_format = "sample",
+                                   colData = metadata_test)
 ```
 
 ## Run nipalsMCIA on training data
@@ -94,6 +94,7 @@ MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train_mae,
 ```
 
 ## Visualize model on training data using metadata on cancer type
+
 The `get_metadata_colors()` function returns an assignment of a color for the
 metadata columns.  The `nmb_get_gs()` function returns the global scores from the
 input `NipalsResult` object.
@@ -111,14 +112,14 @@ colnames(MCIA_out) <- c("Factor.1", "Factor.2", "cancerType")
 ggplot(data = MCIA_out, aes(x = Factor.1, y = Factor.2, color = cancerType)) +
   geom_point(size = 3) +
   labs(title = "MCIA for NCI60 training data") +
-  theme_bw() +
-  scale_color_manual(values = meta_colors)
+  scale_color_manual(values = meta_colors) +
+  theme_bw()
 ```
 
 ## Generate factor scores for test data using the MCIA_train model
 
 We use the \verb+predict_gs+ function to generate new factor scores on the test
-data set using the MCIA_train model.  The new dataset in the form of an MAE object
+data set using the MCIA_train model. The new dataset in the form of an MAE object
 is input using the parameter `test_data`.
 
 ```{r generate-new-scores, message = FALSE}
@@ -146,8 +147,8 @@ ggplot(data = MCIA_out_full,
        aes(x = Factor.1, y = Factor.2, color = cancerType, shape = set)) +
   geom_point(size = 3) +
   labs(title = "MCIA for NCI60 training and test data") +
-  theme_bw() +
-  scale_color_manual(values = meta_colors)
+  scale_color_manual(values = meta_colors) +
+  theme_bw()
 ```
 
 # Session Info

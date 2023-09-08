@@ -10,7 +10,7 @@
 #' @param mcia_results an mcia object output by nipals_multiblock()
 #'         containing block scores, weights, and pre-processing identifier.
 #' @param test_data an MAE object with the same block types and features as the
-#'         training dataset.  Feature and omic order must match `bl`. 
+#'         training dataset.  Feature and omic order must match `bl`.
 #' @return a matrix of predicted global scores for the training data
 #' @examples
 #'    data(NCI60)
@@ -27,7 +27,7 @@ predict_gs <- function(mcia_results, test_data) {
     bw <- mcia_results@block_score_weights
     col_preproc_method <- mcia_results@col_preproc_method
     block_preproc_method <- mcia_results@block_preproc_method
-    
+
     # extract data from train MAE object
     df <- extract_from_mae(test_data)
 
