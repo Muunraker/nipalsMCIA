@@ -31,7 +31,7 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.5/Vignette-2-Pipeline.png)
+![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.6/Vignette-2-Pipeline.png)
 
 *The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
 
@@ -341,11 +341,16 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 # "largest_sv" results in a more balanced contribution
 # from the blocks than the default "unit_var"
 set.seed(42)
-mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
+
+# convert data_blocks_sc to an MAE object using the SingleCellExperiment class
+data_blocks_sc_mae <-
+  MultiAssayExperiment::MultiAssayExperiment(lapply(data_blocks_sc, function(x)
+    SingleCellExperiment::SingleCellExperiment(t(as.matrix(x)))),
+    colData = metadata_sc)
+mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
                                      col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
                                      num_PCs = 10, tol = 1e-9,
-                                     metadata = metadata_sc,
                                      deflationMethod = "global",
                                      plots = "none")
 ## Performing column-level pre-processing...
@@ -369,7 +374,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
 mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
-names(mcia_results_sc)
+mcia_results_sc
 ```
 
 ## Visualization
@@ -649,8 +654,7 @@ annotations defined in a later section, so we will clear them out here to
 proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file = file.path(path_inst,
-                                "tenx_pbmc5k_CITEseq_annotated.rds"))
+obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
 # reset to baseline
 Idents(object = obj) <- "seurat_clusters"
@@ -914,12 +918,12 @@ VlnPlot(object = obj,
         axis.title.x = element_blank())
 ```
 
-You can also obtain the following bar plot using the output of `nipals_multiblock` e.g. with `ggplot(data.frame(table(mcia_results_sc$metadata)), aes(x = CellType, y = Freq, fill = CellType)) + geom_bar(stat = "identity")` (for the base plot).
+You can also obtain the following bar plot using the output of `nipals_multiblock` e.g. with `ggplot(data.frame(table(nmb_get_metadata(mcia_results_sc))), aes(x = CellType, y = Freq, fill = CellType)) + geom_bar(stat = "identity")` (for the base plot).
 
 ```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
 # examine the total counts
 ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
-  geom_bar() +
+  geom_bar(color = "black", linewidth = 0.2) +
   labs(title = "Cell Type Counts", x = "Cell Type", y = "Count") +
   scale_fill_manual(values = meta_colors_sc) +
   theme_bw() +

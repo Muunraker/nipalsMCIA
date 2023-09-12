@@ -1,3 +1,17 @@
+
+
+# 0.99.6 (2023-09-09):
+## Major changes
+* Switched primary input to `nipals_multiblock()` to a `MultiAssayExperiment` object.
+* `nipals_multiblock()` now outputs an object of the `NipalsResult` class.
+* Converted all downstream analysis functions to work with the `NipalsResult` class.
+
+
+## Minor improvements and bug fixes
+* Added `simple_mae()` function to convert a list of dataframes to a `MultiAssayExperiment` object.
+* Fixed missing `\value` fields in man page for `NipalsResult` class. 
+
+
 # 0.99.5 (2023-06-22):
 ## Major changes
 * Bumping version number to trigger re-build following bug in BiocCheck.

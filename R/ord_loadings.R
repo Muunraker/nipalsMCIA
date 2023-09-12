@@ -12,8 +12,10 @@
 #' @return ranked dataframe
 #' @examples
 #' data(NCI60)
-#' mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-#'                                   num_PCs = 10, plots = "none", tol = 1e-12)
+#' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+#'                               colData=metadata_NCI60)
+#' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
+#'                                   plots = "none", tol = 1e-12)
 #' all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
 #'                           absolute = FALSE, descending = TRUE, factor = 1)
 #' @export
@@ -21,7 +23,7 @@
 ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
                          descending = TRUE, factor = 1) {
     # list of omics plus 'all'
-    omics_names <- names(mcia_out$block_loadings)
+    omics_names <- names(mcia_out@block_loadings)
     omics_names <- c(omics_names, "all")
 
     # Return error if omic not chosen from omics_names list
@@ -30,12 +32,12 @@ ord_loadings <- function(mcia_out, omic = "all", absolute = FALSE,
     }
 
     # Get global loadings and list of omics
-    gl <- mcia_out$global_loadings
+    gl <- mcia_out@global_loadings
     # omic_type <- gsub("^.*_", "", rownames(gl))
 
-    omic_dims <- vapply(mcia_out$block_loadings, dim, numeric(2))[1, ]
+    omic_dims <- vapply(mcia_out@block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
-    omics_labels <- names(mcia_out$block_loadings)
+    omics_labels <- names(mcia_out@block_loadings)
     for (i in seq_along(omics_labels)) {
         omic_label <- omics_labels[i]
         length_omic <- omic_dims[i]

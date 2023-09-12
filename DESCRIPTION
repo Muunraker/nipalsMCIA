@@ -1,6 +1,6 @@
 Package: nipalsMCIA
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
-Version: 0.99.5
+Version: 0.99.6
 Authors@R: c(
     person("Maximilian", "Mattessich",
             email = "maximilian.mattessich@northwestern.edu",
@@ -22,7 +22,7 @@ License: GPL-3
 URL: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
-    R (>= 4.2.0)
+    R (>= 4.3.0)
 Imports:
     ComplexHeatmap,
     dplyr,
@@ -32,6 +32,7 @@ Imports:
     grid,
     methods,
     MultiAssayExperiment,
+    SummarizedExperiment,
     pracma,
     rlang,
     RSpectra,

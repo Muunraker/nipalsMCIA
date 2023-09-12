@@ -33,7 +33,7 @@ projection_plot(
 \item{orders}{Option to select orders of factors to plot against each other
 (for projection plots)}
 
-\item{block_name}{of the block if projection = "block"}
+\item{block_name}{Name of the  block to be plotted (if `projection = block` argument used).}
 
 \item{color_col}{an integer or string specifying the column that will be
 used for color_col}
@@ -60,8 +60,10 @@ Plotting function for a projection plot.
 }
 \examples{
 data(NCI60)
-mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-                                  num_PCs = 10, plots = "none", tol = 1e-12)
+data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                              colData=metadata_NCI60)
+mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
+                                  plots = "none", tol = 1e-12)
 projection_plot(mcia_results, projection = "all", orders = c(1,2),
                 color_col = "cancerType", legend_loc = "bottomright")
 }
