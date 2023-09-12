@@ -24,7 +24,7 @@ Features include:
 
 **References**
 
-Mattesich (2022) A Review of Multi-Block Dimensionality Reduction via
+Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
 Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
 University (<http://hdl.handle.net/10427/CZ30Q6773>)
 
