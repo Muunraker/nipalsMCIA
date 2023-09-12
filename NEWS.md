@@ -1,6 +1,6 @@
 
 
-# 0.99.6 (2023-09-09):
+# 0.99.6 (2023-09-11):
 ## Major changes
 * Switched primary input to `nipals_multiblock()` to a `MultiAssayExperiment` object.
 * `nipals_multiblock()` now outputs an object of the `NipalsResult` class.
