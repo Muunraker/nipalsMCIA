@@ -4,29 +4,32 @@
 \alias{predict_gs}
 \title{Prediction of new global scores based on block loadings and weights}
 \usage{
-predict_gs(mcia_results, df)
+predict_gs(mcia_results, test_data)
 }
 \arguments{
-\item{mcia_results}{an mcia object output by nipals_multiblock() containing block
-scores, weights, and pre-processing identifier.}
+\item{mcia_results}{an mcia object output by nipals_multiblock()
+containing block scores, weights, and pre-processing identifier.}
 
-\item{df}{a list of data matrices to make predictions from, where each entry 
-corresponds to one omics type in "sample" x " features" format.
-Feature and omic order must match `bl`. Pre-processing should also match the data
-used to generate `bl` and `bw`.}
+\item{test_data}{an MAE object with the same block types and features as the
+training dataset.  Feature and omic order must match `bl`.}
 }
 \value{
-a matrix of predicted global scores, in form
+a matrix of predicted global scores for the training data
 }
 \description{
-Uses previously-computed block scores and weights to compute 
+Uses previously-computed block scores and weights to compute
 a global score for new data.
 }
 \details{
-Projects the new observations onto each block loadings vector, then 
+Projects the new observations onto each block loadings vector, then
 weights the projection according to the corresponding block weights.
 }
 \examples{
-deflated_data <- deflate_block_bl(data_frame,block_loading)
+   data(NCI60)
+   data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                                 colData=metadata_NCI60)
+   mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 2)
+   new_data <- data_blocks_mae # should update with a truly new dataset
+   preds <- predict_gs(mcia_results, new_data)
 
 }

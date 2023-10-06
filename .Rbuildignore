@@ -1,5 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^R/test_vignette_visualizations\.R$
-^test_vignette_visualizations\.R$
 ^LICENSE\.md$
+^doc$
+^Meta$
+^README\.Rmd$
+^biocCheck.txt
+^devtoolsCheck.txt

@@ -1,9 +1,31 @@
-*.Rproj.user
-*.Rhistory
-*.RData
-*.Ruserdata
-*.Rproj
-*.tex
-*.Rnw
-*.un~
+# R specific
+..Rcheck/
 .Rproj.user
+*.RData
+*.Rhistory
+*.Rnw
+*.Rproj
+*.Rproj.user
+*.Ruserdata
+*.Rapp.history
+
+# other file extensions
+*.html
+*.png
+*.swp
+*.tex
+*.un~
+
+# specific files
+.DS_Store
+.gitignore
+biocCheck.txt
+devtoolsCheck.txt
+vignettes/.build.timestamp
+
+# directories
+/doc/
+/Meta/
+data/
+inst/doc/
+inst/extdata/

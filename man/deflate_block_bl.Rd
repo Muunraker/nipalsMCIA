@@ -15,14 +15,16 @@ deflate_block_bl(df, bl)
 the deflated data frame
 }
 \description{
-Removes data from a data frame in the direction of a given block 
-loadings vector.
+Removes data from a data frame in the direction of a given
+block loadings vector.
 }
 \details{
 Subtracts the component of each row in the direction of a given
 block loadings vector to yield a `deflated' data matrix.
 }
 \examples{
-deflated_data <- deflate_block_bl(data_frame,block_loading)
+df <- matrix(rbinom(15, 1, prob = 0.3), ncol = 3)
+block_loading <- rbinom(3, 1, prob = 0.3)
+deflated_data <- deflate_block_bl(df, block_loading)
 
 }

@@ -1,64 +1,109 @@
 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# NIPALS-MCIA: Software to Compute Multi-Block Dimensionality Reduction
+# nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
+<!-- badges: start -->
+<!-- badges: end -->
 
-## Installation Instructions 
+This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
+data using the Nonlinear Iterative Partial Least Squares (NIPALS)
+method.
 
-### Required Dependencies
+Features include:
 
-* The R component of NIPALS-MCIA requires R versions 3.5.0 or above. Some functions from the Pracma R package are automatically installed with NIPALS-MCIA.
+- Efficient computation of deflation and variance enabling embedding of
+  high-volume (e.g. single-cell) datasets.  
+- Functionality to perform out-of-sample embedding.
+- Easy-to-adjust options for deflation and pre-processing
+- Multiple visualization and analysis options for sample- and
+  feature-level embedding results
+- Streamlined and well-documented and supported code that is consistent
+  with published theory to enable more efficient algorithm development
+  and extension
 
+**References**
 
-### Installation
+Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
+Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
+University (<http://hdl.handle.net/10427/CZ30Q6773>)
 
-The R version of MIPALS-MCIA can be easily installed from Github using the `devtools' package. 
+Hanafi et al. (2011) Connections between multiple co-inertia analysis
+and consensus principal component analysis, Chemometrics and Intelligent
+Laboratory Systems 106 (1)
+(<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
 
-```{r}
-install.packages("devtools")
-library(devtools)
-install_github("Muunraker/NIPALS-MCIA",force = TRUE)
+Meng et al. (2014) A multivariate approach to the integration of
+multi-omics datasets, BMC Bioinformatics 2014(15)
+(<https://doi.org/10.1186/1471-2105-15-162>)
 
+## Installation
+
+This package currently can only be installed using
+`devtools::install_github()`. A Bioconductor version is in progress.
+
+You can install the development version of nipalsMCIA from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+                         force = TRUE, build_vignettes = TRUE)
 ```
-The MATLAB version of NIPALS-MCIA is installed simply by downloading the files from Github 
-and adding the 'Functions' folder to the MATLAB path.
 
-```{matlab}
-addpath('<path to MATLAB_MCIA>\Functions')
+## Basic Example
 
+The package currently includes one test dataset: `data_blocks`. This is
+a list of dataframes containing observations of variables from three
+omics types (mRNA, proteins, and micro RNA) on 21 cancer cell lines from
+the NCI60 cancer cell lines. The data file includes a `metadata` data
+frame containing the cancer type associated with each cell line.
+
+``` r
+# load the package and set a seed for reproducibility
+library(nipalsMCIA)
+set.seed(42)
 ```
 
-## Using NIPALS-MCIA
+``` r
+data(NCI60) # import data as "data_blocks" and metadata as "metadata_NCI60"
 
-### Performing dimensionality-reduction
-
-The package currently includes only one vignette - a cut version of a three-omic NCI-60
-cancer cell line dataset. Only one function call is needed to perform MCIA: 
-```{r}
-data(NCI60) # import data as "data_blocks"
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 8, tol=1e-9)
-
+# examine the data and metadata
+summary(data_blocks)
+#>       Length Class      Mode
+#> mrna  12895  data.frame list
+#> miRNA   537  data.frame list
+#> prot   7016  data.frame list
+head(metadata_NCI60)
+#>            cancerType
+#> CNS.SF_268        CNS
+#> CNS.SF_295        CNS
+#> CNS.SF_539        CNS
+#> CNS.SNB_19        CNS
+#> CNS.SNB_75        CNS
+#> CNS.U251          CNS
+table(metadata_NCI60)
+#> metadata_NCI60
+#>      CNS Leukemia Melanoma 
+#>        6        6        9
 ```
-Note: this dataset is reproduced from the omicade4 package (Meng et. al., 2014). This package assumes
-all input datasets are in sample by feature format. 
 
-Meng, C., Kuster, B., Culhane, A. C., & Gholami, A. M. (2014). A multivariate approach to the integration of multi-omics datasets. BMC bioinformatics, 15(1), 1-13.
+*Note: this dataset is reproduced from the [omicade4
+package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
+(Meng et. al., 2014). This package assumes all input datasets are in
+sample by feature format.*
 
-### Predicting scores on new data
+The main MCIA function can be called on `data_blocks` and optionally can
+include `metadata_NCI60` for plot coloring by cancer type:
 
-NIPALS-MCIA includes the 'predict_gs' function, which allows for the computation of global
-scores for new data given a previously-computed set of loadings.
-```{r}
-# Computing MCIA on a dataset:
-mcia_results <- nipals_multiblock(data_blocks, preprocMethod='colprofile',num_PCs = 8, tol=1e-9)
-
-# Prediction
-bl <- mcia_results$block_loadings # existing block loadings matrix
-bw <- mcia_results$block_score_weights  # existing block weights matrix
-new_data <- list(omics_1, omics_2, omics_3) # new data where each omics is a matrix or dataframe.
-gs_new <- predict_gs(bl, bw, new_data) # new global score from "new_data" 
-
-
+``` r
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
+                                  metadata = metadata_NCI60,
+                                  color_col = "cancerType", 
+                                  num_PCs = 10, tol = 1e-12)
 ```
-Note that the new dataset must have the same number of omics and match all the features of the original dataset. 
-The new dataset must also be formatted as a list of data frames or data matrices in sample by feature form.
+
+<img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
+
+Here `numPCs` is the dimension of the low-dimensional embedding of the
+data chosen by the user.
