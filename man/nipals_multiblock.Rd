@@ -61,10 +61,7 @@ scree plot
 \item `global` displays only global score projections and eigenvalue scree
 plot
 \item `none` does not display plots
-\item `block_variances` a list of variances of each block AFTER
-NORMALIZATION OPTION APPLIED
-\item `metadata` the metadata dataframe supplied with the `metadata`
-argument. Note: overrides metadata present in any MAE class object.}}
+}}
 }
 \value{
 a `nipalsResult` object with the following fields: \itemize{
@@ -82,6 +79,10 @@ one block (w/ unit length)
 \item `block score weights` a matrix containing weights for each block score
 of each order used to construct the global scores.
 \item `col_preproc_method` the column preprocessing method used on the data.
+\item `block_variances` a list of variances of each block AFTER
+NORMALIZATION OPTION APPLIED
+\item `metadata` the metadata dataframe supplied with the `metadata`
+argument. Note: overrides metadata present in any MAE class object.
 }
 }
 \description{
