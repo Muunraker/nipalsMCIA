@@ -7,6 +7,6 @@ citEntry(entry = "Misc",
                       as.person("Anna Konstorum")),
   title = "nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction",
   year = "2023",
-  url = "https://doi.org/10.18129/B9.bioc.nipalsMCIA",
-  textVersion = "Mattessich M, Reyna J, Aron E, Konstorum A. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. Bioconductor version: Development (3.18); 2023. 10.18129/B9.bioc.nipalsMCIA"
+  url = "https://github.com/Muunraker/nipalsMCIA",
+  textVersion = "Mattessich et al. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction (Version 1.0, 2023)"
 )

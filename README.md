@@ -15,12 +15,13 @@ Features include:
 - Efficient computation of deflation and variance enabling embedding of
   high-volume (e.g. single-cell) datasets.  
 - Functionality to perform out-of-sample embedding.
-- Easy-to-adjust options for deflation and pre-processing.
+- Easy-to-adjust options for deflation and pre-processing
 - Multiple visualization and analysis options for sample- and
-  feature-level embedding results.
+  feature-level embedding results
 - Streamlined and well-documented and supported code that is consistent
   with published theory to enable more efficient algorithm development
-  and extension.
+  and extension
+
 **References**
 
 Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
@@ -38,22 +39,16 @@ multi-omics datasets, BMC Bioinformatics 2014(15)
 
 ## Installation
 
-To install the current development version from Bioconductor, use 
-``` r
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+This package currently can only be installed using
+`devtools::install_github()`. A Bioconductor version is in progress.
 
-BiocManager::install(version='devel')
-
-BiocManager::install("nipalsMCIA")
-```
-
-nipalsMCIA can also be installed from [GitHub](https://github.com/) 
-provided the [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) package is also installed:
+You can install the development version of nipalsMCIA from
+[GitHub](https://github.com/) with:
 
 ``` r
-devtools::install_github("Muunraker/nipalsMCIA",
-                           build_vignettes = TRUE)
+# install.packages("devtools")
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+                         force = TRUE, build_vignettes = TRUE)
 ```
 
 ## Basic Example
@@ -92,25 +87,23 @@ table(metadata_NCI60)
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
-*Note: this dataset is reproduced from the [omicade4 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
-(Meng et. al., 2014). 
 
-nipalsMCIA requires all input data to be formatted as a [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html). 
-The package provides a simple function to convert a list of dataframes and accompanying metadata to a MAE object:
-``` r
-data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-                                  colData=metadata_NCI60)
-```
-Note: the `row_format` argument specifies whether the dataset rows correspond to samples or features.
+*Note: this dataset is reproduced from the [omicade4
+package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
+(Meng et. al., 2014). This package assumes all input datasets are in
+sample by feature format.*
 
-The main MCIA function can be called on `data_blocks_mae`: 
+The main MCIA function can be called on `data_blocks` and optionally can
+include `metadata_NCI60` for plot coloring by cancer type:
+
 ``` r
-mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
-                                  tol = 1e-12, max_iter = 1000,
-                                  col_preproc_method = "colprofile",
-                                  color_col = "cancerType",
-                                  deflationMethod = "block")
+mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
+                                  metadata = metadata_NCI60,
+                                  color_col = "cancerType", 
+                                  num_PCs = 10, tol = 1e-12)
 ```
-The output is an object of the `NipalsResult` class, which contains the low-dimensional representation of the data (with dimension set by `num_PCs`) as well as other information about the decomposition. By default, the function plots the first two scores vectors colored by the `color_col = "cancerType"` field in `metadata_NCI60`. It also generates a scree plot of the global eigenvalues.
 
 <img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
+
+Here `numPCs` is the dimension of the low-dimensional embedding of the
+data chosen by the user.
