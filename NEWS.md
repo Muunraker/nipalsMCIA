@@ -1,4 +1,8 @@
-
+# 0.99.7 (2023-10-07):
+## Minor Changes
+* Updated readme to reflect MAE changes.
+* Updated citation. 
+* Fixed bug in documentation for `nipals_multiblock`.
 
 # 0.99.6 (2023-09-11):
 ## Major changes
