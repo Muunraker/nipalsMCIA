@@ -80,7 +80,7 @@ The following code details several ways in which to load in this dataset. You ma
 
 ## All Sources
 
-We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **These files includes the processed object that you will need in order to run MCIA (data_blocks_sc.Rda).**
+We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. *Note: the processed object that you will need in order to run MCIA (data_blocks_sc.Rda) is currently commented out as we do not actively use it in this vignette and instead read in the results directly to save on rendering time and memory.*
 
 ```{r data-all-list}
 # list all of the currently available files in the latest release
@@ -93,8 +93,8 @@ piggyback::pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 # files needed for running MCIA
 piggyback::pb_download(file = "metadata_sc.csv",
                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
-piggyback::pb_download(file = "data_blocks_sc.Rda",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+# piggyback::pb_download(file = "data_blocks_sc.Rda",
+#                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
 
 # MCIA results
 piggyback::pb_download(file = "mcia_results_sc.Rds",
