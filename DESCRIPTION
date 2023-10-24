@@ -1,6 +1,6 @@
 Package: nipalsMCIA
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
-Version: 0.99.7
+Version: 1.0.0
 Authors@R: c(
     person("Maximilian", "Mattessich",
             email = "maximilian.mattessich@northwestern.edu",
