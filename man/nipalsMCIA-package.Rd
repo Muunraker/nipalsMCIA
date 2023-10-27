@@ -21,9 +21,9 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Anna Konstorum \email{konstorum.anna@gmail.com} (\href{https://orcid.org/0000-0003-4024-2058}{ORCID})
   \item Joaquin Reyna \email{joreyna@live.com} (\href{https://orcid.org/0000-0002-8468-2840}{ORCID})
   \item Edel Aron \email{edel.aron@yale.edu} (\href{https://orcid.org/0000-0002-8683-4772}{ORCID})
+  \item Anna Konstorum \email{konstorum.anna@gmail.com} (\href{https://orcid.org/0000-0003-4024-2058}{ORCID})
 }
 
 }
