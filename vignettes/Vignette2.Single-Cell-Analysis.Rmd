@@ -31,11 +31,9 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.7/Vignette-2-Pipeline.png)
-
-*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
-
 ## Installation
+
+To install the development version from GitHub:
 
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
@@ -44,8 +42,7 @@ devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
-# after acceptance
-# install.packages("BiocManager")
+# release version
 BiocManager::install("nipalsMCIA")
 ```
 
@@ -70,6 +67,20 @@ path_data <- file.path("..", "data")
 
 # recommended location for external data
 path_inst <- tempdir()
+```
+
+## Vignette Pipeline
+
+*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
+
+```{r pipelines, echo = FALSE}
+# specify `tag = ` to use a different release other than latest
+
+# pipeline image
+piggyback::pb_download(file = "Vignette-2-Pipeline.png",
+                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+
+knitr::include_graphics(path = file.path(path_inst, "Vignette-2-Pipeline.png"))
 ```
 
 # Data
