@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-![BioC
-status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)\](<https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA>)
+[![BioC
+status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA)
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
@@ -27,18 +27,16 @@ Features include:
 
 **References**
 
-Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
-Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
-University (<http://hdl.handle.net/10427/CZ30Q6773>)
-
-Hanafi et al. (2011) Connections between multiple co-inertia analysis
-and consensus principal component analysis, Chemometrics and Intelligent
-Laboratory Systems 106 (1)
-(<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
-
-Meng et al. (2014) A multivariate approach to the integration of
-multi-omics datasets, BMC Bioinformatics 2014(15)
-(<https://doi.org/10.1186/1471-2105-15-162>)
+- Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
+  Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
+  University (<http://hdl.handle.net/10427/CZ30Q6773>)
+- Meng et al. (2014) A multivariate approach to the integration of
+  multi-omics datasets, BMC Bioinformatics 2014(15)
+  (<https://doi.org/10.1186/1471-2105-15-162>)
+- Hanafi et al. (2011) Connections between multiple co-inertia analysis
+  and consensus principal component analysis, Chemometrics and
+  Intelligent Laboratory Systems 106 (1)
+  (<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
 
 ## Installation
 
@@ -57,7 +55,7 @@ You can install the development version of nipalsMCIA from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development-mae",
                          force = TRUE, build_vignettes = TRUE)
 ```
 
@@ -119,5 +117,5 @@ mcia_results <- nipals_multiblock(data_blocks_mae = data_blocks_mae,
 
 <img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
 
-Here `numPCs` is the dimension of the low-dimensional embedding of the
+Here `num_PCs` is the dimension of the low-dimensional embedding of the
 data chosen by the user.
