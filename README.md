@@ -55,7 +55,7 @@ You can install the development version of nipalsMCIA from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development-mae",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE)
 ```
 
