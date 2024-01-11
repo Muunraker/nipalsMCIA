@@ -10,10 +10,8 @@
 #' the desired deflation method.
 #' This process is repeated up to the desired maximum order of scores/loadings.
 #'
-#' @param data_blocks a list of data frames or a MultiAssayExperiment class
+#' @param data_blocks_mae a MultiAssayExperiment class
 #' object (with sample metadata as a dataframe in the colData attribute).
-#' @param row_format for lists of data frames, indicates whether rows of
-#' datasets denote `samples` (default) or `features`.
 #' @param col_preproc_method an option for the desired column-level data
 #' pre-processing, either:
 #' \itemize{
@@ -35,16 +33,19 @@
 #' @param tol a number for the tolerance on the stopping criterion for NIPALS
 #' @param max_iter a number for the maximum number of times NIPALS should
 #' iterate
-#' @param metadata a data frame containing metadata (i.e. sample labels) for
-#' each sample in the dataframe.
-#' May have multiple columns, but rows and row names must match the data frames
-#' in `data_blocks`.
 #' @param color_col Optional argument with the column name of the `metadata`
 #' data frame used to define plotting colors
 #' @param deflationMethod an option for the desired deflation method, either:
 #' \itemize{
 #' \item `block` deflation via block loadings (for MCIA, default)
 #' \item `global` deflation via global scores (for CPCA)
+#' }
+#' @param plots an option to display various plots of results: \itemize{
+#' \item `all` displays plots of block scores, global scores, and eigenvalue
+#' scree plot
+#' \item `global` displays only global score projections and eigenvalue scree
+#' plot
+#' \item `none` does not display plots
 #' }
 #' @return a `nipalsResult` object with the following fields: \itemize{
 #' \item `global_scores` a matrix containing global scores as columns
@@ -61,92 +62,47 @@
 #' \item `block score weights` a matrix containing weights for each block score
 #' of each order used to construct the global scores.
 #' \item `col_preproc_method` the column preprocessing method used on the data.
-#' }
-#' @param plots an option to display various plots of results: \itemize{
-#' \item `all` displays plots of block scores, global scores, and eigenvalue
-#' scree plot
-#' \item `global` displays only global score projections and eigenvalue scree
-#' plot
-#' \item `none` does not display plots
 #' \item `block_variances` a list of variances of each block AFTER
 #' NORMALIZATION OPTION APPLIED
 #' \item `metadata` the metadata dataframe supplied with the `metadata`
-#' argument. Note: overrides metadata present in any MAE class object.}
+#' argument. Note: overrides metadata present in any MAE class object.
+#'}
 #' @importFrom graphics par
 #' @importFrom methods new
-#' @importFrom MultiAssayExperiment experiments metadata colData assays
+#' @importFrom MultiAssayExperiment colData
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'    data(NCI60)
-#'    NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10,
-#'    tol = 1e-12, max_iter = 1000, col_preproc_method = "colprofile",
-#'    deflationMethod = "block")
-#'    MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
-#'    CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
+#'    data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+#'                                  colData=metadata_NCI60)
+#'    NIPALS_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
+#'                                        tol = 1e-12, max_iter = 1000,
+#'                                        col_preproc_method = "colprofile",
+#'                                        deflationMethod = "block")
+#'    MCIA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4)
+#'    CPCA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4,
 #'    deflationMethod = 'global')
 #'
 #' @export
-nipals_multiblock <- function(data_blocks, row_format = "samples",
+nipals_multiblock <- function(data_blocks_mae,
                               col_preproc_method = "colprofile",
                               block_preproc_method = "unit_var",
-                              num_PCs = 10, tol = 1e-9, max_iter = 1000,
-                              metadata = NULL, color_col = NULL,
+                              num_PCs = 10, tol = 1e-9,
+                              max_iter = 1000,color_col = NULL,
                               deflationMethod = "block", plots = "all") {
-
     # Check for input type MAE or list
-    if (is(data_blocks, "MultiAssayExperiment")) {
-        data_blocks_mae <- data_blocks
-
-        data_blocks <- MultiAssayExperiment::assays(data_blocks)@listData
-        data_blocks <- lapply(data_blocks, t) # need samples x features
-        data_blocks <- lapply(data_blocks, data.frame, check.names = FALSE)
-
-        # If no metadata supplied, attempt to extract it from the MAE object
-        if (is.null(metadata)) {
-            # Convert metadata
-            metadata <-
-              data.frame(MultiAssayExperiment::colData(data_blocks_mae))
-            if (length(metadata) == 0) {
-                metadata <- NULL
-            }
-        }
-    } else if (is(data_blocks, "list")) {
-        # Transpose data blocks if in features x samples format:
-        if (tolower(row_format) == "features") {
-            data_blocks <- lapply(data_blocks, t)
-        }
+    if (is(data_blocks_mae, "MultiAssayExperiment")) {
+      data_blocks <- extract_from_mae(data_blocks_mae)
+      metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
+      if (length(metadata) == 0) {
+        metadata <- NULL
+      }
     } else {
-        stop("Unknown input data format -
-             please use MultiAssayExperiment or a list of data blocks.")
+        stop("Unknown input data format - please use MultiAssayExperiment")
     }
 
     num_blocks <- length(data_blocks)
     omics_names <- names(data_blocks)
-
-    # Check number of samples are the same across all omics
-    if (length(unique(lapply(data_blocks, nrow))) > 1) {
-        stop("Each omics/data block must have the same number of rows
-             (i.e. samples).")
-    }
-
-    # Check samples are the same (in same order) for each block
-    # comparing sequential sample names
-    samplenames <- lapply(data_blocks, rownames)
-    for (i in seq_len(length(samplenames) - 1)) {
-      if (any(tolower(samplenames[[i]]) != tolower(samplenames[[i + 1]]))) {
-        errmsg <- sprintf("Sample names or order in block %d do not
-                          match block %d.", i, i + 1)
-        stop(errmsg)
-      }
-    }
-
-    # Check that metadata sample names match block sample names
-    if (!is.null(metadata)) {
-      if (any(tolower(samplenames[[1]]) != tolower(rownames(metadata)))) {
-        errmsg <- sprintf("Metadata sample names dont match block sample names")
-        stop(errmsg)
-      }
-    }
 
     # Check for omics names and assign generic name if null
     if (is.null(omics_names)) {
@@ -154,7 +110,7 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
         names(data_blocks) <- omics_names
     }
 
-    # Formatting feature labels to include omic type
+    # Check for feature names and assign generic name if null
     for (i in seq_along(data_blocks)) {
         fNames <- names(data_blocks[[i]]) # feature names
 
@@ -263,19 +219,19 @@ nipals_multiblock <- function(data_blocks, row_format = "samples",
     if (is.null(metadata)) {
         metadata <- data.frame()
     }
-    
+
     # creating S4 class object with nipals outputs
     mcia_out <- new("NipalsResult",
-                   global_scores = global_scores,
-                   global_loadings = global_loadings,
-                   block_score_weights = block_score_weights,
-                   block_scores = block_scores,
-                   block_loadings = block_loadings,
-                   eigvals = eigvals,
-                   col_preproc_method = tolower(col_preproc_method),
-                   block_preproc_method = tolower(block_preproc_method),
-                   block_variances = block_vars,
-                   metadata = metadata)
+                    global_scores = global_scores,
+                    global_loadings = global_loadings,
+                    block_score_weights = block_score_weights,
+                    block_scores = block_scores,
+                    block_loadings = block_loadings,
+                    eigvals = eigvals,
+                    col_preproc_method = tolower(col_preproc_method),
+                    block_preproc_method = tolower(block_preproc_method),
+                    block_variances = block_vars,
+                    metadata = metadata)
 
     # Plotting results
     if (tolower(plots) == "all") {

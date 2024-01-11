@@ -1,16 +1,16 @@
 Package: nipalsMCIA
 Title: Multiple Co-Inertia Analysis via the NIPALS Method
-Version: 0.99.6
+Version: 1.1.0
 Authors@R: c(
     person("Maximilian", "Mattessich",
             email = "maximilian.mattessich@northwestern.edu",
             role = "cre", comment = c(ORCID = "0000-0002-1233-1240")),
-    person("Anna", "Konstorum", email = "konstorum.anna@gmail.com",
-            role = "aut", comment = c(ORCID = "0000-0003-4024-2058")),
     person("Joaquin", "Reyna", email = "joreyna@live.com",
             role = "aut", comment = c(ORCID = "0000-0002-8468-2840")),
     person("Edel", "Aron", email = "edel.aron@yale.edu",
-            role = "aut", comment = c(ORCID = "0000-0002-8683-4772")))
+            role = "aut", comment = c(ORCID = "0000-0002-8683-4772")),
+    person("Anna", "Konstorum", email = "konstorum.anna@gmail.com",
+            role = "aut", comment = c(ORCID = "0000-0003-4024-2058")))
 Description: Computes Multiple Co-Inertia Analysis (MCIA), a
     dimensionality reduction (jDR) algorithm, for a multi-block dataset
     using a modification to the Nonlinear Iterative Partial Least Squares
@@ -22,7 +22,7 @@ License: GPL-3
 URL: https://github.com/Muunraker/nipalsMCIA
 BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
-    R (>= 4.2.0)
+    R (>= 4.3.0)
 Imports:
     ComplexHeatmap,
     dplyr,
@@ -32,6 +32,7 @@ Imports:
     grid,
     methods,
     MultiAssayExperiment,
+    SummarizedExperiment,
     pracma,
     rlang,
     RSpectra,

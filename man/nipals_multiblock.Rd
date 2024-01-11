@@ -5,25 +5,20 @@
 \title{Main NIPALS computation loop}
 \usage{
 nipals_multiblock(
-  data_blocks,
-  row_format = "samples",
+  data_blocks_mae,
   col_preproc_method = "colprofile",
   block_preproc_method = "unit_var",
   num_PCs = 10,
   tol = 1e-09,
   max_iter = 1000,
-  metadata = NULL,
   color_col = NULL,
   deflationMethod = "block",
   plots = "all"
 )
 }
 \arguments{
-\item{data_blocks}{a list of data frames or a MultiAssayExperiment class
+\item{data_blocks_mae}{a MultiAssayExperiment class
 object (with sample metadata as a dataframe in the colData attribute).}
-
-\item{row_format}{for lists of data frames, indicates whether rows of
-datasets denote `samples` (default) or `features`.}
 
 \item{col_preproc_method}{an option for the desired column-level data
 pre-processing, either:
@@ -51,11 +46,6 @@ square root of its variance
 \item{max_iter}{a number for the maximum number of times NIPALS should
 iterate}
 
-\item{metadata}{a data frame containing metadata (i.e. sample labels) for
-each sample in the dataframe.
-May have multiple columns, but rows and row names must match the data frames
-in `data_blocks`.}
-
 \item{color_col}{Optional argument with the column name of the `metadata`
 data frame used to define plotting colors}
 
@@ -71,10 +61,7 @@ scree plot
 \item `global` displays only global score projections and eigenvalue scree
 plot
 \item `none` does not display plots
-\item `block_variances` a list of variances of each block AFTER
-NORMALIZATION OPTION APPLIED
-\item `metadata` the metadata dataframe supplied with the `metadata`
-argument. Note: overrides metadata present in any MAE class object.}}
+}}
 }
 \value{
 a `nipalsResult` object with the following fields: \itemize{
@@ -92,6 +79,10 @@ one block (w/ unit length)
 \item `block score weights` a matrix containing weights for each block score
 of each order used to construct the global scores.
 \item `col_preproc_method` the column preprocessing method used on the data.
+\item `block_variances` a list of variances of each block AFTER
+NORMALIZATION OPTION APPLIED
+\item `metadata` the metadata dataframe supplied with the `metadata`
+argument. Note: overrides metadata present in any MAE class object.
 }
 }
 \description{
@@ -107,11 +98,14 @@ This process is repeated up to the desired maximum order of scores/loadings.
 }
 \examples{
    data(NCI60)
-   NIPALS_results <- nipals_multiblock(data_blocks, num_PCs = 10,
-   tol = 1e-12, max_iter = 1000, col_preproc_method = "colprofile",
-   deflationMethod = "block")
-   MCIA_results <- nipals_multiblock(data_blocks, num_PCs = 4)
-   CPCA_results <- nipals_multiblock(data_blocks, num_PCs = 4,
+   data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                                 colData=metadata_NCI60)
+   NIPALS_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
+                                       tol = 1e-12, max_iter = 1000,
+                                       col_preproc_method = "colprofile",
+                                       deflationMethod = "block")
+   MCIA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4)
+   CPCA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4,
    deflationMethod = 'global')
 
 }

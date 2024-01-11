@@ -16,9 +16,10 @@
 #' @slot metadata A data frame of metadata originally passed into
 #' `nipals_multiblock()`.
 #'
+#' @returns A NipalsResult object.
 #' @exportClass NipalsResult
 
-NipalsResult <- setClass("NipalsResult", 
+NipalsResult <- setClass("NipalsResult",
   representation(
     global_scores = "matrix",
     global_loadings = "matrix",
@@ -36,7 +37,7 @@ NipalsResult <- setClass("NipalsResult",
 setMethod("show", "NipalsResult",
   function(object){
     cat(is(object)[[1]], " Object with properties: \n",
-      "> Dataset dimensions:   ", nrow(object@global_scores)," x ", nrow(object@global_loadings), "\n",
+      "> Dataset dimensions:   ", nrow(object@global_scores), " x ", nrow(object@global_loadings), "\n",
       "> Number of blocks:  ", length(object@block_variances), "\n",
       "> Order of scores:  ", ncol(object@global_scores), "\n",
       "> Column preprocessing:  ", object@col_preproc_method, "\n",
@@ -44,7 +45,7 @@ setMethod("show", "NipalsResult",
       "> Block names and sizes:   \n",
       sep = ""
     )
-    blockdims <- lapply(object@block_loadings,nrow)
+    blockdims <- lapply(object@block_loadings, nrow)
     print(unlist(blockdims))
   }
 )

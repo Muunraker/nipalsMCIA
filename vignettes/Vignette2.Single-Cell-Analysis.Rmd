@@ -31,11 +31,9 @@ available single-cell data, how to format it for and process it with MCIA and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.5/Vignette-2-Pipeline.png)
-
-*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
-
 ## Installation
+
+To install the development version from GitHub:
 
 ```{r installation-github, eval = FALSE}
 # install.packages("devtools")
@@ -44,8 +42,7 @@ devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
-# after acceptance
-# install.packages("BiocManager")
+# release version
 BiocManager::install("nipalsMCIA")
 ```
 
@@ -72,6 +69,20 @@ path_data <- file.path("..", "data")
 path_inst <- tempdir()
 ```
 
+## Vignette Pipeline
+
+*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
+
+```{r pipelines, echo = FALSE}
+# specify `tag = ` to use a different release other than latest
+
+# pipeline image
+piggyback::pb_download(file = "Vignette-2-Pipeline.png",
+                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+
+knitr::include_graphics(path = file.path(path_inst, "Vignette-2-Pipeline.png"))
+```
+
 # Data
 
 We will be using the 10x Genomics "pbmc5k-CITEseq" dataset, which was published in May 2019 and processed using Cell Ranger 3.0.2. It contains 5,247 detected cells from PBMCs and 33,538 genes along with 32 cell surface markers. We chose this dataset due to it containing both gene expression (GEX) and cell surface protein (ADT) data as well as being relatively recent, publicly available and from a widely used platform.
@@ -80,7 +91,7 @@ The following code details several ways in which to load in this dataset. You ma
 
 ## All Sources
 
-We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. **These files includes the processed object that you will need in order to run MCIA (data_blocks_sc.Rda).**
+We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. *Note: the processed object that you will need in order to run MCIA (data_blocks_sc.Rda) is currently commented out as we do not actively use it in this vignette and instead read in the results directly to save on rendering time and memory.*
 
 ```{r data-all-list}
 # list all of the currently available files in the latest release
@@ -93,8 +104,8 @@ piggyback::pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 # files needed for running MCIA
 piggyback::pb_download(file = "metadata_sc.csv",
                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
-piggyback::pb_download(file = "data_blocks_sc.Rda",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+# piggyback::pb_download(file = "data_blocks_sc.Rda",
+#                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
 
 # MCIA results
 piggyback::pb_download(file = "mcia_results_sc.Rds",
@@ -118,9 +129,9 @@ piggyback::pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
 ## Bioconductor
 
 There are several Bioconductor packages which provide single-cell data for users
-as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/3.15/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics (stored as [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) classes), including the one that we will be analyzing.
+as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/release/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics (stored as [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) classes), including the one that we will be analyzing.
 
-Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.16/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the DelayedMatrix format since they are so large. In this object, the rows represent the features and the columns represent the cells.
+Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.17/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the DelayedMatrix format since they are so large. In this object, the rows represent the features and the columns represent the cells.
 
 ```{r data-bioconductor-load, eval = FALSE}
 # read in the data as a SingleCellExperiment object
@@ -341,11 +352,16 @@ load(file = file.path(path_inst, "data_blocks_sc.Rda"))
 # "largest_sv" results in a more balanced contribution
 # from the blocks than the default "unit_var"
 set.seed(42)
-mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
+
+# convert data_blocks_sc to an MAE object using the SingleCellExperiment class
+data_blocks_sc_mae <-
+  MultiAssayExperiment::MultiAssayExperiment(lapply(data_blocks_sc, function(x)
+    SingleCellExperiment::SingleCellExperiment(t(as.matrix(x)))),
+    colData = metadata_sc)
+mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
                                      col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
                                      num_PCs = 10, tol = 1e-9,
-                                     metadata = metadata_sc,
                                      deflationMethod = "global",
                                      plots = "none")
 ## Performing column-level pre-processing...
@@ -368,21 +384,8 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc,
 
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
-mcia_results_sc_list <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
-names(mcia_results_sc_list)
-
-# **** TEMPORARY - CONVERT TO NIPALS RESULT OBJECT DIRECTLY *********
-mcia_results_sc <- new("NipalsResult",
-                   global_scores = mcia_results_sc_list$global_scores,
-                   global_loadings = mcia_results_sc_list$global_loadings,
-                   block_score_weights = mcia_results_sc_list$block_score_weights,
-                   block_scores = mcia_results_sc_list$block_scores,
-                   block_loadings = mcia_results_sc_list$block_loadings,
-                   eigvals = mcia_results_sc_list$eigvals,
-                   col_preproc_method = mcia_results_sc_list$col_preproc_method,
-                   block_preproc_method = mcia_results_sc_list$block_preproc_method,
-                   block_variances = mcia_results_sc_list$block_variances,
-                   metadata = mcia_results_sc_list$metadata)
+mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
+mcia_results_sc
 ```
 
 ## Visualization
@@ -662,8 +665,7 @@ annotations defined in a later section, so we will clear them out here to
 proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file = file.path(path_inst,
-                                "tenx_pbmc5k_CITEseq_annotated.rds"))
+obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
 
 # reset to baseline
 Idents(object = obj) <- "seurat_clusters"
@@ -932,7 +934,7 @@ You can also obtain the following bar plot using the output of `nipals_multibloc
 ```{r seurat-check-annotations-bar, fig.dim = c(8, 6)}
 # examine the total counts
 ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
-  geom_bar() +
+  geom_bar(color = "black", linewidth = 0.2) +
   labs(title = "Cell Type Counts", x = "Cell Type", y = "Count") +
   scale_fill_manual(values = meta_colors_sc) +
   theme_bw() +

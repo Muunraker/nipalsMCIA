@@ -23,8 +23,10 @@ nipalsMCIA() output loadings matrix ranked using across two factor axes
 }
 \examples{
 data(NCI60)
-mcia_results <- nipals_multiblock(data_blocks, metadata = metadata_NCI60,
-num_PCs = 10, plots = "none", tol = 1e-12)
-colors_omics <- get_colors(mcia_results)
+data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
+                              colData=metadata_NCI60)
+mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
+                                  plots = "none", tol = 1e-12)
+                                  colors_omics <- get_colors(mcia_results)
 vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
 }

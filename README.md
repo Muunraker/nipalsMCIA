@@ -4,6 +4,9 @@
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
+
+[![BioC
+status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA)
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
@@ -24,30 +27,35 @@ Features include:
 
 **References**
 
-Mattesich (2022) A Review of Multi-Block Dimensionality Reduction via
-Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
-University (<http://hdl.handle.net/10427/CZ30Q6773>)
-
-Hanafi et al. (2011) Connections between multiple co-inertia analysis
-and consensus principal component analysis, Chemometrics and Intelligent
-Laboratory Systems 106 (1)
-(<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
-
-Meng et al. (2014) A multivariate approach to the integration of
-multi-omics datasets, BMC Bioinformatics 2014(15)
-(<https://doi.org/10.1186/1471-2105-15-162>)
+- Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
+  Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
+  University (<http://hdl.handle.net/10427/CZ30Q6773>)
+- Meng et al. (2014) A multivariate approach to the integration of
+  multi-omics datasets, BMC Bioinformatics 2014(15)
+  (<https://doi.org/10.1186/1471-2105-15-162>)
+- Hanafi et al. (2011) Connections between multiple co-inertia analysis
+  and consensus principal component analysis, Chemometrics and
+  Intelligent Laboratory Systems 106 (1)
+  (<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
 
 ## Installation
 
-This package currently can only be installed using
-`devtools::install_github()`. A Bioconductor version is in progress.
+This package can be installed [via
+Bioconductor](https://bioconductor.org/packages/release/bioc/html/nipalsMCIA.html):
+
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("nipalsMCIA")
+```
 
 You can install the development version of nipalsMCIA from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development-mae",
                          force = TRUE, build_vignettes = TRUE)
 ```
 
@@ -83,7 +91,7 @@ head(metadata_NCI60)
 #> CNS.SNB_75        CNS
 #> CNS.U251          CNS
 table(metadata_NCI60)
-#> metadata_NCI60
+#> cancerType
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
@@ -97,13 +105,17 @@ The main MCIA function can be called on `data_blocks` and optionally can
 include `metadata_NCI60` for plot coloring by cancer type:
 
 ``` r
-mcia_results <- nipals_multiblock(data_blocks, preproc_method = 'colprofile',
-                                  metadata = metadata_NCI60,
-                                  color_col = "cancerType", 
-                                  num_PCs = 10, tol = 1e-12)
+# to convert data_blocks into an MAE object we provide the simple_mae() function
+data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+                              colData = metadata_NCI60)
+
+mcia_results <- nipals_multiblock(data_blocks_mae = data_blocks_mae,
+                                  col_preproc_method = "colprofile",
+                                  num_PCs = 10, tol = 1e-12,
+                                  color_col = "cancerType")
 ```
 
 <img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
 
-Here `numPCs` is the dimension of the low-dimensional embedding of the
+Here `num_PCs` is the dimension of the low-dimensional embedding of the
 data chosen by the user.
