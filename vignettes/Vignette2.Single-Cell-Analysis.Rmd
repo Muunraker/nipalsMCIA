@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Introduction
 
 In this vignette, we will cover some of the possible sources for publicly
-available single-cell data, how to format it for and process it with MCIA and
+available single-cell data, how to format it for and process it with [MCIA](https://bioconductor.org/packages/release/bioc/html/nipalsMCIA.html) and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
@@ -36,13 +36,18 @@ as metadata for exploring the decomposition results.
 To install the development version from GitHub:
 
 ```{r installation-github, eval = FALSE}
+# devel version
+
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
 # release version
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
 BiocManager::install("nipalsMCIA")
 ```
 

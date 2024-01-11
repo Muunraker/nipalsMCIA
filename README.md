@@ -45,7 +45,7 @@ Bioconductor](https://bioconductor.org/packages/release/bioc/html/nipalsMCIA.htm
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+  install.packages("BiocManager")
 
 BiocManager::install("nipalsMCIA")
 ```

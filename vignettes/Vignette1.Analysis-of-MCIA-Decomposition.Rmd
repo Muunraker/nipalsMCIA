@@ -96,14 +96,18 @@ in [Part 2: Interpreting Global Loadings].
 ## Installation
 
 ```{r installation-github, eval = FALSE}
+# devel version
+
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
-# after acceptance
-# install.packages("BiocManager")
+# release version
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
 BiocManager::install("nipalsMCIA")
 ```
 

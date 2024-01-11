@@ -48,7 +48,7 @@ This package can be installed [via Bioconductor](https://bioconductor.org/packag
 
 ```{r installation-release, echo = TRUE, results = "hide", message = FALSE, eval = FALSE}
 if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+  install.packages("BiocManager")
 
 BiocManager::install("nipalsMCIA")
 ```
@@ -57,7 +57,7 @@ You can install the development version of nipalsMCIA from [GitHub](https://gith
 
 ```{r installation-devel, echo = TRUE, results = "hide", message = FALSE, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development-mae",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE)
 ```
 
