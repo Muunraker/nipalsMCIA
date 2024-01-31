@@ -3,10 +3,10 @@
 #' @description Visualize all loadings recovered from
 #' nipalsMCIA() output loadings matrix ranked using across two factor axes
 #'
-#' @param mcia_out object returned from nipals_multiblock() function
+#' @param mcia_results object returned from nipals_multiblock() function
 #' @param axes list of two numbers associated with two factors to visualize
-#' @param colors_omics named list of colors associated with omics,
-#' output of get_colors() function
+#' @param color_pal a list of colors or function which returns a list of colors
+#' @param color_pal_params a list of parameters for the color function
 #' @return Plot of MCIA feature loadings for chosen axes
 #' @examples
 #' data(NCI60)
@@ -14,19 +14,27 @@
 #'                               colData=metadata_NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                   plots = "none", tol = 1e-12)
-#'                                   colors_omics <- get_colors(mcia_results)
-#' vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
+#' vis_load_plot(mcia_results, axes = c(1, 4))
 #' @importFrom ggplot2 ggplot aes_string geom_point theme_bw scale_color_manual
 #' @importFrom ggplot2 xlab ylab labs
 #' @export
 
-vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
+vis_load_plot <- function(mcia_results, axes = c(1, 2),
+                          color_pal = scales::viridis_pal,
+                          color_pal_params = list()) {
+    
+    # get the colors 
+    plot_colors <- get_colors(mcia_results,
+                              color_pal = color_pal,
+                              color_pal_params = color_pal_params)
+        
+    
     # extracting global loadings
-    gl <- mcia_out@global_loadings
+    gl <- mcia_results@global_loadings
 
-    omic_dims <- vapply(mcia_out@block_loadings, dim, numeric(2))[1, ]
+    omic_dims <- vapply(mcia_results@block_loadings, dim, numeric(2))[1, ]
     omic_type <- c()
-    omics_labels <- names(mcia_out@block_loadings)
+    omics_labels <- names(mcia_results@block_loadings)
     for (i in seq_along(omics_labels)) {
         omic_label <- omics_labels[i]
         length_omic <- omic_dims[i]
@@ -46,6 +54,6 @@ vis_load_plot <- function(mcia_out, axes = c(1, 2), colors_omics) {
                color = omic)) +
       geom_point(alpha = 0.3) +
       labs(x = paste0("Axis ", axes[1]), y = paste0("Axis ", axes[2])) +
-      scale_color_manual(values = colors_omics) +
+      scale_color_manual(values = plot_colors) +
       theme_bw()
 }

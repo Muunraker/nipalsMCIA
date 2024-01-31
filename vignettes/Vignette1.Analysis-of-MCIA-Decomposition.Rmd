@@ -355,7 +355,7 @@ values will be the strongest contributors to that factor.
 # colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 colors_omics <- get_colors(mcia_results)
 
-vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
+vis_load_plot(mcia_results, axes = c(1, 4), color_pal = colors_omics)
 ```
 From this plot, we can deduce that individual miRNA features tend to
 have the most extreme values in factors 1 and 4, thereby contributing most strongly
