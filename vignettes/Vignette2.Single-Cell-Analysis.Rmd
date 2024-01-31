@@ -448,8 +448,8 @@ block_weights_heatmap(mcia_results = mcia_results_sc)
 ### Loadings
 
 ```{r mcia-plots-loadings, fig.dim = c(6, 4.5)}
-vis_load_plot(mcia_out = mcia_results_sc,
-              axes = c(1, 4), colors_omics = colors_omics_sc)
+vis_load_plot(mcia_results = mcia_results_sc,
+              axes = c(1, 4), color_pal = colors_omics_sc)
 ```
 
 ### Top features

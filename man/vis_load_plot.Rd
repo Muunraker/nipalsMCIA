@@ -4,15 +4,21 @@
 \alias{vis_load_plot}
 \title{Visualize all loadings on two factor axes}
 \usage{
-vis_load_plot(mcia_out, axes = c(1, 2), colors_omics)
+vis_load_plot(
+  mcia_results,
+  axes = c(1, 2),
+  color_pal = scales::viridis_pal,
+  color_pal_params = list()
+)
 }
 \arguments{
-\item{mcia_out}{object returned from nipals_multiblock() function}
+\item{mcia_results}{object returned from nipals_multiblock() function}
 
 \item{axes}{list of two numbers associated with two factors to visualize}
 
-\item{colors_omics}{named list of colors associated with omics,
-output of get_colors() function}
+\item{color_pal}{a list of colors or function which returns a list of colors}
+
+\item{color_pal_params}{a list of parameters for the color function}
 }
 \value{
 Plot of MCIA feature loadings for chosen axes
@@ -27,6 +33,5 @@ data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
                               colData=metadata_NCI60)
 mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
                                   plots = "none", tol = 1e-12)
-                                  colors_omics <- get_colors(mcia_results)
-vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
+vis_load_plot(mcia_results, axes = c(1, 4))
 }

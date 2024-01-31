@@ -22,6 +22,8 @@
 biocCheck.txt
 devtoolsCheck.txt
 vignettes/.build.timestamp
+vignettes/*.R
+vignettes/*.html
 
 # directories
 /doc/
