@@ -373,24 +373,40 @@ omic by using a corresponding block name (i.e. mrna).
 
 ### Factor 1
 
-Here, we return and visualize two ranked lists for Factor 1: using all omics,
+Here, we visualize two ranked lists for Factor 1: using all omics,
 or just mrna.
 
 ```{r part-2-factor-1, fig.dim = c(8, 3)}
-# define the loadings
-all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-                          absolute = FALSE, descending = TRUE, factor = 1)
-mrna_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "mrna",
-                           absolute = FALSE, descending = TRUE, factor = 1)
 
-# visualization
-all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = "all",
-                              colors_omics = colors_omics)
-mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
-                               colors_omics = colors_omics)
+# generate the visualizations
+all_pos_1_vis <- vis_load_ord(mcia_results, omic = "all", factor = 1,
+                              absolute = FALSE, descending = TRUE)
+mrna_pos_1_vis <- vis_load_ord(mcia_results, omic = "mrna", factor = 1,
+                               absolute = FALSE, descending = TRUE)
 
 ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
+
+The ordering itself can be easily obtained using the `ord_loadings(...)`
+function. 
+
+```{r part-2-factor-1-orderings}
+# obtain the loadings as plotted above
+all_pos_1 <- ord_loadings(mcia_results, omic = "all", factor = 1,
+                          absolute = FALSE, descending = TRUE)
+mrna_pos_1 <- ord_loadings(mcia_results, omic = "mrna", factor = 1,
+                           absolute = FALSE, descending = TRUE)
+```
+
+```{r part-2-factor-1-orderings-1}
+# visualize the tabular data
+all_pos_1[1:3, ]
+```
+
+```{r part-2-factor-1-orderings-2}
+mrna_pos_1[1:3, ]
+```
+
 
 The first plot shows that that miRNA has the overal top positive feature loadings for
 factor 1, whereas the second plot allows us to focus on only mRNA signals,
@@ -403,18 +419,32 @@ or just protein, this time ranking features by magnitude (absolute value).
 
 ```{r part-2-factor-2, fig.dim = c(8, 3)}
 # define the loadings
-all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-                          absolute = TRUE, descending = TRUE, factor = 2)
-prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot",
-                           absolute = TRUE, descending = TRUE, factor = 2)
+all_abs_2 <- vis_load_ord(mcia_results, omic = "all", factor = 2,
+                          absolute = TRUE, descending = TRUE)
 
-# visualization
-all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_name = "all",
-                              colors_omics = colors_omics)
-prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
-                               colors_omics = colors_omics)
+prot_abs_2 <- vis_load_ord(mcia_results, omic = "prot", factor = 2,
+                           absolute = TRUE, descending = TRUE)
 
-ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
+ggpubr::ggarrange(all_abs_2, prot_abs_2)
+```
+
+
+```{r part-2-factor-2-orderings}
+
+# obtain the loadings as plotted above
+all_abs_2_vis <- ord_loadings(mcia_results, omic = "all", factor = 2,
+                          absolute = TRUE, descending = TRUE)
+prot_abs_2_vis <- ord_loadings(mcia_results, omic = "prot", factor = 2,
+                          absolute = TRUE, descending = TRUE)
+```
+
+```{r part-2-factor-2-orderings-1}
+# visualize the tabular data
+all_abs_2_vis[1:3, ]
+```
+
+```{r part-2-factor-2-orderings-2}
+prot_abs_2_vis[1:3, ]
 ```
 
 For factor 2, we again see that across all omics, miRNA is playing the strongest
@@ -429,14 +459,17 @@ that they may play a distinct role from the miRNA in global scores for this fact
 We return and visualize a ranked list for Factor 4 with the top 60 features.
 
 ```{r part-2-factor-4, fig.dim = c(10, 4)}
-# define the loadings
-all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
-                      descending = TRUE, factor = 4)
-
 # visualization
-all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
-                           n_feat = 60)
+all_4_plot <- vis_load_ord(mcia_results, omic = "all", factor = 4, 
+                           absolute = FALSE, descending = TRUE, n_feat = 60)
 all_4_plot
+```
+
+```{r part-2-factor-4-orderings, fig.dim = c(10, 4)}
+# visualize the tabular data
+all_4 <- ord_loadings(mcia_results, omic = "all", factor = 4,
+                      absolute = FALSE, descending = TRUE)
+
 ```
 One can observe that while miRNA dominate the top features, proteins are also 
 represented.

@@ -4,17 +4,34 @@
 \alias{vis_load_ord}
 \title{Visualize ranked loadings}
 \usage{
-vis_load_ord(gl_f_ord, omic_name, colors_omics, n_feat = 15)
+vis_load_ord(
+  mcia_results,
+  omic,
+  factor = 1,
+  n_feat = 15,
+  absolute = TRUE,
+  descending = TRUE,
+  color_pal = scales::viridis_pal,
+  color_pal_params = list()
+)
 }
 \arguments{
-\item{gl_f_ord}{Ranked loading dataframe output from ord_loadings() function}
+\item{mcia_results}{object returned from nipals_multiblock() function}
 
-\item{omic_name}{name of the given omic dataset}
+\item{omic}{name of the given omic dataset}
 
-\item{colors_omics}{named list of colors associated with omics,
-output of get_colors() function}
+\item{factor}{choose a factor (numeric value from 1 to number of factors
+in mcia_results)}
 
 \item{n_feat}{number of features to visualize}
+
+\item{absolute}{whether to rank by absolute value}
+
+\item{descending}{whether to rank in descending or ascending order}
+
+\item{color_pal}{a list of colors or function which returns a list of colors}
+
+\item{color_pal_params}{a list of parameters for the color function}
 }
 \value{
 Plot in features for a factor by rank
@@ -30,8 +47,5 @@ data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
                               colData=metadata_NCI60)
 mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
                                   plots = "none", tol = 1e-12)
-all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-    absolute = FALSE, descending = TRUE, factor = 1)
-colors_omics <- get_colors(mcia_results)
-vis_load_ord(all_pos_1, colors_omics = colors_omics)
+vis_load_ord(mcia_results, omic="mrna")
 }
