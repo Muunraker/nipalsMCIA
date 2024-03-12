@@ -1,3 +1,7 @@
+# Latest
+
+* Added `BiocFileCache`
+
 # 0.99.7 (2023-10-07):
 
 ## Minor improvements and bug fixes
