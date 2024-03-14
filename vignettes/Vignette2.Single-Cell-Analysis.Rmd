@@ -148,21 +148,27 @@ Get the file paths from the cache (for clarity, we actually read in each file in
 
 ```{r data-all-download}
 # files needed for running MCIA
-path_metadata_sc <- BiocFileCache::bfcquery(bfc, query = "metadata_sc")$rpath
+path_metadata_sc <-
+  BiocFileCache::bfcquery(bfc, query = "metadata_sc")$rpath
 
 # MCIA results
 # path_data_blocks <- bfcquery(bfc, query = "data_blocks")$rpath
-path_mcia_results <- BiocFileCache::bfcquery(bfc, query = "mcia_results_sc")$rpath
+path_mcia_results <-
+  BiocFileCache::bfcquery(bfc, query = "mcia_results_sc")$rpath
 
 # marker genes for cell type annotation with Seurat
-path_marker_genes <- BiocFileCache::bfcquery(bfc, query = "marker_genes")$rpath
+path_marker_genes <-
+  BiocFileCache::bfcquery(bfc, query = "marker_genes")$rpath
 
 # the Seurat data's metric summary file from 10x Genomics
-path_metrics_summary <- BiocFileCache::bfcquery(bfc, query = "metrics_summary")$rpath
+path_metrics_summary <-
+  BiocFileCache::bfcquery(bfc, query = "metrics_summary")$rpath
 
 # Seurat objects in different stages of processing
-path_obj_raw <- BiocFileCache::bfcquery(bfc, query = "CITEseq_raw")$rpath
-path_obj_annotated <- BiocFileCache::bfcquery(bfc, query = "CITEseq_annotated")$rpath
+path_obj_raw <-
+  BiocFileCache::bfcquery(bfc, query = "CITEseq_raw")$rpath
+path_obj_annotated <-
+  BiocFileCache::bfcquery(bfc, query = "CITEseq_annotated")$rpath
 ```
 
 ## Bioconductor

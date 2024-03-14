@@ -45,7 +45,8 @@ extract_from_mae <- function(MAE_object, subset_data = "all") {
     }
   }
 
-  MAE_object_harmonize <- MultiAssayExperiment::mergeReplicates(intersectColumns(MAE_object))
+  MAE_object_harmonize <-
+    MultiAssayExperiment::mergeReplicates(intersectColumns(MAE_object))
 
   # Extract data matrices
   extracted_data <- MultiAssayExperiment::assays(MAE_object_harmonize)@listData

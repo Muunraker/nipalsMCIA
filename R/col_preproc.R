@@ -58,7 +58,7 @@ col_preproc <- function(df, col_preproc_method) {
         temp_df <- scale(temp_df, center = TRUE, scale = FALSE)
     } else {
         stop("Column preprocessing method not recognized ",
-                 "- pick from available options")
+             "- pick from available options")
     }
 
     return(temp_df)

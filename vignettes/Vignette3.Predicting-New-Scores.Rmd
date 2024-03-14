@@ -138,7 +138,8 @@ datasets
 
 ```{r visualize-both-models, fig.height = 2.5}
 MCIA_out_test <- data.frame(MCIA_test_scores[, 1:2])
-MCIA_out_test$cancerType <- MultiAssayExperiment::colData(data_blocks_test_mae)$cancerType
+MCIA_out_test$cancerType <-
+  MultiAssayExperiment::colData(data_blocks_test_mae)$cancerType
 
 colnames(MCIA_out_test) <- c("Factor.1", "Factor.2", "cancerType")
 MCIA_out_test$set <- "test"

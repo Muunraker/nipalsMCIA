@@ -14,7 +14,7 @@
 #'         \item `block` - scatter plot of two orders of block scores
 #'                         only (aka factors) for given block.
 #'         }
-#' @param block_name Name of the  block to be plotted (if `projection = block` argument used).
+#' @param block_name Name of the block to be plotted (if `projection = block` argument used).
 #'
 #' @param orders Option to select orders of factors to plot against each other
 #'         (for projection plots)

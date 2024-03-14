@@ -30,17 +30,17 @@ vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
                          absolute = TRUE, descending = TRUE,
                          color_pal = scales::viridis_pal,
                          color_pal_params = list()) {
-    
+
     # get the colors
     plot_colors <- get_colors(mcia_results,
                               color_pal = color_pal,
                               color_pal_params = color_pal_params)
-    
+
     # get the load ordering internally
-    gl_f_ord = ord_loadings(mcia_results = mcia_results, omic = omic,
+    gl_f_ord <- ord_loadings(mcia_results = mcia_results, omic = omic,
                             factor = factor, absolute = absolute,
                             descending = descending)
-    
+
     # setting parameters with tidy evaluation
     loading <- quo(`loading`)
     omic_quo <- quo(`omic`)
@@ -49,14 +49,15 @@ vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
     n_plot <- min(nrow(gl_f_ord), n_feat)
     omic_subset <- names(table(droplevels(gl_f_ord[seq(0, n_plot), ])$omic))
     color_vals <- plot_colors[omic_subset]
-    
+
     p <- ggplot(data = gl_f_ord[seq_len(n_plot), ],
                 aes(x = factor(omic_name, levels = omic_name),
                     y = !!loading, color = !!omic_quo)) +
              geom_point() +
              labs(x = "Feature") +
              theme_bw() +
-             theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) + 
+             theme(axis.text.x = element_text(angle = 45, hjust = 1,
+                                              size = 6)) +
              scale_color_manual(values = color_vals, limits = force)
 
     return(p)
