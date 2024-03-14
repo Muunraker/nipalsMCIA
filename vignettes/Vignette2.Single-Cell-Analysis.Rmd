@@ -83,33 +83,41 @@ To manage the data used in this vignette, we will be using `BiocFileCache`:
 # since we only use the cache in this vignette, we don't need wrapper functions
 
 # initialize the cache in a temporary directory
-bfc <- BiocFileCache()
+bfc <- BiocFileCache::BiocFileCache()
   
 # set up or load the unique resource ids
-rid <- bfcquery(bfc, query = "vignette_2", "rname")$rid
+rid <- BiocFileCache::bfcquery(bfc, query = "vignette_2", "rname")$rid
 # rid <- bfcrid(bfc) # we only have one rname, so you could also just use this
 
 # if the data is not in the cache, download and add it
 if (length(rid) == 0) {
   # specify `tag = ` to use a different release other than latest
-  urls <- pb_download_url(repo = "Muunraker/nipalsMCIA", tag = "latest")
+  urls <-
+    piggyback::pb_download_url(repo = "Muunraker/nipalsMCIA", tag = "latest")
   
   # you could add all of the urls to rid at once, but it would throw this error when it comes to downloading them: "Error in parse_url(url) : length(url) == 1 is not TRUE"
   for (url in urls) {
     # the rids are numbered in the order they are added e.g. BFC1, BFC2, ...
     message(paste("Downloading file", url))
-    rid <- names(bfcadd(bfc, rname = "vignette_2", url))
+    rid <- names(BiocFileCache::bfcadd(bfc, rname = "vignette_2", url))
     
     # check if the cached data needs updating and download it if needed
-    if (!isFALSE(bfcneedsupdate(bfc, rid))) {
+    if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid))) {
       # this will overwrite existing files without asking
-      bfcdownload(bfc, rid, ask = FALSE)
+      BiocFileCache::bfcdownload(bfc, rid, ask = FALSE)
     }
   }
 }
 
 # return the paths to the cached files
-# bfcrpath(bfc, rid = rid)
+# BiocFileCache::bfcrpath(bfc, rid = rid)
+```
+
+The temporary directory being used is:
+
+```{r cache-temp-dir}
+# you can also run tools::R_user_dir("BiocFileCache", which = "cache")
+BiocFileCache::getBFCOption("CACHE")
 ```
 
 ## Vignette Pipeline
@@ -118,7 +126,7 @@ if (length(rid) == 0) {
 
 ```{r pipelines, echo = FALSE}
 # pipeline image
-knitr::include_graphics(path = bfcquery(bfc, "Pipeline")$rpath)
+knitr::include_graphics(path = BiocFileCache::bfcquery(bfc, "Pipeline")$rpath)
 ```
 
 # Data
@@ -140,21 +148,21 @@ Get the file paths from the cache (for clarity, we actually read in each file in
 
 ```{r data-all-download}
 # files needed for running MCIA
-path_metadata_sc <- bfcquery(bfc, query = "metadata_sc")$rpath
+path_metadata_sc <- BiocFileCache::bfcquery(bfc, query = "metadata_sc")$rpath
 
 # MCIA results
 # path_data_blocks <- bfcquery(bfc, query = "data_blocks")$rpath
-path_mcia_results <- bfcquery(bfc, query = "mcia_results_sc")$rpath
+path_mcia_results <- BiocFileCache::bfcquery(bfc, query = "mcia_results_sc")$rpath
 
 # marker genes for cell type annotation with Seurat
-path_marker_genes <- bfcquery(bfc, query = "marker_genes")$rpath
+path_marker_genes <- BiocFileCache::bfcquery(bfc, query = "marker_genes")$rpath
 
 # the Seurat data's metric summary file from 10x Genomics
-path_metrics_summary <- bfcquery(bfc, query = "metrics_summary")$rpath
+path_metrics_summary <- BiocFileCache::bfcquery(bfc, query = "metrics_summary")$rpath
 
 # Seurat objects in different stages of processing
-path_obj_raw <- bfcquery(bfc, query = "CITEseq_raw")$rpath
-path_obj_annotated <- bfcquery(bfc, query = "CITEseq_annotated")$rpath
+path_obj_raw <- BiocFileCache::bfcquery(bfc, query = "CITEseq_raw")$rpath
+path_obj_annotated <- BiocFileCache::bfcquery(bfc, query = "CITEseq_annotated")$rpath
 ```
 
 ## Bioconductor

@@ -24,7 +24,6 @@ BugReports: https://github.com/Muunraker/nipalsMCIA/issues
 Depends:
     R (>= 4.3.0)
 Imports:
-    BiocFileCache,
     ComplexHeatmap,
     dplyr,
     fgsea,
@@ -40,6 +39,7 @@ Imports:
     scales,
     stats
 Suggests:
+    BiocFileCache,
     BiocStyle,
     circlize,
     ggpubr,
