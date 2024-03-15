@@ -11,7 +11,7 @@ header-includes:
    - \usepackage{amsfonts}
 output:
   BiocStyle::html_document:
-    dev: 'jpeg'
+    dev: "jpeg"
     df_print: kable
     fig_retina: 1
     number_sections: FALSE
@@ -277,7 +277,9 @@ data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
 ```
 
 We now rerun `nipals_multiblock()` using the updated MAE object, where the
-`colData` is passed to the `metadata` slot of the `NipalsResult` instance,
+`colData` is passed to the `metadata` slot of the `NipalsResult` instance, and
+then visualize the global factor scores using the `projection_plot()` function.
+
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
@@ -290,7 +292,7 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
 The `color_col` argument of `projection_plot()` can then be used to determine
 which column of `metadata` is used for coloring the individual data points, in
 this case `cancerType`. `color_pal` is used to assign a color palette and
-requires a vector of colors (i.e. c('blue', 'red', 'green')). To help create
+requires a vector of colors (i.e. `c("blue", "red", "green")`). To help create
 this vector we also provide `get_metadata_colors()`, a helper function (used 
 below) that can be used with a `scales::<function>` to return an appropriate
 vector of colors. Note: colors are applied by lexicographically sorting the list
@@ -316,11 +318,11 @@ A heatmap can be used to cluster samples based on global scores across all facto
 using `global_scores_heatmap()`. The samples can be colored by the associated metadata 
 using `color_cor` + `color_pal`as shown below.
 
-
 ```{r part-1-global-heatmap-colored, fig.dim = c(6, 4)}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
+
 Like the projection plot, one can observe that the clustering can differentiate
 between cancer type quite effectively.
 
@@ -351,12 +353,13 @@ using the `vis_load_plot` function. The features that take the most extreme
 values will be the strongest contributors to that factor.
 
 ```{r part-2-loadings, fig.dim = c(6, 4)}
-# colors_omics = c('red', 'blue', 'green')
+# colors_omics = c("red", "blue", "green")
 # colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 colors_omics <- get_colors(mcia_results)
 
 vis_load_plot(mcia_results, axes = c(1, 4), color_pal = colors_omics)
 ```
+
 From this plot, we can deduce that individual miRNA features tend to
 have the most extreme values in factors 1 and 4, thereby contributing most strongly
 to the global scores for those factors.
@@ -407,8 +410,7 @@ all_pos_1[1:3, ]
 mrna_pos_1[1:3, ]
 ```
 
-
-The first plot shows that that miRNA has the overal top positive feature loadings for
+The first plot shows that that miRNA has the overall top positive feature loadings for
 factor 1, whereas the second plot allows us to focus on only mRNA signals,
 where genes like *GNS* and *WASL* come up as top contributors.
 
@@ -469,8 +471,8 @@ all_4_plot
 # visualize the tabular data
 all_4 <- ord_loadings(mcia_results, omic = "all", factor = 4,
                       absolute = FALSE, descending = TRUE)
-
 ```
+
 One can observe that while miRNA dominate the top features, proteins are also 
 represented.
 
@@ -485,7 +487,7 @@ pathway as well as the total number of significant pathways for each factor.
 
 ### Gather Data and Generate the Report
 
-```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
 # extract mRNA global loadings
 mrna_gfscores <- nmb_get_gl(mcia_results)
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
@@ -525,7 +527,7 @@ As just mentioned, Factor 3 contains the most enriched gene set so we can
 re-run GSEA for this factor in order to get a full list of enrichment scores
 across all gene sets:
 
-```{r part-2-gsea-for-factor-3, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r part-2-gsea-for-factor-3, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
 # re-running GSEA
 factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
                                  nPermSimple = 10000, minSize = 15,
@@ -545,7 +547,7 @@ clean_pathway_name <- function(x) {
     replaced_value <- str_replace_all(x , "_", " ")
     if (nchar(replaced_value) > 49) {
         substring_value <- substr(replaced_value, 1, 50) 
-        return(paste0(substring_value, '...'))
+        return(paste0(substring_value, "..."))
     }
     else {
         return(replaced_value)

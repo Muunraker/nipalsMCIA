@@ -95,7 +95,9 @@ if (length(rid) == 0) {
   urls <-
     piggyback::pb_download_url(repo = "Muunraker/nipalsMCIA", tag = "latest")
   
-  # you could add all of the urls to rid at once, but it would throw this error when it comes to downloading them: "Error in parse_url(url) : length(url) == 1 is not TRUE"
+  # you could add all of the urls to rid at once, but it would throw this error
+  # when it comes to downloading them:
+  # "Error in parse_url(url) : length(url) == 1 is not TRUE"
   for (url in urls) {
     # the rids are numbered in the order they are added e.g. BFC1, BFC2, ...
     message(paste("Downloading file", url))
@@ -176,7 +178,7 @@ path_obj_annotated <-
 There are several Bioconductor packages which provide single-cell data for users
 as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/release/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics (stored as [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) classes), including the one that we will be analyzing.
 
-Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.17/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the DelayedMatrix format since they are so large. In this object, the rows represent the features and the columns represent the cells.
+Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.17/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the `DelayedMatrix` format since they are so large. In this object, the rows represent the features and the columns represent the cells.
 
 ```{r data-bioconductor-load, eval = FALSE}
 # read in the data as a SingleCellExperiment object
@@ -546,6 +548,8 @@ This section demonstrates how to take in raw data (in this case, the output of C
 *Credit to Seurat ([RNA](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html) and [multi-modal](https://satijalab.org/seurat/articles/multimodal_vignette.html#setup-a-seurat-object-add-the-rna-and-protein-data)) for the general steps.*
 
 ## Read in and process the data
+
+Note that there are other approaches to reading in single cell transcriptomics data, such as Bioconductor's [DropletUtils](https://bioconductor.org/packages/release/bioc/html/DropletUtils.html).
 
 ```{r seurat-load-data, message = FALSE}
 # load the data
