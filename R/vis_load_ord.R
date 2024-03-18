@@ -40,6 +40,7 @@ vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
     gl_f_ord <- ord_loadings(mcia_results = mcia_results, omic = omic,
                             factor = factor, absolute = absolute,
                             descending = descending)
+    omic_name <- gl_f_ord$omic_name
 
     # setting parameters with tidy evaluation
     loading <- quo(`loading`)
