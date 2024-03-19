@@ -141,7 +141,7 @@ nipals_multiblock <- function(data_blocks_mae,
 
     # First NIPALS run
     message("Computing order ", 1, " scores")
-    nipals_result <- nipals_iter(data_blocks, tol, isCentered = TRUE)
+    nipals_result <- nipals_iter(data_blocks, tol)
 
     # Saving result
     # matrix containing global scores as columns
