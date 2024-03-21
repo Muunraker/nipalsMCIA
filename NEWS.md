@@ -1,7 +1,7 @@
 # 1.1.0 (2024-03-21)
 
 ## Major changes
-* Added `BiocFileCache`
+* Added `BiocFileCache` to replace previous method of downloading large SC datasets. 
 
 ## Minor improvements and bugfixes
 * Updated `nipals_iter` to only use `var(gs)` to compute the significance of global scores.
