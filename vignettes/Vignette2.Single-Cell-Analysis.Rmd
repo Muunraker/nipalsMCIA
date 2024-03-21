@@ -18,6 +18,8 @@ vignette: >
   %\VignetteIndexEntry{Single Cell Analysis}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -27,25 +29,29 @@ knitr::opts_chunk$set(echo = TRUE)
 # Introduction
 
 In this vignette, we will cover some of the possible sources for publicly
-available single-cell data, how to format it for and process it with MCIA and
+available single-cell data, how to format it for and process it with [MCIA](https://bioconductor.org/packages/release/bioc/html/nipalsMCIA.html) and
 how to run a basic analysis in order to annotate the data and use the results
 as metadata for exploring the decomposition results.
 
-![Vignette 2 Pipelines by Major Section](https://github.com/Muunraker/nipalsMCIA/releases/download/v0.99.7/Vignette-2-Pipeline.png)
-
-*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
-
 ## Installation
 
+To install the development version from GitHub:
+
 ```{r installation-github, eval = FALSE}
+# devel version
+
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
+To install the released Bioconductor version:
+
 ```{r installation-bioconductor, eval = FALSE}
-# after acceptance
-# install.packages("BiocManager")
+# release version
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
 BiocManager::install("nipalsMCIA")
 ```
 
@@ -53,6 +59,7 @@ BiocManager::install("nipalsMCIA")
 # note that the TENxPBMCData package is not included in this list as you may
 # decide to pull data from another source or use our provided objects
 
+library(BiocFileCache)
 library(dplyr)
 library(ggplot2)
 library(ggpubr)
@@ -67,9 +74,61 @@ set.seed(42)
 ```{r set-paths}
 # if you would like to save any of the data loaded/created locally
 path_data <- file.path("..", "data")
+```
 
-# recommended location for external data
-path_inst <- tempdir()
+To manage the data used in this vignette, we will be using `BiocFileCache`:
+
+```{r cache}
+# as suggested in: https://bioconductor.org/packages/release/bioc/vignettes/BiocFileCache/inst/doc/BiocFileCache.html#cache-to-manage-package-data
+# since we only use the cache in this vignette, we don't need wrapper functions
+
+# initialize the cache in a temporary directory
+bfc <- BiocFileCache::BiocFileCache()
+  
+# set up or load the unique resource ids
+rid <- BiocFileCache::bfcquery(bfc, query = "vignette_2", "rname")$rid
+# rid <- bfcrid(bfc) # we only have one rname, so you could also just use this
+
+# if the data is not in the cache, download and add it
+if (length(rid) == 0) {
+  # specify `tag = ` to use a different release other than latest
+  urls <-
+    piggyback::pb_download_url(repo = "Muunraker/nipalsMCIA", tag = "latest")
+  
+  # you could add all of the urls to rid at once, but it would throw this error
+  # when it comes to downloading them:
+  # "Error in parse_url(url) : length(url) == 1 is not TRUE"
+  for (url in urls) {
+    # the rids are numbered in the order they are added e.g. BFC1, BFC2, ...
+    message(paste("Downloading file", url))
+    rid <- names(BiocFileCache::bfcadd(bfc, rname = "vignette_2", url))
+    
+    # check if the cached data needs updating and download it if needed
+    if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid))) {
+      # this will overwrite existing files without asking
+      BiocFileCache::bfcdownload(bfc, rid, ask = FALSE)
+    }
+  }
+}
+
+# return the paths to the cached files
+# BiocFileCache::bfcrpath(bfc, rid = rid)
+```
+
+The temporary directory being used is:
+
+```{r cache-temp-dir}
+# you can also run tools::R_user_dir("BiocFileCache", which = "cache")
+BiocFileCache::getBFCOption("CACHE")
+```
+
+## Vignette Pipeline
+
+*The lines for the data_sc_sce.Rda are dotted because we do not provide this object below; however, the code describing how to generate it is still included.*
+
+```{r pipelines, echo = FALSE}
+# pipeline image
+knitr::include_graphics(path = BiocFileCache::bfcquery(bfc, "Pipeline")$rpath)
 ```
 
 # Data
@@ -80,39 +139,38 @@ The following code details several ways in which to load in this dataset. You ma
 
 ## All Sources
 
-We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. *Note: the processed object that you will need in order to run MCIA (data_blocks_sc.Rda) is currently commented out as we do not actively use it in this vignette and instead read in the results directly to save on rendering time and memory.*
+We have the objects described below available in data files which you can download and load in here if you do not want to run the following sections. *Note: the processed object that you will need in order to run MCIA (data_blocks_sc.Rda) is currently commented out as we do not actively use it in this vignette and instead read in the results directly to save on rendering time and memory. You can still download it if you choose to as we provide the file.*
 
 ```{r data-all-list}
 # list all of the currently available files in the latest release
 piggyback::pb_list(repo = "Muunraker/nipalsMCIA", tag = "latest")
 ```
 
-```{r data-all-download}
-# specify `tag = ` to use a different release other than latest
+Get the file paths from the cache (for clarity, we actually read in each file in the following sections instead of loading them in here):
 
+```{r data-all-download}
 # files needed for running MCIA
-piggyback::pb_download(file = "metadata_sc.csv",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
-# piggyback::pb_download(file = "data_blocks_sc.Rda",
-#                        dest = path_inst, repo = "Muunraker/nipalsMCIA")
+path_metadata_sc <-
+  BiocFileCache::bfcquery(bfc, query = "metadata_sc")$rpath
 
 # MCIA results
-piggyback::pb_download(file = "mcia_results_sc.Rds",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+# path_data_blocks <- bfcquery(bfc, query = "data_blocks")$rpath
+path_mcia_results <-
+  BiocFileCache::bfcquery(bfc, query = "mcia_results_sc")$rpath
 
 # marker genes for cell type annotation with Seurat
-piggyback::pb_download(file = "marker_genes.csv",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+path_marker_genes <-
+  BiocFileCache::bfcquery(bfc, query = "marker_genes")$rpath
 
 # the Seurat data's metric summary file from 10x Genomics
-piggyback::pb_download(file = "5k_pbmc_protein_v3_metrics_summary.csv",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+path_metrics_summary <-
+  BiocFileCache::bfcquery(bfc, query = "metrics_summary")$rpath
 
 # Seurat objects in different stages of processing
-piggyback::pb_download(file = "tenx_pbmc5k_CITEseq_raw.rds",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
-piggyback::pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
-                       dest = path_inst, repo = "Muunraker/nipalsMCIA")
+path_obj_raw <-
+  BiocFileCache::bfcquery(bfc, query = "CITEseq_raw")$rpath
+path_obj_annotated <-
+  BiocFileCache::bfcquery(bfc, query = "CITEseq_annotated")$rpath
 ```
 
 ## Bioconductor
@@ -120,7 +178,7 @@ piggyback::pb_download(file = "tenx_pbmc5k_CITEseq_annotated.rds",
 There are several Bioconductor packages which provide single-cell data for users
 as part of the package. The [TENxPBMCData](https://bioconductor.org/packages/release/data/experiment/html/TENxPBMCData.html) contains 9 different publicly available datasets from 10x Genomics (stored as [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) classes), including the one that we will be analyzing.
 
-Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.17/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the DelayedMatrix format since they are so large. In this object, the rows represent the features and the columns represent the cells.
+Note that the CITE-Seq information is being stored as an "[alternative experiment](https://bioconductor.org/books/3.17/OSCA.intro/the-singlecellexperiment-class.html#alternative-experiments)" within the SingleCellExperiment object. Both the GEX (`"mainExpName: Gene Expression"`) and ADT (`"altExpNames(1): Antibody Capture"`) data were stored in the `DelayedMatrix` format since they are so large. In this object, the rows represent the features and the columns represent the cells.
 
 ```{r data-bioconductor-load, eval = FALSE}
 # read in the data as a SingleCellExperiment object
@@ -321,8 +379,7 @@ Note that the "-1"s have been removed from the cell barcodes.
 
 ```{r mcia-metadata}
 # read in the annotated cells
-metadata_sc <- read.csv(file = file.path(path_inst, "metadata_sc.csv"),
-                        header = TRUE, row.names = 1)
+metadata_sc <- read.csv(file = path_metadata_sc, header = TRUE, row.names = 1)
 
 # examples
 metadata_sc %>% slice_sample(n = 5)
@@ -333,8 +390,9 @@ metadata_sc %>% slice_sample(n = 5)
 This will run on cells with the top 2000 variable features (as defined in the later analysis).
 
 ```{r mcia-decomp-load-data, eval = FALSE}
-# load the object setup for running MCIA [10x Genomics & Seurat]
-load(file = file.path(path_inst, "data_blocks_sc.Rda"))
+# load the object set up for running MCIA [10x Genomics & Seurat]
+# (if you save it in the following code block or download it from a release)
+load(file = path_data_blocks)
 ```
 
 ```{r mcia-decomp-run, eval = FALSE}
@@ -347,6 +405,7 @@ data_blocks_sc_mae <-
   MultiAssayExperiment::MultiAssayExperiment(lapply(data_blocks_sc, function(x)
     SingleCellExperiment::SingleCellExperiment(t(as.matrix(x)))),
     colData = metadata_sc)
+
 mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
                                      col_preproc_method = "colprofile",
                                      block_preproc_method = "largest_sv",
@@ -373,7 +432,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
 
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
-mcia_results_sc <- readRDS(file = file.path(path_inst, "mcia_results_sc.Rds"))
+mcia_results_sc <- readRDS(file = path_mcia_results)
 mcia_results_sc
 ```
 
@@ -432,8 +491,8 @@ block_weights_heatmap(mcia_results = mcia_results_sc)
 ### Loadings
 
 ```{r mcia-plots-loadings, fig.dim = c(6, 4.5)}
-vis_load_plot(mcia_out = mcia_results_sc,
-              axes = c(1, 4), colors_omics = colors_omics_sc)
+vis_load_plot(mcia_results = mcia_results_sc,
+              axes = c(1, 4), color_pal = colors_omics_sc)
 ```
 
 ### Top features
@@ -443,19 +502,31 @@ In a few factors of interest:
 #### Factor 1
 
 ```{r mcia-plots-top-features-factor-1, fig.dim = c(10, 4)}
-# define the loadings
-all_pos_1 <- ord_loadings(mcia_out = mcia_results_sc, omic = "all",
-                          absolute = FALSE, descending = TRUE, factor = 1)
-mrna_pos_1 <- ord_loadings(mcia_out = mcia_results_sc, omic = "mrna",
-                           absolute = FALSE, descending = TRUE, factor = 1)
-
-# visualization
-all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = "all",
-                              colors_omics = colors_omics_sc)
-mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
-                               colors_omics = colors_omics_sc)
+all_pos_1_vis <- vis_load_ord(mcia_results_sc, omic = "all", factor = 1, 
+                              absolute = FALSE, descending = TRUE)
+mrna_pos_1_vis <- vis_load_ord(mcia_results_sc, omic = "mrna", factor = 1, 
+                               absolute = FALSE, descending = TRUE)
 
 ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis, widths = c(1, 1))
+```
+
+The `ord_loadings(...)` function can be used to extract the ordered values from
+the plot above. 
+
+```{r mcia-plots-top-features-factor-1-orderings}
+all_pos_1 <- ord_loadings(mcia_results_sc, omic = "all", factor = 1, 
+                              absolute = FALSE, descending = TRUE)
+mrna_pos_1 <- ord_loadings(mcia_results_sc, omic = "mrna", factor = 1, 
+                               absolute = FALSE, descending = TRUE)
+```
+
+```{r mcia-plots-top-features-factor-1-orderings-1}
+# visualize the tabular data
+all_pos_1[1:3, ]
+```
+
+```{r mcia-plots-top-features-factor-1-orderings-2}
+mrna_pos_1[1:3, ]
 ```
 
 #### Factor 4
@@ -463,13 +534,8 @@ ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis, widths = c(1, 1))
 If you don't want to rank by the absolute value and see a large number of features:
 
 ```{r mcia-plots-top-features-factor-4, fig.dim = c(10, 5)}
-# define the loadings
-all_4 <- ord_loadings(mcia_results_sc, omic = "all",
-                      absolute = FALSE, descending = TRUE, factor = 4)
-
-# visualization
-vis_load_ord(gl_f_ord = all_4, omic_name = "all",
-             colors_omics = colors_omics_sc, n_feat = 60)
+vis_load_ord(mcia_results_sc, omic = "all", factor = 4, n_feat = 60,
+             absolute = FALSE, descending = TRUE)
 ```
 
 As we saw in the [Block weights heatmap], factor 4 is dominated by the mRNA data
@@ -483,9 +549,11 @@ This section demonstrates how to take in raw data (in this case, the output of C
 
 ## Read in and process the data
 
+Note that there are other approaches to reading in single cell transcriptomics data, such as Bioconductor's [DropletUtils](https://bioconductor.org/packages/release/bioc/html/DropletUtils.html).
+
 ```{r seurat-load-data, message = FALSE}
 # load the data
-obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_raw.rds"))
+obj <- readRDS(file = path_obj_raw)
 
 # add useful metadata
 obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
@@ -497,9 +565,8 @@ obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 
 ```{r seurat-qc-metrics-summary}
 # read in and display the summary table
-(metrics_summary <- read.csv(
-    file = file.path(path_inst, "5k_pbmc_protein_v3_metrics_summary.csv")
-))
+metrics_summary <- read.csv(file = path_metrics_summary)
+metrics_summary
 ```
 
 ### GEX QC metrics
@@ -654,7 +721,7 @@ annotations defined in a later section, so we will clear them out here to
 proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file = file.path(path_inst, "tenx_pbmc5k_CITEseq_annotated.rds"))
+obj <- readRDS(file = path_obj_annotated)
 
 # reset to baseline
 Idents(object = obj) <- "seurat_clusters"
@@ -719,7 +786,7 @@ They are included as examples of some of the cell types you could look for.
 
 ```{r seurat-markers-load}
 # sort by Cell_Type and Marker if not already sorted
-markers_all <- read.csv(file = file.path(path_inst, "marker_genes.csv"))
+markers_all <- read.csv(file = path_marker_genes)
 markers_all %>% slice_sample(n = 10) # example markers
 ```
 

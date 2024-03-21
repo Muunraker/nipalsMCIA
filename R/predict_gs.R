@@ -2,7 +2,8 @@
 #' Prediction of new global scores based on block loadings and weights
 #'
 #' @description Uses previously-computed block scores and weights to compute
-#' a global score for new data.
+#' a global score for new data. Only validated for MCIA results, as CPCA loadings 
+#' aren't compatible with un-deflated data. 
 #'
 #' @details Projects the new observations onto each block loadings vector, then
 #' weights the projection according to the corresponding block weights.

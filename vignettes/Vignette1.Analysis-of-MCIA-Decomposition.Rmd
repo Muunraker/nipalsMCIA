@@ -11,7 +11,7 @@ header-includes:
    - \usepackage{amsfonts}
 output:
   BiocStyle::html_document:
-    dev: 'jpeg'
+    dev: "jpeg"
     df_print: kable
     fig_retina: 1
     number_sections: FALSE
@@ -96,14 +96,18 @@ in [Part 2: Interpreting Global Loadings].
 ## Installation
 
 ```{r installation-github, eval = FALSE}
+# devel version
+
 # install.packages("devtools")
-devtools::install_github("Muunraker/nipalsMCIA", ref = "code-development",
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE) # devel version
 ```
 
 ```{r installation-bioconductor, eval = FALSE}
-# after acceptance
-# install.packages("BiocManager")
+# release version
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
 BiocManager::install("nipalsMCIA")
 ```
 
@@ -273,7 +277,9 @@ data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
 ```
 
 We now rerun `nipals_multiblock()` using the updated MAE object, where the
-`colData` is passed to the `metadata` slot of the `NipalsResult` instance,
+`colData` is passed to the `metadata` slot of the `NipalsResult` instance, and
+then visualize the global factor scores using the `projection_plot()` function.
+
 ```{r part-1-mcia-again, warning = FALSE, message = FALSE}
 # adding metadata as part of the nipals_multiblock() function
 set.seed(42)
@@ -286,7 +292,7 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
 The `color_col` argument of `projection_plot()` can then be used to determine
 which column of `metadata` is used for coloring the individual data points, in
 this case `cancerType`. `color_pal` is used to assign a color palette and
-requires a vector of colors (i.e. c('blue', 'red', 'green')). To help create
+requires a vector of colors (i.e. `c("blue", "red", "green")`). To help create
 this vector we also provide `get_metadata_colors()`, a helper function (used 
 below) that can be used with a `scales::<function>` to return an appropriate
 vector of colors. Note: colors are applied by lexicographically sorting the list
@@ -312,11 +318,11 @@ A heatmap can be used to cluster samples based on global scores across all facto
 using `global_scores_heatmap()`. The samples can be colored by the associated metadata 
 using `color_cor` + `color_pal`as shown below.
 
-
 ```{r part-1-global-heatmap-colored, fig.dim = c(6, 4)}
 global_scores_heatmap(mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
+
 Like the projection plot, one can observe that the clustering can differentiate
 between cancer type quite effectively.
 
@@ -347,12 +353,13 @@ using the `vis_load_plot` function. The features that take the most extreme
 values will be the strongest contributors to that factor.
 
 ```{r part-2-loadings, fig.dim = c(6, 4)}
-# colors_omics = c('red', 'blue', 'green')
+# colors_omics = c("red", "blue", "green")
 # colors_omics <- get_colors(mcia_results, color_pal = colors_omics)
 colors_omics <- get_colors(mcia_results)
 
-vis_load_plot(mcia_results, axes = c(1, 4), colors_omics = colors_omics)
+vis_load_plot(mcia_results, axes = c(1, 4), color_pal = colors_omics)
 ```
+
 From this plot, we can deduce that individual miRNA features tend to
 have the most extreme values in factors 1 and 4, thereby contributing most strongly
 to the global scores for those factors.
@@ -369,26 +376,41 @@ omic by using a corresponding block name (i.e. mrna).
 
 ### Factor 1
 
-Here, we return and visualize two ranked lists for Factor 1: using all omics,
+Here, we visualize two ranked lists for Factor 1: using all omics,
 or just mrna.
 
 ```{r part-2-factor-1, fig.dim = c(8, 3)}
-# define the loadings
-all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-                          absolute = FALSE, descending = TRUE, factor = 1)
-mrna_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "mrna",
-                           absolute = FALSE, descending = TRUE, factor = 1)
 
-# visualization
-all_pos_1_vis <- vis_load_ord(gl_f_ord = all_pos_1, omic_name = "all",
-                              colors_omics = colors_omics)
-mrna_pos_1_vis <- vis_load_ord(gl_f_ord = mrna_pos_1, omic_name = "mrna",
-                               colors_omics = colors_omics)
+# generate the visualizations
+all_pos_1_vis <- vis_load_ord(mcia_results, omic = "all", factor = 1,
+                              absolute = FALSE, descending = TRUE)
+mrna_pos_1_vis <- vis_load_ord(mcia_results, omic = "mrna", factor = 1,
+                               absolute = FALSE, descending = TRUE)
 
 ggpubr::ggarrange(all_pos_1_vis, mrna_pos_1_vis)
 ```
 
-The first plot shows that that miRNA has the overal top positive feature loadings for
+The ordering itself can be easily obtained using the `ord_loadings(...)`
+function. 
+
+```{r part-2-factor-1-orderings}
+# obtain the loadings as plotted above
+all_pos_1 <- ord_loadings(mcia_results, omic = "all", factor = 1,
+                          absolute = FALSE, descending = TRUE)
+mrna_pos_1 <- ord_loadings(mcia_results, omic = "mrna", factor = 1,
+                           absolute = FALSE, descending = TRUE)
+```
+
+```{r part-2-factor-1-orderings-1}
+# visualize the tabular data
+all_pos_1[1:3, ]
+```
+
+```{r part-2-factor-1-orderings-2}
+mrna_pos_1[1:3, ]
+```
+
+The first plot shows that that miRNA has the overall top positive feature loadings for
 factor 1, whereas the second plot allows us to focus on only mRNA signals,
 where genes like *GNS* and *WASL* come up as top contributors.
 
@@ -399,18 +421,32 @@ or just protein, this time ranking features by magnitude (absolute value).
 
 ```{r part-2-factor-2, fig.dim = c(8, 3)}
 # define the loadings
-all_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "all",
-                          absolute = TRUE, descending = TRUE, factor = 2)
-prot_abs_2 <- ord_loadings(mcia_out = mcia_results, omic = "prot",
-                           absolute = TRUE, descending = TRUE, factor = 2)
+all_abs_2 <- vis_load_ord(mcia_results, omic = "all", factor = 2,
+                          absolute = TRUE, descending = TRUE)
 
-# visualization
-all_abs_2_vis <- vis_load_ord(gl_f_ord = all_abs_2, omic_name = "all",
-                              colors_omics = colors_omics)
-prot_abs_2_vis <- vis_load_ord(gl_f_ord = prot_abs_2, omic_name = "prot",
-                               colors_omics = colors_omics)
+prot_abs_2 <- vis_load_ord(mcia_results, omic = "prot", factor = 2,
+                           absolute = TRUE, descending = TRUE)
 
-ggpubr::ggarrange(all_abs_2_vis, prot_abs_2_vis)
+ggpubr::ggarrange(all_abs_2, prot_abs_2)
+```
+
+
+```{r part-2-factor-2-orderings}
+
+# obtain the loadings as plotted above
+all_abs_2_vis <- ord_loadings(mcia_results, omic = "all", factor = 2,
+                          absolute = TRUE, descending = TRUE)
+prot_abs_2_vis <- ord_loadings(mcia_results, omic = "prot", factor = 2,
+                          absolute = TRUE, descending = TRUE)
+```
+
+```{r part-2-factor-2-orderings-1}
+# visualize the tabular data
+all_abs_2_vis[1:3, ]
+```
+
+```{r part-2-factor-2-orderings-2}
+prot_abs_2_vis[1:3, ]
 ```
 
 For factor 2, we again see that across all omics, miRNA is playing the strongest
@@ -425,15 +461,18 @@ that they may play a distinct role from the miRNA in global scores for this fact
 We return and visualize a ranked list for Factor 4 with the top 60 features.
 
 ```{r part-2-factor-4, fig.dim = c(10, 4)}
-# define the loadings
-all_4 <- ord_loadings(mcia_results, omic = "all", absolute = FALSE,
-                      descending = TRUE, factor = 4)
-
 # visualization
-all_4_plot <- vis_load_ord(gl_f_ord = all_4, colors_omics = colors_omics,
-                           n_feat = 60)
+all_4_plot <- vis_load_ord(mcia_results, omic = "all", factor = 4, 
+                           absolute = FALSE, descending = TRUE, n_feat = 60)
 all_4_plot
 ```
+
+```{r part-2-factor-4-orderings, fig.dim = c(10, 4)}
+# visualize the tabular data
+all_4 <- ord_loadings(mcia_results, omic = "all", factor = 4,
+                      absolute = FALSE, descending = TRUE)
+```
+
 One can observe that while miRNA dominate the top features, proteins are also 
 represented.
 
@@ -448,7 +487,7 @@ pathway as well as the total number of significant pathways for each factor.
 
 ### Gather Data and Generate the Report
 
-```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r part-2-pathways, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
 # extract mRNA global loadings
 mrna_gfscores <- nmb_get_gl(mcia_results)
 mrna_rows <- str_detect(row.names(mrna_gfscores), "_mrna")
@@ -463,7 +502,7 @@ pathways <- fgsea::gmtPathways(gmt.file = path.database)
 
 # generate the GSEA report
 geneset_report <- gsea_report(metagenes = mrna_gfscores, path.database,
-                              factors = seq(1, 3), pval.thr = 0.05, nproc = 8)
+                              factors = seq(1, 3), pval.thr = 0.05, nproc = 2)
 ```
 
 ### Investigating the GSEA Summary Table
@@ -488,11 +527,11 @@ As just mentioned, Factor 3 contains the most enriched gene set so we can
 re-run GSEA for this factor in order to get a full list of enrichment scores
 across all gene sets:
 
-```{r part-2-gsea-for-factor-3, echo = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r part-2-gsea-for-factor-3, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
 # re-running GSEA
 factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
                                  nPermSimple = 10000, minSize = 15,
-                                 nproc = 4, maxSize = 500)
+                                 nproc = 2, maxSize = 500)
 ```
 
 ```{r include=FALSE}
@@ -500,23 +539,21 @@ factor3_paths <- fgseaMultilevel(pathways, stats = mrna_gfscores[, 3],
 factor3_paths <- factor3_paths[order(factor3_paths$padj), ]
 
 # Apply scientific notation to padj
-to_sci <- function(x) {
-    return(sprintf("%.2e", x))
-}
-factor3_paths[,"padj"] <- sapply(factor3_paths[,"padj"], to_sci)
+to_sci <- function(x) return(sprintf("%.2e", x))
+factor3_paths$padj <- vapply(factor3_paths$padj, to_sci, character(1))
 
 # Clean up pathway name
 clean_pathway_name <- function(x) {
     replaced_value <- str_replace_all(x , "_", " ")
     if (nchar(replaced_value) > 49) {
-      substring_value <- substr(replaced_value, 1, 50) 
-      return(paste0(substring_value, '...'))
+        substring_value <- substr(replaced_value, 1, 50) 
+        return(paste0(substring_value, "..."))
     }
     else {
-      return(replaced_value)
+        return(replaced_value)
     }
 }
-factor3_paths[, "pathway"] <- apply(X = factor3_paths[,"pathway"],
+factor3_paths[, "pathway"] <- apply(X = factor3_paths[, "pathway"],
                                     MARGIN = 1, FUN = clean_pathway_name)
 ```
 

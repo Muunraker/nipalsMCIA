@@ -1,9 +1,9 @@
 test_that("only existing omics", {
-    expect_error(ord_loadings(mcia_out = mcia_results, omic = "test"))
+    expect_error(ord_loadings(mcia_results, omic = "test"))
 })
 
 # all omics and factor 1, ranked in descending order
-all_pos_1 <- ord_loadings(mcia_out = mcia_results, omic = "all",
+all_pos_1 <- ord_loadings(mcia_results, omic = "all",
                           absolute = FALSE, descending = TRUE, factor = 1)
 
 test_that("factor filtration", {

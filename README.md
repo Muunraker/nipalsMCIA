@@ -4,6 +4,9 @@
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
+
+[![BioC
+status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA)
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
@@ -15,45 +18,45 @@ Features include:
 - Efficient computation of deflation and variance enabling embedding of
   high-volume (e.g. single-cell) datasets.  
 - Functionality to perform out-of-sample embedding.
-- Easy-to-adjust options for deflation and pre-processing.
+- Easy-to-adjust options for deflation and pre-processing
 - Multiple visualization and analysis options for sample- and
-  feature-level embedding results.
+  feature-level embedding results
 - Streamlined and well-documented and supported code that is consistent
   with published theory to enable more efficient algorithm development
-  and extension.
+  and extension
+
 **References**
 
-Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
-Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
-University (<http://hdl.handle.net/10427/CZ30Q6773>)
-
-Hanafi et al. (2011) Connections between multiple co-inertia analysis
-and consensus principal component analysis, Chemometrics and Intelligent
-Laboratory Systems 106 (1)
-(<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
-
-Meng et al. (2014) A multivariate approach to the integration of
-multi-omics datasets, BMC Bioinformatics 2014(15)
-(<https://doi.org/10.1186/1471-2105-15-162>)
+- Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
+  Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
+  University (<http://hdl.handle.net/10427/CZ30Q6773>)
+- Meng et al. (2014) A multivariate approach to the integration of
+  multi-omics datasets, BMC Bioinformatics 2014(15)
+  (<https://doi.org/10.1186/1471-2105-15-162>)
+- Hanafi et al. (2011) Connections between multiple co-inertia analysis
+  and consensus principal component analysis, Chemometrics and
+  Intelligent Laboratory Systems 106 (1)
+  (<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
 
 ## Installation
 
-To install the current development version from Bioconductor, use 
+This package can be installed [via
+Bioconductor](https://bioconductor.org/packages/release/bioc/html/nipalsMCIA.html):
+
 ``` r
 if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install(version='devel')
+  install.packages("BiocManager")
 
 BiocManager::install("nipalsMCIA")
 ```
 
-nipalsMCIA can also be installed from [GitHub](https://github.com/) 
-provided the [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) package is also installed:
+You can install the development version of nipalsMCIA from
+[GitHub](https://github.com/) with:
 
 ``` r
-devtools::install_github("Muunraker/nipalsMCIA",
-                           build_vignettes = TRUE)
+# install.packages("devtools")
+devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
+                         force = TRUE, build_vignettes = TRUE)
 ```
 
 ## Basic Example
@@ -88,29 +91,31 @@ head(metadata_NCI60)
 #> CNS.SNB_75        CNS
 #> CNS.U251          CNS
 table(metadata_NCI60)
-#> metadata_NCI60
+#> cancerType
 #>      CNS Leukemia Melanoma 
 #>        6        6        9
 ```
-*Note: this dataset is reproduced from the [omicade4 package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
-(Meng et. al., 2014). 
 
-nipalsMCIA requires all input data to be formatted as a [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html). 
-The package provides a simple function to convert a list of dataframes and accompanying metadata to a MAE object:
-``` r
-data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-                                  colData=metadata_NCI60)
-```
-Note: the `row_format` argument specifies whether the dataset rows correspond to samples or features.
+*Note: this dataset is reproduced from the [omicade4
+package](https://www.bioconductor.org/packages/release/bioc/html/omicade4.html)
+(Meng et. al., 2014). This package assumes all input datasets are in
+sample by feature format.*
 
-The main MCIA function can be called on `data_blocks_mae`: 
+The main MCIA function can be called on `data_blocks` and optionally can
+include `metadata_NCI60` for plot coloring by cancer type:
+
 ``` r
-mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
-                                  tol = 1e-12, max_iter = 1000,
+# to convert data_blocks into an MAE object we provide the simple_mae() function
+data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+                              colData = metadata_NCI60)
+
+mcia_results <- nipals_multiblock(data_blocks_mae = data_blocks_mae,
                                   col_preproc_method = "colprofile",
-                                  color_col = "cancerType",
-                                  deflationMethod = "block")
+                                  num_PCs = 10, tol = 1e-12,
+                                  color_col = "cancerType")
 ```
-The output is an object of the `NipalsResult` class, which contains the low-dimensional representation of the data (with dimension set by `num_PCs`) as well as other information about the decomposition. By default, the function plots the first two scores vectors colored by the `color_col = "cancerType"` field in `metadata_NCI60`. It also generates a scree plot of the global eigenvalues.
 
 <img src="man/figures/README-call-mcia-1.png" width="100%" style="display: block; margin: auto;" />
+
+Here `num_PCs` is the dimension of the low-dimensional embedding of the
+data chosen by the user.

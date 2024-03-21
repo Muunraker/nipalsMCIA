@@ -18,7 +18,8 @@ a matrix of predicted global scores for the training data
 }
 \description{
 Uses previously-computed block scores and weights to compute
-a global score for new data.
+a global score for new data. Only validated for MCIA results, as CPCA loadings 
+aren't compatible with un-deflated data.
 }
 \details{
 Projects the new observations onto each block loadings vector, then

@@ -33,7 +33,7 @@ projection_plot(
 \item{orders}{Option to select orders of factors to plot against each other
 (for projection plots)}
 
-\item{block_name}{Name of the  block to be plotted (if `projection = block` argument used).}
+\item{block_name}{Name of the block to be plotted (if `projection = block` argument used).}
 
 \item{color_col}{an integer or string specifying the column that will be
 used for color_col}

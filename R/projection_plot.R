@@ -14,7 +14,7 @@
 #'         \item `block` - scatter plot of two orders of block scores
 #'                         only (aka factors) for given block.
 #'         }
-#' @param block_name Name of the  block to be plotted (if `projection = block` argument used).
+#' @param block_name Name of the block to be plotted (if `projection = block` argument used).
 #'
 #' @param orders Option to select orders of factors to plot against each other
 #'         (for projection plots)
@@ -159,8 +159,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         plot(gs_normed[sample_indexes, orders[[1]]],
              gs_normed[sample_indexes, orders[[2]]],
              main = "Factor Plot",
-             xlab = paste("Factor ", orders[[1]]),
-             ylab = paste("Factor ", orders[[2]]),
+             xlab = paste("Factor", orders[[1]]),
+             ylab = paste("Factor", orders[[2]]),
              col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
@@ -288,8 +288,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         plot(bs_normed[sample_indexes, orders[[1]]],
              bs_normed[sample_indexes, orders[[2]]],
              main = "Factor Plot",
-             xlab = paste("Factor ", orders[[1]]),
-             ylab = paste("Factor ", orders[[2]]),
+             xlab = paste("Factor", orders[[1]]),
+             ylab = paste("Factor", orders[[2]]),
              col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
@@ -353,8 +353,8 @@ projection_plot <- function(mcia_results, projection, orders = c(1, 2),
         plot(gs_normed[sample_indexes, orders[[1]]],
              gs_normed[sample_indexes, orders[[2]]],
              main = "Global Factor Plot",
-             xlab = paste("Factor ", orders[[1]]),
-             ylab = paste("Factor ", orders[[2]]),
+             xlab = paste("Factor", orders[[1]]),
+             ylab = paste("Factor", orders[[2]]),
              col = plotCol,
              xlim = c(min_x, max_x),
              ylim = c(min_y, max_y),
