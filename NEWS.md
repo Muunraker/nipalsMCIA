@@ -1,6 +1,11 @@
-# 1.1.0
+# 1.1.0 (2024-03-21)
 
+## Major changes
 * Added `BiocFileCache`
+
+## Minor improvements and bugfixes
+* Updated `nipals_iter` to only use `var(gs)` to compute the significance of global scores.
+* Added to documentation for `predict_gs()` warning against use with CPCA deflation. 
 
 # 0.99.7 (2023-10-07):
 
