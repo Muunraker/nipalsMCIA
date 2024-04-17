@@ -50,7 +50,7 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
                                               annotation_label = color_col)
 
         ComplexHeatmap::Heatmap(matrix = global_scores,
-                                     name = "GS Score",
+                                     name = "Global Score",
                                      row_title = "Samples",
                                      column_title = "Factors",
                                      row_names_side = "right",
@@ -61,7 +61,7 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
 
     } else {
         ComplexHeatmap::Heatmap(matrix = global_scores,
-                                     name = "GS Score",
+                                     name = "Global Score",
                                      row_title = "Samples",
                                      column_title = "Factors",
                                      row_names_side = "right",
