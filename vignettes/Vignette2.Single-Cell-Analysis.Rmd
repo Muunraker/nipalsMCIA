@@ -182,10 +182,10 @@ Note that the CITE-Seq information is being stored as an "[alternative experimen
 
 ```{r data-bioconductor-load, eval = FALSE}
 # read in the data as a SingleCellExperiment object
-tenx_pbmc3k <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
+tenx_pbmc5k <- TENxPBMCData::TENxPBMCData(dataset = "pbmc5k-CITEseq")
 
 # examine the data
-tenx_pbmc3k
+tenx_pbmc5k
 ## class: SingleCellExperiment
 ## dim: 33538 5247
 ## metadata(0):
@@ -198,7 +198,7 @@ tenx_pbmc3k
 ## mainExpName: Gene Expression
 ## altExpNames(1): Antibody Capture
 
-counts(tenx_pbmc3k)
+counts(tenx_pbmc5k)
 ## <33538 x 5247> sparse matrix of class DelayedMatrix and type "integer":
 ##                    [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
 ## ENSG00000243485       0       0       0       0   .       0       0       0       0
@@ -213,7 +213,7 @@ counts(tenx_pbmc3k)
 ## ENSG00000277475       0       0       0       0   .       0       0       0       0
 ## ENSG00000268674       0       0       0       0   .       0       0       0       0
 
-counts(altExp(tenx_pbmc3k))
+counts(altExp(tenx_pbmc5k))
 ## <32 x 5247> sparse matrix of class DelayedMatrix and type "integer":
 ##           [, 1]    [, 2]    [, 3]    [, 4] ... [, 5244] [, 5245] [, 5246] [, 5247]
 ##    CD3      25     959     942     802   .     402     401       6    1773
@@ -229,7 +229,7 @@ counts(altExp(tenx_pbmc3k))
 ##  IgG2b       6       2       4       8   .       0       0       2       5
 
 # examine the metadata:
-head(colData(tenx_pbmc3k), n = 3)
+head(colData(tenx_pbmc5k), n = 3)
 ## DataFrame with 6 rows and 11 columns
 ##           Sample            Barcode         Sequence   Library Cell_ranger_version Tissue_status Barcode_type
 ##      <character>        <character>      <character> <integer>         <character>   <character>  <character>
@@ -242,7 +242,7 @@ head(colData(tenx_pbmc3k), n = 3)
 ## 2 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 ## 3 Chromium_v3           NovaSeq HealthyDonor     2019-05-29
 
-head(rowData(tenx_pbmc3k), n = 3)
+head(rowData(tenx_pbmc5k), n = 3)
 ## DataFrame with 6 rows and 4 columns
 ##                      ENSEMBL_ID Symbol_TENx            Type       Symbol
 ##                     <character> <character>     <character>  <character>
@@ -250,11 +250,11 @@ head(rowData(tenx_pbmc3k), n = 3)
 ## ENSG00000237613 ENSG00000237613     FAM138A Gene Expression      FAM138A
 ## ENSG00000186092 ENSG00000186092       OR4F5 Gene Expression        OR4F5
 
-metadata(tenx_pbmc3k)
+metadata(tenx_pbmc5k)
 ## list()
 
 # change the gene names from Ensembl IDs to the 10x genes
-rownames(tenx_pbmc3k) <- rowData(tenx_pbmc3k)$Symbol_TENx
+rownames(tenx_pbmc5k) <- rowData(tenx_pbmc5k)$Symbol_TENx
 ```
 
 In order to run MCIA, the format of this data must be slightly modified:
@@ -262,8 +262,8 @@ In order to run MCIA, the format of this data must be slightly modified:
 ```{r data-bioconductor-formatting, eval = FALSE}
 # set up the list
 data_blocks_sc_sce <- list()
-data_blocks_sc_sce$mrna <- data.frame(as.matrix(counts(tenx_pbmc3k)))
-data_blocks_sc_sce$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc3k))))
+data_blocks_sc_sce$mrna <- data.frame(as.matrix(counts(tenx_pbmc5k)))
+data_blocks_sc_sce$adt <- data.frame(as.matrix(counts(altExp(tenx_pbmc5k))))
 
 summary(data_blocks_sc_sce)
 ##      Length Class      Mode
@@ -277,11 +277,11 @@ obj_sce[["ADT"]] <- CreateAssayObject(counts = data_blocks_sc_sce$adt)
 
 # name the cells with their barcodes
 obj_sce <- RenameCells(object = obj_sce,
-                       new.names = colData(tenx_pbmc3k)$Sequence)
+                       new.names = colData(tenx_pbmc5k)$Sequence)
 
 # add metadata from the SingleCellExperiment object
 obj_sce <- AddMetaData(object = obj_sce,
-                       metadata = as.data.frame(colData(tenx_pbmc3k),
+                       metadata = as.data.frame(colData(tenx_pbmc5k),
                                                 row.names = Cells(obj_sce)))
 
 # this object will be slightly different than from the Seurat one down below
