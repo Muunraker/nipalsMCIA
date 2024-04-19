@@ -6,6 +6,8 @@
 ## Minor improvements and bugfixes
 * Updated `nipals_iter` to only use `var(gs)` to compute the significance of global scores.
 * Added to documentation for `predict_gs()` warning against use with CPCA deflation. 
+* Clarified the dataset used in the single-cell vignette and reformatted the workflow diagram
+* Minor plotting improvements (removed redundancies in legend names, consistency of axis text, etc.)
 
 # 0.99.7 (2023-10-07):
 
@@ -14,7 +16,7 @@
 * Updated README to reflect MAE changes.
 * Updated the citation. 
 * Fixed bug in documentation for `nipals_multiblock`.
-* Stopped downloading one of the files for Vignette 2.
+* Stopped downloading one of the files for the single cell analysis vignette.
 
 # 0.99.6 (2023-09-09):
 
@@ -62,11 +64,11 @@
 
 ## Major changes
 
-* Shrank the vignettes sizes (especially Vignette 2).
+* Shrank the vignettes sizes (especially the single cell analysis vignette).
 
 ## Minor improvements and bug fixes
 
-* Restructured Vignette 2 to be more streamlined and have more explanations.
+* Restructured the single cell analysis vignette to be more streamlined and have more explanations.
 * Add an additional single cell data file to the repository using `piggyback`.
 
 # 0.99.1 (2023-02-26):
