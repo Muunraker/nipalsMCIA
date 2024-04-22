@@ -18,17 +18,16 @@
 #' @importFrom ggplot2 ggplot aes_string geom_point theme_bw scale_color_manual
 #' @importFrom ggplot2 xlab ylab labs
 #' @export
-
 vis_load_plot <- function(mcia_results, axes = c(1, 2),
                           color_pal = scales::viridis_pal,
                           color_pal_params = list()) {
-    
-    # get the colors 
+
+    # get the colors
     plot_colors <- get_colors(mcia_results,
                               color_pal = color_pal,
                               color_pal_params = color_pal_params)
-        
-    
+
+
     # extracting global loadings
     gl <- mcia_results@global_loadings
 
@@ -54,6 +53,7 @@ vis_load_plot <- function(mcia_results, axes = c(1, 2),
                color = omic)) +
       geom_point(alpha = 0.3) +
       labs(x = paste0("Axis ", axes[1]), y = paste0("Axis ", axes[2])) +
+         # color = "Omic"
       scale_color_manual(values = plot_colors) +
       theme_bw()
 }

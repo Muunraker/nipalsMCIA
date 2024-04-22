@@ -16,7 +16,7 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
     global_scores <- mcia_results@global_scores
 
     # extract and re-label global scores
-    colnames(global_scores) <- paste0("F", seq(1, ncol(global_scores)))
+    colnames(global_scores) <- seq(1, ncol(global_scores))
 
     if (!is.null(color_col)) {
         # check if metadata is within the MCIA results
@@ -50,24 +50,26 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
                                               annotation_label = color_col)
 
         ComplexHeatmap::Heatmap(matrix = global_scores,
-                                     name = "Global Score",
-                                     row_title = "Samples",
-                                     column_title = "Factors",
-                                     row_names_side = "right",
-                                     show_row_names = TRUE,
-                                     row_names_gp = grid::gpar(fontsize = 7),
-                                     show_column_names = TRUE,
-                                     right_annotation = row_ha)
-
+                                name = "Global Score",
+                                row_title = "Samples",
+                                column_title = "Factors",
+                                row_names_side = "right",
+                                show_row_names = TRUE,
+                                row_names_gp = grid::gpar(fontsize = 7),
+                                column_names_rot = 0,
+                                column_names_centered = TRUE,
+                                show_column_names = TRUE,
+                                right_annotation = row_ha)
     } else {
         ComplexHeatmap::Heatmap(matrix = global_scores,
-                                     name = "Global Score",
-                                     row_title = "Samples",
-                                     column_title = "Factors",
-                                     row_names_side = "right",
-                                     show_row_names = TRUE,
-                                     row_names_gp = grid::gpar(fontsize = 7),
-                                     show_column_names = TRUE)
+                                name = "Global Score",
+                                row_title = "Samples",
+                                column_title = "Factors",
+                                row_names_side = "right",
+                                show_row_names = TRUE,
+                                row_names_gp = grid::gpar(fontsize = 7),
+                                column_names_rot = 0,
+                                column_names_centered = TRUE,
+                                show_column_names = TRUE)
     }
-
 }
