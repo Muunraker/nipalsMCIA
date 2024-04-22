@@ -4,10 +4,12 @@
 \alias{block_weights_heatmap}
 \title{block_weights_heatmap}
 \usage{
-block_weights_heatmap(mcia_results)
+block_weights_heatmap(mcia_results, separate_rects = TRUE)
 }
 \arguments{
 \item{mcia_results}{MCIA results object returned from `nipals_multiblock`}
+
+\item{separate_rects}{a boolean indicating whether or not to add white lines between the rectangles for visual clarity}
 }
 \value{
 heatmap object containing the block weights as a heatmap
