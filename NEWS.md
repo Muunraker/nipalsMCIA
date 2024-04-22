@@ -1,3 +1,12 @@
+# 1.1.2
+
+## Major changes
+* 
+
+## Minor improvements and bugfixes
+* Clarified the dataset used in the single-cell vignette and reformatted the workflow diagram
+* Minor plotting improvements (removed redundancies in legend names, consistency of axis text, separation of rectangles in heatmaps etc.)
+
 # 1.1.0 (2024-03-21)
 
 ## Major changes
@@ -6,8 +15,6 @@
 ## Minor improvements and bugfixes
 * Updated `nipals_iter` to only use `var(gs)` to compute the significance of global scores.
 * Added to documentation for `predict_gs()` warning against use with CPCA deflation. 
-* Clarified the dataset used in the single-cell vignette and reformatted the workflow diagram
-* Minor plotting improvements (removed redundancies in legend names, consistency of axis text, etc.)
 
 # 0.99.7 (2023-10-07):
 
