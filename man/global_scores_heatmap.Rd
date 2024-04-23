@@ -8,8 +8,7 @@ global_scores_heatmap(
   mcia_results,
   color_col = NULL,
   color_pal = scales::viridis_pal,
-  color_pal_params = list(option = "D"),
-  separate_rects = TRUE
+  color_pal_params = list(option = "D")
 )
 }
 \arguments{
@@ -22,8 +21,6 @@ used for color_col}
 \item{color_pal}{a list of colors or function which returns a list of colors}
 
 \item{color_pal_params}{a list of parameters for the color function}
-
-\item{separate_rects}{a boolean indicating whether or not to add white lines between the rectangles for visual clarity}
 }
 \value{
 ComplexHeatmap object

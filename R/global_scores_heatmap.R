@@ -7,25 +7,16 @@
 #'     used for color_col
 #' @param color_pal a list of colors or function which returns a list of colors
 #' @param color_pal_params a list of parameters for the color function
-#' @param separate_rects a boolean indicating whether or not to add white lines between the rectangles for visual clarity
 #' @return ComplexHeatmap object
 #' @export
 global_scores_heatmap <- function(mcia_results, color_col = NULL,
                                   color_pal = scales::viridis_pal,
-                                  color_pal_params = list(option = "D"),
-                                  separate_rects = TRUE) {
+                                  color_pal_params = list(option = "D")) {
     # extract the global scores
     global_scores <- mcia_results@global_scores
 
     # extract and re-label global scores
     colnames(global_scores) <- seq(1, ncol(global_scores))
-
-    # create a graphic parameters object for drawing the rectangles
-    if (separate_rects) {
-        rect_gp <- grid::gpar(col = "white", lwd = 1)
-    } else {
-        rect_gp <- grid::gpar(col = NA) # default
-    }
 
     if (!is.null(color_col)) {
         # check if metadata is within the MCIA results
@@ -60,7 +51,6 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
 
         ComplexHeatmap::Heatmap(matrix = global_scores,
                                 name = "Global Score",
-                                rect_gp = rect_gp,
                                 row_title = "Samples",
                                 column_title = "Factors",
                                 row_names_side = "right",
@@ -73,7 +63,6 @@ global_scores_heatmap <- function(mcia_results, color_col = NULL,
     } else {
         ComplexHeatmap::Heatmap(matrix = global_scores,
                                 name = "Global Score",
-                                rect_gp = rect_gp,
                                 row_title = "Samples",
                                 column_title = "Factors",
                                 row_names_side = "right",
