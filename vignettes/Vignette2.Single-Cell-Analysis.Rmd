@@ -760,7 +760,6 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
   theme(legend.position = "bottom")
 ```
 
-
 ### UMAP
 
 ```{r seurat-umap-initial, fig.dim = c(6, 6), message = FALSE}
@@ -991,11 +990,13 @@ You can also obtain the following bar plot using the output of `nipals_multibloc
 # examine the total counts
 ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
   geom_bar(color = "black", linewidth = 0.2) +
-  labs(title = "Cell Type Counts", x = "Cell Type", y = "Count") +
+  labs(title = "pbmc5k-CITEseq Cell Type Counts",
+       x = "Cell Type", y = "Count") +
   scale_fill_manual(values = meta_colors_sc) +
   theme_bw() +
   theme(plot.title = element_text(size = 14, hjust = 0.5),
         axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.grid.major.x = element_blank(),
         legend.position = "none")
 ```
 
