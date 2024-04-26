@@ -25,12 +25,10 @@
 #' @importFrom ggplot2 ggplot aes geom_point theme_bw xlab theme
 #' @importFrom ggplot2 scale_color_manual element_text
 #' @export
-
 vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
                          absolute = TRUE, descending = TRUE,
                          color_pal = scales::viridis_pal,
                          color_pal_params = list()) {
-
     # get the colors
     plot_colors <- get_colors(mcia_results,
                               color_pal = color_pal,
@@ -38,8 +36,8 @@ vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
 
     # get the load ordering internally
     gl_f_ord <- ord_loadings(mcia_results = mcia_results, omic = omic,
-                            factor = factor, absolute = absolute,
-                            descending = descending)
+                             factor = factor, absolute = absolute,
+                             descending = descending)
     omic_name <- gl_f_ord$omic_name
 
     # setting parameters with tidy evaluation
@@ -51,21 +49,13 @@ vis_load_ord <- function(mcia_results, omic, factor = 1, n_feat = 15,
     omic_subset <- names(table(droplevels(gl_f_ord[seq(0, n_plot), ])$omic))
     color_vals <- plot_colors[omic_subset]
 
-    p <- ggplot(data = gl_f_ord[seq_len(n_plot), ],
-                aes(x = factor(omic_name, levels = omic_name),
-                    y = !!loading, color = !!omic_quo)) +
-             geom_point() +
-             labs(x = "Feature") +
-             theme_bw() +
-             theme(axis.text.x = element_text(angle = 45, hjust = 1,
-                                              size = 6)) +
-             scale_color_manual(values = color_vals, limits = force)
-
-    return(p)
+    # plot the data
+    ggplot(data = gl_f_ord[seq_len(n_plot), ],
+           aes(x = factor(omic_name, levels = omic_name),
+               y = !!loading, color = !!omic_quo)) +
+        geom_point() +
+        labs(x = "Feature", y = "Loading") + # color = "Omic"
+        scale_color_manual(values = color_vals, limits = force) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
 }
-
-
-
-
-
-

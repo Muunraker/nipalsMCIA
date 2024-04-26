@@ -58,7 +58,7 @@ options including those present in the original development of MCIA
 with an iterative solver that shows speed-up for larger datasets, and is 
 explicitly designed for simultaneous ease of use as a tool for multi-view data 
 decomposition as well as a foundation for theoretical and computational 
-development of MCIA and related methodology.  A manuscript detailing our 
+development of MCIA and related methodology. A manuscript detailing our 
 implementation is forthcoming.
 
 ## Overview
@@ -71,21 +71,21 @@ subjects with three data blocks. The data blocks include mRNA levels
 (12895 features), microRNA levels (537 features) and protein levels
 (7016 features). 
 
-The `nipals_multiblock` function performs MCIA using the NIPALS algorithm.  
+The `nipals_multiblock` function performs MCIA using the NIPALS algorithm. 
 `nipals_multiblock` outputs a decomposition that includes a low-dimensional 
-embedding of the data in the form of global scores, and the contributions of the data 
-blocks (block score weights) and features (global loadings) to these same global scores.  
-`nipalsMCIA` provides several additional functions to visualize, analyze, 
-and interpret these results.
+embedding of the data in the form of global scores, and the contributions of
+the data blocks (block score weights) and features (global loadings) to these
+same global scores. `nipalsMCIA` provides several additional functions to
+visualize, analyze, and interpret these results.
 
 The `nipals_multiblock` function accepts as input a [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html)
-(MAE) object. Such objects represent a modern classed-based approach to organizing
-multi-omics data in which each assay can be stored as an individual experiment
-alongside relevant metadata for samples and experiments.  If users
+(MAE) object. Such objects represent a modern classed-based approach to
+organizing multi-omics data in which each assay can be stored as an individual
+experiment alongside relevant metadata for samples and experiments. If users
 have a list of data blocks with matching sample names (and optional sample-level
-metadata), we provide a simple conversion function (`simple_mae.R`) to generate an 
-MAE object.  For more sophisticated MAE object construction,
-please consult the MAE documentation.
+metadata), we provide a simple conversion function (`simple_mae.R`) to generate
+an MAE object. For more sophisticated MAE object construction, please consult
+the MAE documentation.
 
 In the context of the NCI-60 data set and this vignette, we will show you the
 power of MCIA to find important relationships between mRNA, microRNA and
@@ -141,6 +141,7 @@ data_blocks$prot[1:3, 1:3]
 
 To convert data_blocks into an MAE object we provide the `simple_mae()`
 function:
+
 ```{r convert-to-mae}
 data_blocks_mae <- simple_mae(data_blocks, row_format = "sample")
 ```
@@ -220,7 +221,7 @@ generate two plots which help establish an initial intuition for the MCIA
 decomposition. Here we will re-run `nipals_multiblock()` with the default `plots`
 parameter (`all`):
 
-```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(7, 4)}
+```{r part-1-mcia, warning = FALSE, message = FALSE, fig.dim = c(9, 5)}
 set.seed(42)
 mcia_results <- nipals_multiblock(data_blocks_mae,
                                   col_preproc_method = "colprofile",
@@ -309,6 +310,7 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2),
                 color_col = "cancerType", color_pal = meta_colors,
                 legend_loc = "bottomleft")
 ```
+
 Using this plot one can observe that global factor scores for factor 1 and 2 can
 separate samples into their cancer types.
 
@@ -319,7 +321,7 @@ using `global_scores_heatmap()`. The samples can be colored by the associated me
 using `color_cor` + `color_pal`as shown below.
 
 ```{r part-1-global-heatmap-colored, fig.dim = c(6, 4)}
-global_scores_heatmap(mcia_results,
+global_scores_heatmap(mcia_results = mcia_results,
                       color_col = "cancerType", color_pal = meta_colors)
 ```
 
@@ -380,7 +382,6 @@ Here, we visualize two ranked lists for Factor 1: using all omics,
 or just mrna.
 
 ```{r part-2-factor-1, fig.dim = c(8, 3)}
-
 # generate the visualizations
 all_pos_1_vis <- vis_load_ord(mcia_results, omic = "all", factor = 1,
                               absolute = FALSE, descending = TRUE)
@@ -432,7 +433,6 @@ ggpubr::ggarrange(all_abs_2, prot_abs_2)
 
 
 ```{r part-2-factor-2-orderings}
-
 # obtain the loadings as plotted above
 all_abs_2_vis <- ord_loadings(mcia_results, omic = "all", factor = 2,
                           absolute = TRUE, descending = TRUE)
@@ -553,6 +553,7 @@ clean_pathway_name <- function(x) {
         return(replaced_value)
     }
 }
+
 factor3_paths[, "pathway"] <- apply(X = factor3_paths[, "pathway"],
                                     MARGIN = 1, FUN = clean_pathway_name)
 ```

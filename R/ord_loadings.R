@@ -19,10 +19,8 @@
 #' all_pos_1 <- ord_loadings(mcia_results = mcia_results, omic = "all",
 #'                           absolute = FALSE, descending = TRUE, factor = 1)
 #' @export
-
-ord_loadings <- function(mcia_results, omic = "all", factor = 1, 
+ord_loadings <- function(mcia_results, omic = "all", factor = 1,
                          absolute = FALSE, descending = TRUE) {
-    
     # list of omics plus 'all'
     omics_names <- names(mcia_results@block_loadings)
     omics_names <- c(omics_names, "all")
@@ -58,7 +56,6 @@ ord_loadings <- function(mcia_results, omic = "all", factor = 1,
         } else {
             gl_f_ord <- gl_f[order(gl_f$loading, decreasing = FALSE), ]
         }
-
     } else {
         gl_f_abs <- gl_f
         gl_f_abs$abs <- abs(gl_f_abs$loading)

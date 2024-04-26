@@ -33,5 +33,5 @@ global_scores_eigenvalues_plot <- function(mcia_results) {
 
     # generate barplot
     barplot(barploteigs, xlab = "Factors", ylab = ylabel, cex.names = 1,
-            main = "Global Eigenvalues ")
+            main = "Global Eigenvalues")
 }
