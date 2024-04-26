@@ -19,8 +19,12 @@ block_weights_heatmap <- function(mcia_results) {
     bs_weights <- as.matrix(data.frame(mcia_results@block_score_weights))
     colnames(bs_weights) <- seq_len(ncol(bs_weights))
 
-    ComplexHeatmap::Heatmap(bs_weights, cluster_columns = FALSE,
-                            cluster_rows = FALSE, name = "weight",
+    ComplexHeatmap::Heatmap(matrix = bs_weights,
+                            name = "Weight",
+                            column_title = "Factors",
                             column_title_side = "bottom",
-                            column_title = "Factor")
+                            cluster_rows = FALSE,
+                            cluster_columns = FALSE,
+                            column_names_rot = 0,
+                            column_names_centered = TRUE)
 }
