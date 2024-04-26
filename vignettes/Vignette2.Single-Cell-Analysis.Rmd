@@ -1013,14 +1013,12 @@ data_rna <- GetAssayData(object = obj, slot = "data",
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
 # colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
-data_rna <- log2(data_rna + 1) # log-transform because the data is heavy tailed
 
 # adt
 data_adt <- GetAssayData(object = obj, slot = "data", assay = "ADT")
 data_adt <- as.matrix(data_adt)
 data_adt <- t(data_adt) # switch the rows
 # colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")
-data_adt <- log2(data_adt + 1) # log-transform because the data is heavy tailed
 
 # combined
 data_blocks_sc <- list(mrna = data_rna, adt = data_adt)

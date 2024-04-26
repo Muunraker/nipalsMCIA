@@ -1,11 +1,13 @@
-# 1.1.2
+# 1.2.0 (2024-04-26)
 
 ## Major changes
-* 
 
 ## Minor improvements and bugfixes
 * Clarified the dataset used in the single-cell vignette and reformatted the workflow diagram
-* Minor plotting improvements (removed redundancies in legend names, consistency of axis text, separation of rectangles in heatmaps etc.)
+* Removed the final log transformation in the single-cell vignette when saving for MCIA
+* Minor plotting improvements (removed redundancies in legend names, consistency of axis text, etc.)
+
+---
 
 # 1.1.0 (2024-03-21)
 
@@ -16,6 +18,8 @@
 * Updated `nipals_iter` to only use `var(gs)` to compute the significance of global scores.
 * Added to documentation for `predict_gs()` warning against use with CPCA deflation. 
 
+---
+
 # 0.99.7 (2023-10-07):
 
 ## Minor improvements and bug fixes
@@ -24,6 +28,8 @@
 * Updated the citation. 
 * Fixed bug in documentation for `nipals_multiblock`.
 * Stopped downloading one of the files for the single cell analysis vignette.
+
+---
 
 # 0.99.6 (2023-09-09):
 
@@ -38,17 +44,23 @@
 * Added `simple_mae()` function to convert a list of dataframes to a `MultiAssayExperiment` object.
 * Fixed missing `\value` fields in man page for `NipalsResult` class. 
 
+---
+
 # 0.99.5 (2023-06-22):
 
 ## Major changes
 
 * Bumping version number to trigger re-build following bug in BiocCheck.
 
+---
+
 # 0.99.4 (2023-06-01):
 
 ## Major changes
 
 * Fixed data corruption issues from v0.99.3.
+
+---
 
 # 0.99.3 (2023-06-01):
 
@@ -67,6 +79,8 @@
 * Renamed the associated output of `col_preproc_method` in `nipals_multiblock`. The metadata field is also now available in the output independent of whether metadata is provided in the input.
 * Added checks for consistency in sample names across data blocks and metadata. 
 
+---
+
 # 0.99.2 (2023-03-25):
 
 ## Major changes
@@ -78,6 +92,8 @@
 * Restructured the single cell analysis vignette to be more streamlined and have more explanations.
 * Add an additional single cell data file to the repository using `piggyback`.
 
+---
+
 # 0.99.1 (2023-02-26):
 
 ## Major changes
@@ -88,6 +104,8 @@
 ## Minor improvements and bug fixes
 
 * Made `get_colors()` more flexible for different color palette options.
+
+---
 
 # 0.99.0 (2022-10-21):
 

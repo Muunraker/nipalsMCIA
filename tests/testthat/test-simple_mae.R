@@ -5,3 +5,7 @@ sce_list <- list(sce1,sce2)
 test_that("All omics must have sample names", {
     expect_error(simple_mae(sce_list))
 })
+
+test_that("Valid row format", {
+    expect_error(simple_mae(sce_list, row_format = "nonsense"))
+})

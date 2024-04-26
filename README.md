@@ -7,6 +7,7 @@
 
 [![BioC
 status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA)
+[![R-CMD-check](https://github.com/Muunraker/nipalsMCIA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Muunraker/nipalsMCIA/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block
