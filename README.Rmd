@@ -5,18 +5,15 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+                      fig.path = "man/figures/README-", out.width = "100%")
 ```
 
 # nipalsMCIA: Software to Compute Multi-Block Dimensionality Reduction
 
 <!-- badges: start -->
 [![BioC status](http://www.bioconductor.org/shields/build/release/bioc/nipalsMCIA.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/nipalsMCIA)
+[![R-CMD-check](https://github.com/Muunraker/nipalsMCIA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Muunraker/nipalsMCIA/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This package computes Multiple Co-Inertia Analysis (MCIA) on multi-block data
