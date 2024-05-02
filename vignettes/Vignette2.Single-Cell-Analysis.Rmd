@@ -86,7 +86,7 @@ To manage the data used in this vignette, we will be using `BiocFileCache`:
 bfc <- BiocFileCache::BiocFileCache()
   
 # set up or load the unique resource ids
-rid <- BiocFileCache::bfcquery(bfc, query = "vignette_2", "rname")$rid
+rid <- BiocFileCache::bfcquery(bfc, query = "single_cell_vignette", "rname")$rid
 # rid <- bfcrid(bfc) # we only have one rname, so you could also just use this
 
 # if the data is not in the cache, download and add it
@@ -101,7 +101,7 @@ if (length(rid) == 0) {
   for (url in urls) {
     # the rids are numbered in the order they are added e.g. BFC1, BFC2, ...
     message(paste("Downloading file", url))
-    rid <- names(BiocFileCache::bfcadd(bfc, rname = "vignette_2", url))
+    rid <- names(BiocFileCache::bfcadd(bfc, rname = "single_cell_vignette", url))
     
     # check if the cached data needs updating and download it if needed
     if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid))) {
@@ -128,7 +128,7 @@ BiocFileCache::getBFCOption("CACHE")
 
 ```{r pipelines, echo = FALSE}
 # pipeline image
-knitr::include_graphics(path = BiocFileCache::bfcquery(bfc, "Pipeline")$rpath)
+knitr::include_graphics(path = BiocFileCache::bfcquery(bfc, "Single_Cell_Analysis_Vignette")$rpath)
 ```
 
 # Data
