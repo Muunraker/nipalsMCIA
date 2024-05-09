@@ -100,7 +100,7 @@ MCIA_train <- nipals_multiblock(data_blocks = data_blocks_train_mae,
 ## Visualize model on training data using metadata on cancer type
 
 The `get_metadata_colors()` function returns an assignment of a color for the
-metadata columns.  The `nmb_get_gs()` function returns the global scores from the
+metadata columns. The `nmb_get_gs()` function returns the global scores from the
 input `NipalsResult` object.
 
 ```{r visualize-training-model, fig.height = 2.5}

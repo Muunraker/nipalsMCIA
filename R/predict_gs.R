@@ -2,8 +2,8 @@
 #' Prediction of new global scores based on block loadings and weights
 #'
 #' @description Uses previously-computed block scores and weights to compute
-#' a global score for new data. Only validated for MCIA results, as CPCA loadings 
-#' aren't compatible with un-deflated data. 
+#' a global score for new data. Only validated for MCIA results, as CPCA loadings
+#' aren't compatible with un-deflated data.
 #'
 #' @details Projects the new observations onto each block loadings vector, then
 #' weights the projection according to the corresponding block weights.
@@ -11,7 +11,7 @@
 #' @param mcia_results an mcia object output by nipals_multiblock()
 #'         containing block scores, weights, and pre-processing identifier.
 #' @param test_data an MAE object with the same block types and features as the
-#'         training dataset.  Feature and omic order must match `bl`.
+#'         training dataset. Feature and omic order must match `bl`.
 #' @return a matrix of predicted global scores for the training data
 #' @examples
 #'    data(NCI60)
