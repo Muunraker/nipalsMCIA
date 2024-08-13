@@ -31,7 +31,8 @@ Features include:
   published theory to enable more efficient algorithm development and extension
 
 **References**
-* Mattessich et al. (2024) nipalsMCIA: Flexible Multi-Block Dimensionality Reduction in R via Non-linear Iterative Partial Least Squares, bioRxiv 2024.06.07.597819 (https://doi.org/10.1101/2024.06.07.597819). 
+
+* **Mattessich et al. (2024) nipalsMCIA: Flexible Multi-Block Dimensionality Reduction in R via Non-linear Iterative Partial Least Squares, bioRxiv 2024.06.07.597819 (https://doi.org/10.1101/2024.06.07.597819)**
 * Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via Multiple
 Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts University (http://hdl.handle.net/10427/CZ30Q6773)
 * Meng et al. (2014) A multivariate approach to the integration of multi-omics
