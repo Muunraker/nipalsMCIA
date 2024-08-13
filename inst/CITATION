@@ -4,9 +4,11 @@ citEntry(entry = "Misc",
   author = personList(as.person("Max Mattessich"),
                       as.person("Joaquin Reyna"),
                       as.person("Edel Aron"),
+		     as.person("Ferhat Ay"),
+                      as.person("Steven Kleinstein"),
                       as.person("Anna Konstorum")),
   title = "nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction",
-  year = "2023",
+  year = "2024",
   url = "https://github.com/Muunraker/nipalsMCIA",
-  textVersion = "Mattessich M, Reyna J, Aron E, Konstorum A. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. Bioconductor version: Development (3.18); 2023. 10.18129/B9.bioc.nipalsMCIA."
+  textVersion = "Mattessich M, Reyna J, Aron E, Ay F, Kleinstein S, Konstorum A. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. Bioconductor version: Release (3.19); 2024. 10.18129/B9.bioc.nipalsMCIA."
 )
