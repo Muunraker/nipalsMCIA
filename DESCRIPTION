@@ -9,6 +9,10 @@ Authors@R: c(
             role = "aut", comment = c(ORCID = "0000-0002-8468-2840")),
     person("Edel", "Aron", email = "edel.aron@yale.edu",
             role = "aut", comment = c(ORCID = "0000-0002-8683-4772")),
+    person("Ferhat", "Ay", email = "ferhatay@lji.org",
+            role = "aut", comment = c(ORCID = "0000-0002-0708-6914")),
+    person("Steven", "Kleinstein", email = "steven.kleinstein@yale.edu",
+            role = "aut", comment = c(ORCID = "0000-0003-4957-1544")),
     person("Anna", "Konstorum", email = "konstorum.anna@gmail.com",
             role = "aut", comment = c(ORCID = "0000-0003-4024-2058")))
 Description: Computes Multiple Co-Inertia Analysis (MCIA), a
