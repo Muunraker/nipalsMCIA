@@ -1,3 +1,12 @@
+# 1.2.1 (2024-08-31)
+
+## Major changes
+
+## Minor improvements and bugfixes
+* Updated 'Single-Cell-Analysis' vignette to remove potential issue with BiocFileCache having two copies of data. 
+* Updated author list and citation. 
+* Updated references in readme. 
+
 # 1.2.0 (2024-04-26)
 
 ## Major changes
