@@ -148,7 +148,7 @@ data_blocks_mae <- simple_mae(data_blocks, row_format = "sample")
 
 # Running and reviewing the MCIA output
 
-We can compute the MCIA decomposition for $r$ global factors.  For our example,
+We can compute the MCIA decomposition for $r$ global factors. For our example,
 we take $r=10$.
 
 ```{r intro-mcia, warning = FALSE, message = FALSE}
@@ -165,7 +165,7 @@ slotNames(mcia_results)
 ```
 
 We describe the first two in more detail below, and will discuss several others
-in the remainder of the vignette.  For additional details on the decomposition, see
+in the remainder of the vignette. For additional details on the decomposition, see
 ([Hanafi, 2011](https://doi.org/10.1016/j.chemolab.2010.05.010), 
 [Mattesich, 2022](http://hdl.handle.net/10427/CZ30Q6773)).
 

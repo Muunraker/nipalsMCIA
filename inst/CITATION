@@ -1,12 +1,16 @@
 citHeader("To cite nipalsMCIA in publications, please use:")
 
-citEntry(entry = "Misc",
+citEntry(entry = "Article",
   author = personList(as.person("Max Mattessich"),
                       as.person("Joaquin Reyna"),
                       as.person("Edel Aron"),
+		     as.person("Ferhat Ay"),
+		     as.person("Misha Kilmer"),
+                      as.person("Steven Kleinstein"),
                       as.person("Anna Konstorum")),
   title = "nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction",
-  year = "2023",
-  url = "https://github.com/Muunraker/nipalsMCIA",
-  textVersion = "Mattessich M, Reyna J, Aron E, Konstorum A. nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction. Bioconductor version: Development (3.18); 2023. 10.18129/B9.bioc.nipalsMCIA."
+  year = "2024",
+  Journal = "bioRxiv",
+  doi = "10.1101/2024.06.07.597819",
+  textVersion = "Mattessich M, Reyna J, Aron E, Ay F, Kilmer M, Kleinstein S, Konstorum A. nipalsMCIA: Flexible Multi-Block Dimensionality Reduction in R via Non-linear Iterative Partial Least Squares. bioRxiv 2024.06.07.597819; doi: https://doi.org/10.1101/2024.06.07.597819."
 )

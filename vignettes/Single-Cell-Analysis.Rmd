@@ -379,7 +379,7 @@ Note that the "-1"s have been removed from the cell barcodes.
 
 ```{r mcia-metadata}
 # read in the annotated cells
-metadata_sc <- read.csv(file = path_metadata_sc, header = TRUE, row.names = 1)
+metadata_sc <- read.csv(file = path_metadata_sc[1], header = TRUE, row.names = 1)
 
 # examples
 metadata_sc %>% slice_sample(n = 5)
@@ -432,7 +432,7 @@ mcia_results_sc <- nipals_multiblock(data_blocks = data_blocks_sc_mae,
 
 ```{r mcia-decomp-load}
 # load the results of the previous block (if already run and saved)
-mcia_results_sc <- readRDS(file = path_mcia_results)
+mcia_results_sc <- readRDS(file = path_mcia_results[1])
 mcia_results_sc
 ```
 
@@ -553,7 +553,7 @@ Note that there are other approaches to reading in single cell transcriptomics d
 
 ```{r seurat-load-data, message = FALSE}
 # load the data
-obj <- readRDS(file = path_obj_raw)
+obj <- readRDS(file = path_obj_raw[1])
 
 # add useful metadata
 obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
@@ -565,7 +565,7 @@ obj[["percent.mt"]] <- PercentageFeatureSet(object = obj, pattern = "^MT-")
 
 ```{r seurat-qc-metrics-summary}
 # read in and display the summary table
-metrics_summary <- read.csv(file = path_metrics_summary)
+metrics_summary <- read.csv(file = path_metrics_summary[1])
 metrics_summary
 ```
 
@@ -721,7 +721,7 @@ annotations defined in a later section, so we will clear them out here to
 proceed as normal.
 
 ```{r seurat-load-processed-object}
-obj <- readRDS(file = path_obj_annotated)
+obj <- readRDS(file = path_obj_annotated[1])
 
 # reset to baseline
 Idents(object = obj) <- "seurat_clusters"
@@ -785,7 +785,7 @@ They are included as examples of some of the cell types you could look for.
 
 ```{r seurat-markers-load}
 # sort by Cell_Type and Marker if not already sorted
-markers_all <- read.csv(file = path_marker_genes)
+markers_all <- read.csv(file = path_marker_genes[1])
 markers_all %>% slice_sample(n = 10) # example markers
 ```
 

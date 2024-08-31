@@ -26,18 +26,15 @@ Features include:
   with published theory to enable more efficient algorithm development
   and extension
 
-**References**
+**Citation**
 
-- Mattessich (2022) A Review of Multi-Block Dimensionality Reduction via
-  Multiple Co-Inertia Analysis, M.S. Thesis, Dept. of Mathematics, Tufts
-  University (<http://hdl.handle.net/10427/CZ30Q6773>)
-- Meng et al. (2014) A multivariate approach to the integration of
-  multi-omics datasets, BMC Bioinformatics 2014(15)
-  (<https://doi.org/10.1186/1471-2105-15-162>)
-- Hanafi et al. (2011) Connections between multiple co-inertia analysis
-  and consensus principal component analysis, Chemometrics and
-  Intelligent Laboratory Systems 106 (1)
-  (<https://doi.org/10.1016/j.chemolab.2010.05.010>.)
+For more information on the methodology used in nipalsMCIA and to cite,
+please see
+
+- Mattessich et al. (2024) nipalsMCIA: Flexible Multi-Block
+  Dimensionality Reduction in R via Non-linear Iterative Partial Least
+  Squares, bioRxiv 2024.06.07.597819
+  (<https://doi.org/10.1101/2024.06.07.597819>).
 
 ## Installation
 
