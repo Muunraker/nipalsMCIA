@@ -13,7 +13,8 @@ nipals_multiblock(
   max_iter = 1000,
   color_col = NULL,
   deflationMethod = "block",
-  plots = "all"
+  plots = "all",
+  harmonize = TRUE
 )
 }
 \arguments{
@@ -62,6 +63,10 @@ scree plot
 plot
 \item `none` does not display plots
 }}
+
+\item{harmonize}{boolean whether or not samples should be checked for duplicates 
+and re-ordered so that each row corresponds to the same sample across datasets.
+Set to FALSE to greatly reduce computation time on many samples (default = TRUE).}
 }
 \value{
 a `nipalsResult` object with the following fields: \itemize{

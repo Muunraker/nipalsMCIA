@@ -64,5 +64,5 @@ VignetteBuilder:
 biocViews: Software, Clustering, Classification, MultipleComparison,
     Normalization, Preprocessing, SingleCell
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3

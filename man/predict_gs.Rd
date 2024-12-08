@@ -11,14 +11,14 @@ predict_gs(mcia_results, test_data)
 containing block scores, weights, and pre-processing identifier.}
 
 \item{test_data}{an MAE object with the same block types and features as the
-training dataset.  Feature and omic order must match `bl`.}
+training dataset. Feature and omic order must match `bl`.}
 }
 \value{
 a matrix of predicted global scores for the training data
 }
 \description{
 Uses previously-computed block scores and weights to compute
-a global score for new data. Only validated for MCIA results, as CPCA loadings 
+a global score for new data. Only validated for MCIA results, as CPCA loadings
 aren't compatible with un-deflated data.
 }
 \details{

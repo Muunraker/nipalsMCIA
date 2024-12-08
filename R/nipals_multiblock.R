@@ -47,6 +47,9 @@
 #' plot
 #' \item `none` does not display plots
 #' }
+#' @param harmonize  boolean whether or not samples should be checked for duplicates 
+#' and re-ordered so that each row corresponds to the same sample across datasets.
+#' Set to FALSE to greatly reduce computation time on many samples (default = TRUE).
 #' @return a `nipalsResult` object with the following fields: \itemize{
 #' \item `global_scores` a matrix containing global scores as columns
 #' (NOT normalized to unit variance)
@@ -89,10 +92,11 @@ nipals_multiblock <- function(data_blocks_mae,
                               block_preproc_method = "unit_var",
                               num_PCs = 10, tol = 1e-9,
                               max_iter = 1000,color_col = NULL,
-                              deflationMethod = "block", plots = "all") {
+                              deflationMethod = "block", plots = "all",
+                              harmonize = TRUE) {
     # Check for input type MAE or list
     if (is(data_blocks_mae, "MultiAssayExperiment")) {
-      data_blocks <- extract_from_mae(data_blocks_mae)
+      data_blocks <- extract_from_mae(data_blocks_mae, harmonize = harmonize)
       metadata <- data.frame(MultiAssayExperiment::colData(data_blocks_mae))
       if (length(metadata) == 0) {
         metadata <- NULL
