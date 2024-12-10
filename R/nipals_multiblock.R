@@ -197,7 +197,7 @@ nipals_multiblock <- function(data_blocks_mae,
                                          nipals_result$block_score_weights)
             eigvals <- cbind(eigvals, nipals_result$eigval)
 
-            for (j in seq(1, num_blocks)) {
+            for (j in seq_along(block_scores)) {
                 block_scores[[j]] <- cbind(block_scores[[j]],
                                            nipals_result$block_scores[, j])
                 block_loadings[[j]] <- cbind(block_loadings[[j]],
@@ -211,11 +211,13 @@ nipals_multiblock <- function(data_blocks_mae,
     names(block_scores) <- names(data_blocks)
     names(block_loadings) <- names(data_blocks)
     names(eigvals) <- paste("gs", seq(1, num_PCs), sep = "")
+    eigvals <- as.matrix(eigvals)
 
     # adding row (sample) names in outputs
     rownames(global_scores) <- rownames(data_blocks[[1]])
 
-    for (j in seq(1, num_blocks)) {
+    for (j in seq_along(num_blocks)) {
+        block_scores[[j]] <- as.matrix(block_scores[[j]])
         rownames(block_scores[[j]]) <- rownames(data_blocks[[1]])
     }
 
@@ -238,14 +240,14 @@ nipals_multiblock <- function(data_blocks_mae,
                     metadata = metadata)
 
     # Plotting results
-    if (tolower(plots) == "all") {
+    if (tolower(plots) == "all" && num_PCs >1) {
         par(mfrow = c(1, 2))
         projection_plot(mcia_out, "all", legend_loc = "bottomleft",
                         color_col = color_col) # first two orders of scores
         global_scores_eigenvalues_plot(mcia_out) # global score eigenvalues
         par(mfrow = c(1, 1))
 
-    } else if (tolower(plots) == "global") {
+    } else if (tolower(plots) == "global"&& num_PCs >1) {
         par(mfrow = c(1, 2))
         # first two global scores
         projection_plot(mcia_out, "global", color_col = color_col)
@@ -255,7 +257,7 @@ nipals_multiblock <- function(data_blocks_mae,
     } else if (tolower(plots) == "none") {
 
     } else {
-        message("No known plotting options specified - skipping plots.")
+        message("No known plotting option (or numPCs=1) - skipping plots.")
     }
 
     return(mcia_out)
