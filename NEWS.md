@@ -1,3 +1,11 @@
+# 1.3.2 (2024-12-10)
+
+## Major changes
+
+## Minor improvements and bugfixes
+* Added `harmonize = FALSE` option to `nipals_multiblock()` to allow disabling (slow) sample harmonization for large datasets.
+* Fixed a bug in `nipals_multiblock()` to allow the `numPCs =1` argument (i.e. ability to compute a single global score).
+
 # 1.2.1 (2024-08-31)
 
 ## Major changes
