@@ -4,7 +4,7 @@
 \alias{extract_from_mae}
 \title{Extract a list of harmonized data matrices from an MAE object}
 \usage{
-extract_from_mae(MAE_object, subset_data = "all")
+extract_from_mae(MAE_object, subset_data = "all", harmonize = TRUE)
 }
 \arguments{
 \item{MAE_object}{an MAE object containing experiment data for extraction
@@ -16,9 +16,14 @@ RangedSummarizedExperiment classes}
 \item `all` use all experiments in MAE object
 \item `c(omic1,omic2,...)` list of omics from names(MAE_object)
 }}
+
+\item{harmonize}{A boolean whether samples should be checked for duplicates \itemize{
+\item `TRUE` (default) merges duplicate samples via the `MultiAssayExperiment::mergeReplicates` function
+\item `FALSE` skips sample duplicate check - USE THIS FOR LARGE-SAMPLE DATASETS.
+}}
 }
 \value{
-List of harmonized data matrices for input into nipals_multiblock()
+List of harmonized data matrices for input into `nipals_multiblock()`
 }
 \description{
 Extract a list of harmonized data matrices for

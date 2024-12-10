@@ -11,7 +11,11 @@
 #' \item `all` use all experiments in MAE object
 #' \item `c(omic1,omic2,...)` list of omics from names(MAE_object)
 #' }
-#' @return List of harmonized data matrices for input into nipals_multiblock()
+#' @param harmonize A boolean whether samples should be checked for duplicates \itemize{
+#' \item `TRUE` (default) merges duplicate samples via the `MultiAssayExperiment::mergeReplicates` function
+#' \item `FALSE` skips sample duplicate check - USE THIS FOR LARGE-SAMPLE DATASETS.
+#' }
+#' @return List of harmonized data matrices for input into `nipals_multiblock()`
 #' @examples
 #' data(NCI60)
 #' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
@@ -23,7 +27,7 @@
 #' @export
 
 
-extract_from_mae <- function(MAE_object, subset_data = "all") {
+extract_from_mae <- function(MAE_object, subset_data = "all", harmonize = TRUE) {
   if (subset_data != "all") {
     if (intersect(subset_data, names(MAE_object)) < 2) {
       stop("Please provide appropriate subset_data list")
@@ -45,20 +49,23 @@ extract_from_mae <- function(MAE_object, subset_data = "all") {
     }
   }
 
-  MAE_object_harmonize <-
-    MultiAssayExperiment::mergeReplicates(intersectColumns(MAE_object))
-
+  if(harmonize){
+    MAE_object <-
+      MultiAssayExperiment::mergeReplicates(intersectColumns(MAE_object))
+  }
+  
   # Extract data matrices
-  extracted_data <- MultiAssayExperiment::assays(MAE_object_harmonize)@listData
+  extracted_data <- MultiAssayExperiment::assays(MAE_object)@listData
 
   # Match experiment sample names to primary names if colData available
-  if (length(colData(MAE_object_harmonize)) > 0) {
-    primary_names <- rownames(colData(MAE_object_harmonize))
+  if (length(colData(MAE_object)) > 0) {
+    primary_names <- rownames(colData(MAE_object))
 
     for (i in seq_along(extracted_data)) {
       colnames(extracted_data[[i]]) <- primary_names
     }
   }
+  rm(MAE_object)
 
   # Transpose to sample x feature format for input into MCIA
   extracted_data <- lapply(extracted_data, t)
