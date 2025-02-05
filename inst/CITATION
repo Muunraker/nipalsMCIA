@@ -8,9 +8,9 @@ citEntry(entry = "Article",
 		     as.person("Misha Kilmer"),
                       as.person("Steven Kleinstein"),
                       as.person("Anna Konstorum")),
-  title = "nipalsMCIA: Discovering shared and data-specific signals using joint dimensionality reduction",
-  year = "2024",
-  Journal = "bioRxiv",
-  doi = "10.1101/2024.06.07.597819",
-  textVersion = "Mattessich M, Reyna J, Aron E, Ay F, Kilmer M, Kleinstein S, Konstorum A. nipalsMCIA: Flexible Multi-Block Dimensionality Reduction in R via Non-linear Iterative Partial Least Squares. bioRxiv 2024.06.07.597819; doi: https://doi.org/10.1101/2024.06.07.597819."
+  title = "nipalsMCIA: flexible multi-block dimensionality reduction in R via nonlinear iterative partial least squares",
+  year = "2025",
+  Journal = "Bioinformatics",
+  doi = "10.1093/bioinformatics/btaf015,
+  textVersion = "Max Mattessich, Joaquin Reyna, Edel Aron, Ferhat Ay, Misha Kilmer, Steven H Kleinstein, Anna Konstorum, nipalsMCIA: flexible multi-block dimensionality reduction in R via nonlinear iterative partial least squares, Bioinformatics, Volume 41, Issue 1, January 2025, btaf015, https://doi.org/10.1093/bioinformatics/btaf015"
 )
