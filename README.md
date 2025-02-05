@@ -31,10 +31,7 @@ Features include:
 For more information on the methodology used in nipalsMCIA and to cite,
 please see
 
-- Mattessich et al. (2024) nipalsMCIA: Flexible Multi-Block
-  Dimensionality Reduction in R via Non-linear Iterative Partial Least
-  Squares, bioRxiv 2024.06.07.597819
-  (<https://doi.org/10.1101/2024.06.07.597819>).
+- Max Mattessich, Joaquin Reyna, Edel Aron, Ferhat Ay, Misha Kilmer, Steven H Kleinstein, Anna Konstorum, nipalsMCIA: flexible multi-block dimensionality reduction in R via nonlinear iterative partial least squares, Bioinformatics, Volume 41, Issue 1, January 2025, btaf015, https://doi.org/10.1093/bioinformatics/btaf015
 
 ## Installation
 
