@@ -31,7 +31,7 @@ Features include:
 For more information on the methodology used in nipalsMCIA and to cite,
 please see
 
-- Max Mattessich, Joaquin Reyna, Edel Aron, Ferhat Ay, Misha Kilmer, Steven H Kleinstein, Anna Konstorum, nipalsMCIA: flexible multi-block dimensionality reduction in R via nonlinear iterative partial least squares, Bioinformatics, Volume 41, Issue 1, January 2025, btaf015, https://doi.org/10.1093/bioinformatics/btaf015
+- Maximilian Mattessich, Joaquin Reyna, Edel Aron, Ferhat Ay, Misha Kilmer, Steven H Kleinstein, Anna Konstorum, nipalsMCIA: flexible multi-block dimensionality reduction in R via nonlinear iterative partial least squares, Bioinformatics, Volume 41, Issue 1, January 2025, btaf015, https://doi.org/10.1093/bioinformatics/btaf015
 
 ## Installation
 
