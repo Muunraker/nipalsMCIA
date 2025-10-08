@@ -18,9 +18,9 @@
 #' @return List of harmonized data matrices for input into `nipals_multiblock()`
 #' @examples
 #' data(NCI60)
-#' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-#'                               colData=metadata_NCI60)
-#' NCI60_input = extract_from_mae(data_blocks_mae,subset='all')
+#' data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+#'                               colData = metadata_NCI60)
+#' NCI60_input = extract_from_mae(data_blocks_mae, subset = "all")
 #' @importFrom MultiAssayExperiment colData assays experiments
 #' @importFrom MultiAssayExperiment mergeReplicates intersectColumns
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment

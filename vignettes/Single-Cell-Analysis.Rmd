@@ -84,6 +84,8 @@ To manage the data used in this vignette, we will be using `BiocFileCache`:
 
 # initialize the cache in a temporary directory
 bfc <- BiocFileCache::BiocFileCache()
+
+# you can run cleanbfc(bfc, days = -Inf) if you want to remove everything
   
 # set up or load the unique resource ids
 rid <- BiocFileCache::bfcquery(bfc, query = "vignette_2", "rname")$rid

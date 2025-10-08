@@ -231,7 +231,7 @@ mcia_results <- nipals_multiblock(data_blocks_mae,
 The first plot visualizes each sample using factor 1 and 2 as a lower
 dimensional representation (factor plot).
 
-- Each sample is represented by 4 points, a center point (solid block
+- Each sample is represented by 4 points, a center point (solid bla'ck
 dot) which represents the global factor score, a mRNA factor score (square), a
 miRNA factor score (circle), and a protein factor score (triangle).
 - The last three omic-specific block factor scores are connected to the global
@@ -258,7 +258,7 @@ projection_plot(mcia_results, projection = "global", orders = c(1, 2))
 ```
 
 In addition, scores can be colored by a meaningful label such as cancer type
-which is highly relevant to NCI-60. To do so, the colData slot of the associated
+which is highly relevant to NCI-60. To do so, the `colData` slot of the associated
 MAE object must be loaded with sample-level metadata prior to invoking
 `projection_plot()`. The sample metadata is composed of row names corresponding to
 the primary sample names of the MAE object, and columns contain different

@@ -76,15 +76,15 @@
 #' @importClassesFrom MultiAssayExperiment MultiAssayExperiment
 #' @examples
 #'    data(NCI60)
-#'    data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-#'                                  colData=metadata_NCI60)
+#'    data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+#'                                  colData = metadata_NCI60)
 #'    NIPALS_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                        tol = 1e-12, max_iter = 1000,
 #'                                        col_preproc_method = "colprofile",
 #'                                        deflationMethod = "block")
 #'    MCIA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4)
 #'    CPCA_results <- nipals_multiblock(data_blocks_mae, num_PCs = 4,
-#'    deflationMethod = 'global')
+#'    deflationMethod = "global")
 #'
 #' @export
 nipals_multiblock <- function(data_blocks_mae,
