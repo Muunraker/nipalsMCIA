@@ -38,8 +38,7 @@ as metadata for exploring the decomposition results.
 To install the development version from GitHub:
 
 ```{r installation-github, eval = FALSE}
-# devel version
-
+# devel version:
 # install.packages("devtools")
 devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
                          force = TRUE, build_vignettes = TRUE) # devel version
@@ -48,9 +47,8 @@ devtools::install_github("Muunraker/nipalsMCIA", ref = "devel",
 To install the released Bioconductor version:
 
 ```{r installation-bioconductor, eval = FALSE}
-# release version
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+# release version:
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 BiocManager::install("nipalsMCIA")
 ```
@@ -58,14 +56,16 @@ BiocManager::install("nipalsMCIA")
 ```{r load-packages, message = FALSE}
 # note that the TENxPBMCData package is not included in this list as you may
 # decide to pull data from another source or use our provided objects
+packages <- c("BiocFileCache", "dplyr", "ggplot2", "ggpubr", "nipalsMCIA",
+              "piggyback", "Seurat")
 
-library(BiocFileCache)
-library(dplyr)
-library(ggplot2)
-library(ggpubr)
-library(nipalsMCIA)
-library(piggyback)
-library(Seurat)
+# load each package and print the version
+for (n in seq_along(packages)) {
+  suppressPackageStartupMessages(library(packages[n], character.only = TRUE))
+  cat(paste0(packages[n], ": ", packageVersion(packages[n]), "\n"))
+}
+
+# note that as of Seurat v5, GetAssayData() uses `layer` instead of `slot`
 
 # NIPALS starts with a random vector
 set.seed(42)
@@ -88,7 +88,7 @@ bfc <- BiocFileCache::BiocFileCache()
 # you can run cleanbfc(bfc, days = -Inf) if you want to remove everything
   
 # set up or load the unique resource ids
-rid <- BiocFileCache::bfcquery(bfc, query = "vignette_2", "rname")$rid
+rid <- BiocFileCache::bfcquery(bfc, query = "vignette_sc", "rname")$rid
 # rid <- bfcrid(bfc) # we only have one rname, so you could also just use this
 
 # if the data is not in the cache, download and add it
@@ -103,7 +103,7 @@ if (length(rid) == 0) {
   for (url in urls) {
     # the rids are numbered in the order they are added e.g. BFC1, BFC2, ...
     message(paste("Downloading file", url))
-    rid <- names(BiocFileCache::bfcadd(bfc, rname = "vignette_2", url))
+    rid <- names(BiocFileCache::bfcadd(bfc, rname = "vignette_sc", url))
     
     # check if the cached data needs updating and download it if needed
     if (!isFALSE(BiocFileCache::bfcneedsupdate(bfc, rid))) {
@@ -368,7 +368,7 @@ rownames(obj[["ADT"]])
 ## [31] "IgG2a-control-TotalSeqB" "IgG2b-control-TotalSeqB"
 
 # save the data locally if desired
-saveRDS(obj, file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
+saveRDS(obj, file = file.path(path_data, "tenx_pbmc5k_CITEseq_raw.rds"))
 ```
 
 You can also load the Seurat object directly, such as in the [Read in and process the data] subsection in the [Deep dive: Seurat analysis] section later in the vignette.
@@ -766,15 +766,13 @@ LabelPoints(plot = VariableFeaturePlot(object = obj),
 
 ```{r seurat-umap-initial, fig.dim = c(6, 6), message = FALSE}
 # you can also use the LabelClusters function to help label individual clusters
-plot_seurat_clusters <- UMAPPlot(object = obj, label = TRUE, label.size = 4,
-                                 label.box = TRUE) +
-                          labs(title = "Initial Clusters") +
-                          scale_fill_manual(
-                               values = rep("white",
-                                            n_distinct(obj$seurat_clusters))) +
-                          theme(plot.title = element_text(hjust = 0.5),
-                                axis.text = element_blank(),
-                                axis.ticks = element_blank())
+plot_seurat_clusters <-
+  UMAPPlot(object = obj, label = TRUE, label.size = 4, label.box = TRUE) +
+  labs(title = "Initial Clusters") +
+  scale_fill_manual(values = rep("white", n_distinct(obj$seurat_clusters))) +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text = element_blank(), axis.ticks = element_blank())
+
 plot_seurat_clusters
 ```
 
@@ -837,8 +835,8 @@ up-regulated features.
 DefaultAssay(object = obj) <- "ADT"
 
 DotPlot(object = obj,
-        features = rownames(GetAssayData(object = obj, assay = "ADT",
-                                         slot = "counts")),
+        features =
+          rownames(GetAssayData(object = obj, layer = "counts", assay = "ADT")),
         cols = "RdBu", col.min = -1, dot.scale = 3, cluster.idents = TRUE) +
   RotatedAxis()
 
@@ -870,8 +868,8 @@ just like for the feature plots (just make sure to remove `assay = "ADT"`).
 
 ```{r seurat-markers-violin-adt, fig.dim = c(8, 8)}
 VlnPlot(object = obj,
-        features = c("CD3-TotalSeqB", "CD14-TotalSeqB",
-                     "CD20-TotalSeqB", "CD335-TotalSeqB"),
+        features = c("CD3-TotalSeqB", "CD14-TotalSeqB", "CD20-TotalSeqB",
+                     "CD335-TotalSeqB"),
         pt.size = 0, assay = "ADT", ncol = 2) &
   theme(plot.title = element_text(size = 10),
         axis.text.x = element_text(angle = 0, hjust = 0.5),
@@ -947,17 +945,14 @@ remove `label.box` and `scale_fill_manual()`.
 
 ```{r seurat-umap-both, fig.dim = c(16, 8), message = FALSE}
 # change colors and themes as desired
-plot_annotated_clusters <- UMAPPlot(object = obj,
-                                    label = TRUE, label.size = 4,
-                                    label.box = TRUE,
-                                    cols = meta_colors_sc) +
-                             labs(title = "Annotated Clusters") +
-                             scale_fill_manual(
-                               values = rep("white", length(meta_colors_sc))) +
-                             theme(plot.title = element_text(hjust = 0.5),
-                                   axis.text = element_blank(),
-                                   axis.ticks = element_blank()) +
-                             NoLegend() # a legend is not needed here
+plot_annotated_clusters <-
+  UMAPPlot(object = obj, cols = meta_colors_sc, label = TRUE, label.size = 4,
+           label.box = TRUE) +
+  labs(title = "Annotated Clusters") +
+  scale_fill_manual(values = rep("white", length(meta_colors_sc))) +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text = element_blank(), axis.ticks = element_blank()) +
+  NoLegend() # a legend is not needed here
 
 ggpubr::ggarrange(plot_seurat_clusters + NoLegend(), plot_annotated_clusters,
                   heights = c(1, 1), widths = c(1, 1))
@@ -998,8 +993,7 @@ ggplot(obj[[]], aes(x = annotated_clusters, fill = annotated_clusters)) +
   theme_bw() +
   theme(plot.title = element_text(size = 14, hjust = 0.5),
         axis.text.x = element_text(angle = 45, hjust = 1),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
+        panel.grid.major.x = element_blank(), legend.position = "none")
 ```
 
 ## Save for MCIA
@@ -1010,14 +1004,14 @@ the end of your features, uncomment the commented lines.
 
 ```{r seurat-save-mcia, eval = FALSE}
 # mrna
-data_rna <- GetAssayData(object = obj, slot = "data",
+data_rna <- GetAssayData(object = obj, layer = "data",
                          assay = "RNA")[VariableFeatures(object = obj), ]
 data_rna <- as.matrix(data_rna)
 data_rna <- t(data_rna) # switch the rows
 # colnames(data_rna) <- paste(colnames(data_rna), "mrna", sep = "_")
 
 # adt
-data_adt <- GetAssayData(object = obj, slot = "data", assay = "ADT")
+data_adt <- GetAssayData(object = obj, layer = "data", assay = "ADT")
 data_adt <- as.matrix(data_adt)
 data_adt <- t(data_adt) # switch the rows
 # colnames(data_adt) <- paste(colnames(data_adt), "adt", sep = "_")
