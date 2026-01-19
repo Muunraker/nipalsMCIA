@@ -15,8 +15,8 @@
 #' @return a matrix of predicted global scores for the training data
 #' @examples
 #'    data(NCI60)
-#'    data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-#'                                  colData=metadata_NCI60)
+#'    data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+#'                                  colData = metadata_NCI60)
 #'    mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 2)
 #'    new_data <- data_blocks_mae # should update with a truly new dataset
 #'    preds <- predict_gs(mcia_results, new_data)

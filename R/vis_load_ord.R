@@ -16,8 +16,8 @@
 #' @return Plot in features for a factor by rank
 #' @examples
 #' data(NCI60)
-#' data_blocks_mae <- simple_mae(data_blocks,row_format="sample",
-#'                               colData=metadata_NCI60)
+#' data_blocks_mae <- simple_mae(data_blocks, row_format = "sample",
+#'                               colData = metadata_NCI60)
 #' mcia_results <- nipals_multiblock(data_blocks_mae, num_PCs = 10,
 #'                                   plots = "none", tol = 1e-12)
 #' vis_load_ord(mcia_results, omic="mrna")
